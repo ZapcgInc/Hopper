@@ -71,10 +71,10 @@ public class ScenarioImpl {
         }
     }
     
-    public void validateHTTPresponseCode(int expectedHttpResponseCode) {
-        int responseCode = restResponse.getStatusCode();
-        if (responseCode != expectedHttpResponseCode) {
-            Assert.fail("Expected response code : " + expectedHttpResponseCode +
+    public void validateHTTPresponseCode(int expectedCode) {
+        int responseCode = restResponse.getStatusCode();        
+        if (responseCode != expectedCode) {
+            Assert.fail("Expected response code : " + expectedCode +
                     " and actual response code : " + responseCode +
                     " are not matching");
         }

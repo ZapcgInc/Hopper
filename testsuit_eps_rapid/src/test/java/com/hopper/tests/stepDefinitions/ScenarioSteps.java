@@ -92,9 +92,15 @@ public class ScenarioSteps {
 		scenarioImpl.raiseHTTPRequest("GET");
 	}
 	
+	@Then("^the response code should be \"(.*?)\"$")
+	public void the_response_code_should_be(String responseCode) throws Throwable {
+		int expectedCode = Integer.valueOf(responseCode);
+		scenarioImpl.validateHTTPresponseCode(expectedCode);
+	}
+	
 	@Then("^the response code should be (\\d+)$")
-	public void the_response_code_should_be(int responseCode) throws Throwable {
-		scenarioImpl.validateHTTPresponseCode(responseCode);
+	public void the_response_code_should_be(int expectedCode) throws Throwable {
+		scenarioImpl.validateHTTPresponseCode(expectedCode);
 	}
 	
 	

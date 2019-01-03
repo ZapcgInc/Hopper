@@ -48,44 +48,21 @@ Background:
 
 #######################   Rapid Test Scenarios
 @rapid_test
-Scenario: Rapid test "Test=no_availability" 
+Scenario Outline: Availability Rapid test Header "<header>" with "<value>"
 	Given Basic web application is running
-	When user sets header "Test" value "no_availability"
+	When user sets header "<header>" value "<value>"
 	And performs GET request
-	Then the response code should be 404
+	Then the response code should be "<code>"
 	And user should see json response with paris on the filterd "." node
-	  |type   		| no_availability   																												  |
-	  |message    | No availability was found for the properties requested.										  |
+	  |type  				| <type> 		|
+	  |message   		| <message>	|	
+  Examples: 
+  | header  | value 									| code  | type										| message																																							|
+  | Test 		| no_availability 				| 404   | no_availability 				| No availability was found for the properties requested. 														| 
+  | Test 		| unknown_internal_error 	| 500   | unknown_internal_error 	| An internal server error has occurred. 																							| 
+  | Test 		| service_unavailable 		| 503   | service_unavailable 		| This service is currently unavailable. 																							| 
+  | Test 		| forbidden							 	| 403   | request_forbidden 			| Your request could not be authorized. Ensure that you have access. 									| 
 
-@rapid_test
-Scenario: Rapid test "Test=unknown_internal_error" 
-	Given Basic web application is running
-	When user sets header "Test" value "unknown_internal_error"
-	And performs GET request
-	Then the response code should be 500
-	And user should see json response with paris on the filterd "." node
-	  |type   		| unknown_internal_error   																										|
-	  |message    | An internal server error has occurred.									  									|
-
-@rapid_test
-Scenario: Rapid test "Test=service_unavailable" 
-	Given Basic web application is running
-	When user sets header "Test" value "service_unavailable"
-	And performs GET request
-	Then the response code should be 503
-	And user should see json response with paris on the filterd "." node
-	  |type   		| service_unavailable   																										|
-	  |message    | This service is currently unavailable.																			|
-
-@rapid_test
-Scenario: Rapid test "Test=forbidden" 
-	Given Basic web application is running
-	When user sets header "Test" value "forbidden"
-	And performs GET request
-	Then the response code should be 403
-	And user should see json response with paris on the filterd "." node
-	  |type   		| request_forbidden  																										|
-	  |message    | Your request could not be authorized. Ensure that you have access.																			|
 
 @rapid_test
 Scenario: Rapid test with invalid value like "Test=INVALID"  
@@ -101,7 +78,7 @@ Scenario: Rapid test with invalid value like "Test=INVALID"
 	    |message  | Content of the test header is invalid. Please use one of the following valid values: forbidden, no_availability, service_unavailable, standard, unknown_internal_error 	|
 
 
-#######################   Data Validation Test Scenarios
+#######################   Data Validation Test Scenarios for headers
 
 #Scenario: Missing User-Agent in header is not returning error
 #Scenario: Missing Accept-Encoding in header is not returning error
@@ -120,25 +97,41 @@ Scenario: Missing Customer-Ip in header
 	    |message  | Customer-Ip header is required and must be a valid IP Address. 	|
 	And user should see json response with paris on the filterd "errors[0].fields[0]" node
 	    |name   	| Customer-Ip 		|
-	    |type  		| header 	|
+	    |type  		| header 					|
+
+#######################   Data Validation Test Scenarios for query parameters
 
 @data_test	
-Scenario: Missing Property Id
+Scenario Outline: Availability API missing Query Param "<query_param>"
 	Given Basic web application is running
-	When user sets queryParam "property_id" value "null" 
+	When user sets queryParam "<query_param>" value "null" 
 	And performs GET request
 	Then the response code should be 400
 	And user should see json response with paris on the filterd "." node
 	  |type   		| invalid_input   																														 |
 	  |message    | An invalid request was sent in, please check the nested errors for details.  |
 	And user should see json response with paris on the filterd "errors[0]" node
-	    |type   	| property_id.required  		|
-	    |message  | Property Id is required. 	|
+    |type   	| <error_type>  		|
+    |message  | <error_message> 	|
 	And user should see json response with paris on the filterd "errors[0].fields[0]" node
-	    |name   	| property_id 		|
-	    |type  		| querystring 	|
+    |name   	| <query_param> 		|
+    |type  		| querystring 			|
+  Examples: 
+  | query_param  				| error_type  									| error_message								| 
+  | property_id 				| property_id.required   				| Property Id is required. 		| 
+  | checkin 						| checkin.required   						| Checkin is required. 				| 
+  | checkout 						| checkout.required   					| Checkout is required. 			| 
+  | currency 						| currency.required   					| Currency code is required. 	|
+  | language 						| language.required   					| Language code is required. 	| 
+  | country_code 				| country_code.required   			| Country code is required. 	|
+ 	| occupancy 					| occupancy.required   					| Occupancy is required. 			| 
+ 	| sales_channel 			| sales_channel.required   			| Sales Channel is required.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta]. 	|
+ 	| sales_environment 	| sales_environment.required   	| Sales Environment is required.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty]. 	|
+ 	| sort_type 					| sort_type.required   					| Sort Type is required.  Accepted sort_type values are: [preferred]. 			| 
 
-Scenario: Valid test request
+
+
+Scenario: Availability API successful response
 	Given Basic web application is running
 	When performs GET request
 	Then the response code should be 200
