@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/resources",
         glue = "com.hopper.tests.stepDefinitions",
+        format={"json:target/cucumber.json"},
         dryRun = false,
         strict = false,
         monochrome = true
