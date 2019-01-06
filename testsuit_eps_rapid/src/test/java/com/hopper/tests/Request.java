@@ -1,6 +1,7 @@
 package com.hopper.tests;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Request {
@@ -10,7 +11,14 @@ public class Request {
 	String authKey;
 	Map<String, String> headers;
 	Map<String, String> params;
+	Map<String, List<String>> paramWithMulitpleValues;
 	
+	public Map<String, List<String>> getParamWithMulitpleValues() {
+		return paramWithMulitpleValues;
+	}
+	public void setParamWithMulitpleValues(Map<String, List<String>> paramWithMulitpleValues) {
+		this.paramWithMulitpleValues = paramWithMulitpleValues;
+	}
 	public String getUrl() {
 		return url;
 	}

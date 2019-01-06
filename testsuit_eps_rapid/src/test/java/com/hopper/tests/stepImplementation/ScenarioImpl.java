@@ -9,6 +9,7 @@ import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.with;
 
+import java.util.List;
 import java.util.Map;
 
 public class ScenarioImpl {
@@ -48,6 +49,11 @@ public class ScenarioImpl {
     	if(request.getParams() != null) {
     		reqspecs.queryParams(request.getParams());
     	}
+    	if(request.getParamWithMulitpleValues() != null) {
+	 		for (String param : request.getParamWithMulitpleValues().keySet()) {
+	 			reqspecs.queryParam(param, request.getParamWithMulitpleValues().get(param));
+	 		}
+    	}
     	System.out.println(reqspecs.log().all());
         switch (httpMethod) {
             case "GET":
@@ -55,6 +61,7 @@ public class ScenarioImpl {
                 	restResponse = reqspecs.get(request.getEndPoint());
 
                 	System.out.println("Response: "+ restResponse.asString());
+                	System.out.println("Response Headers:" + restResponse.getHeaders());
                 } catch (Exception e) {
                     if (e.getMessage().contains("Connection refused")) {
                         Assert.fail("Web application is not running.");

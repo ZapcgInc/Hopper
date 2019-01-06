@@ -1,5 +1,9 @@
 package com.hopper.tests.stepDefinitions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.hopper.tests.Request;
@@ -81,11 +85,29 @@ public class ScenarioSteps {
 	@When("^user sets queryParam \"(.*?)\" value \"(.*?)\"$")
 	public void user_sets_queryParam_value(String param, String value) throws Throwable {
 		if(value.equalsIgnoreCase("null")) {
-			request.getParams().remove(param);
+			if(request.getParams() != null) {
+				request.getParams().remove(param);
+			}
+			if(request.getParamWithMulitpleValues() != null) {
+				request.getParamWithMulitpleValues().remove(param);
+			}
 		} else {
 			request.getParams().put(param, value);
 		}
 	}
+	
+	@Given("^set mulitple values for queryParam \"(.*?)\" with \"(.*?)\"$")
+	public void set_mulitple_values_for_queryParam_with(String queryParam, String values) throws Throwable {
+		List<String> myList = new ArrayList<String>(Arrays.asList(values.split("\\|")));
+		Map<String, List<String>> paramWithMultipleValues;
+		if(request.getParamWithMulitpleValues() == null) {
+			paramWithMultipleValues = new HashMap<String, List<String>>();
+			request.setParamWithMulitpleValues(paramWithMultipleValues);
+		}
+		request.getParamWithMulitpleValues().put(queryParam, myList);
+		System.out.println(queryParam+":"+myList);
+	}
+	
 	
 	@When("^performs GET request$")
 	public void performs_GET_request() throws Throwable {

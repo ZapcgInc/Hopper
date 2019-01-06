@@ -43,6 +43,10 @@ Background:
 		| sales_channel                    | website           					|
 		| sales_environment                | hotel_only                 |
 		| sort_type                        | preferred         					|
+    | include           							 | all_rates                  |
+    | rate_option                      | closed_user_group          |
+ 	And set mulitple values for queryParam "occupancy" with "2-9,1|2"
+	And set mulitple values for queryParam "property_id" with "8521|3317|19762|9100"
 	And user sets GET request to "properties/availability"
 
 
