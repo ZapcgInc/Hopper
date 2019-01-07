@@ -22,6 +22,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
 
 Background:
 	Given simple init
+	And partner is "EPS"
 	And web application endpoint url is "https://test.ean.com"
 	And version is "2.1"
 	And headers are
@@ -42,7 +43,7 @@ Scenario: Missing Authorization header
 	And user sets header "Authorization" value "null"
 	And performs GET request
 	Then the response code should be 401
-	And user should see json response with paris on the filterd "." node
+	And user should see json response with paris on the filtered "." node
 	  |type   | request_unauthenticated   |
 	  |message    | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation.  |
 
@@ -53,7 +54,7 @@ Scenario: Invalid Authorization header
 	And user sets header "Authorization" value "abc123"
 	And performs GET request
 	Then the response code should be 401
-	And user should see json response with paris on the filterd "." node
+	And user should see json response with paris on the filtered "." node
 	  |type   | request_unauthenticated   |
 	  |message    | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation.  |
 
@@ -63,7 +64,7 @@ Scenario: Invalid resource
   When user sets GET request to "properties/availability123"
   And performs GET request
   Then the response code should be 404
-  And user should see json response with paris on the filterd "." node
+  And user should see json response with paris on the filtered "." node
     |type   | resource_not_found   |
     |message    | The resource requested was not found.  |
 
@@ -74,10 +75,10 @@ Scenario: Invalid version
 	And version is "1"
 	And performs GET request
 	Then the response code should be 400
-	And user should see json response with paris on the filterd "." node
+	And user should see json response with paris on the filtered "." node
 	  |type    |  version.required   |
 	  |message |  You have not specified a version, the supported versions are: [2, 2.1, 2.2]  |
-	And user should see json response with paris on the filterd "fields[0]" node
+	And user should see json response with paris on the filtered "fields[0]" node
 	    |name   | version   |
 	    |type   | path  |
 	    |value  | missing |

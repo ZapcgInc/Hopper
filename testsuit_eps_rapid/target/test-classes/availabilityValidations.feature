@@ -22,6 +22,7 @@ Feature: Availability part of shopping API validations.
 
 Background:
 	Given simple init
+	And partner is "EPS"
 	And web application endpoint url is "https://test.ean.com"
 	And version is "2.1"
 	And headers are
