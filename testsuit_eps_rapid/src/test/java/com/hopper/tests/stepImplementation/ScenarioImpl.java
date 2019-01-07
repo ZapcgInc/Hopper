@@ -72,7 +72,7 @@ public class ScenarioImpl {
     }
     
     public void validateHTTPresponseCode(int expectedCode) {
-        int responseCode = restResponse.getStatusCode();        
+        final int responseCode = restResponse.getStatusCode();
         if (responseCode != expectedCode) {
             Assert.fail("Expected response code : " + expectedCode +
                     " and actual response code : " + responseCode +
@@ -82,11 +82,11 @@ public class ScenarioImpl {
     
     
     public void validateResponseBody(Map<String, String> expectedResponseMap, String field) {        
-        Map<String, String> fieldResponseMap = (Map<String, String>) restResponse.jsonPath().get(field);
+        final Map<String, String> fieldResponseMap = restResponse.jsonPath().get(field);
              
         for (String key : expectedResponseMap.keySet()) {
-        	String actualValue = (String)fieldResponseMap.get(key);
-        	String expectedValue = (String)expectedResponseMap.get(key);
+        	String actualValue = fieldResponseMap.get(key);
+        	String expectedValue = expectedResponseMap.get(key);
         	Assert.assertTrue(expectedValue.equals(actualValue));
         }
     }
