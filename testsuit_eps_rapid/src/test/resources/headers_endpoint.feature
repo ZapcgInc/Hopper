@@ -89,5 +89,5 @@ Scenario: Missing version
 	When user sets GET request to "properties/availability"
 	And version is "null"
 	And performs GET request
-	Then the response code should be 404
+	Then the response code should be 400
 	    

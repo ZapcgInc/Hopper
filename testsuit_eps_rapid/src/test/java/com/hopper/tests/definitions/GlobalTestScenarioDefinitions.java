@@ -17,6 +17,7 @@ import cucumber.api.java.en.When;
  */
 public class GlobalTestScenarioDefinitions
 {
+    private static final String NULL_STRING = "null";
     private ShoppingTestDataSupplier m_testDataSupplier;
     private SupportedPartners m_partner;
 
@@ -27,9 +28,16 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Given("^partner is \"(.*?)\"$")
-    public void partner_is(String partner)
+    public void partner_is(String partner) throws Throwable
     {
-        m_partner = SupportedPartners.valueOf(partner);
+        try
+        {
+            m_partner = SupportedPartners.valueOf(partner);
+        }
+        catch (Exception exp)
+        {
+            throw new Exception("Invalid Partner : " + partner);
+        }
     }
 
     @Given("^web application endpoint url is \"(.*?)\"$")
@@ -41,13 +49,11 @@ public class GlobalTestScenarioDefinitions
     @Given("^version is \"(.*?)\"$")
     public void version_is(String version)
     {
-        if (version.equalsIgnoreCase("null"))
+        if (version != null && !NULL_STRING.equalsIgnoreCase(version))
         {
-            version = null;
+            m_testDataSupplier.withRequestVersion(version);
         }
-        m_testDataSupplier.withRequestVersion(version);
     }
-
 
     @Given("^headers are$")
     public void headers_are(DataTable headers)
