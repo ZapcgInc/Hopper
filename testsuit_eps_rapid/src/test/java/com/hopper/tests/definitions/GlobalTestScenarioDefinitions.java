@@ -1,57 +1,64 @@
 package com.hopper.tests.definitions;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.hopper.tests.authorization.Authorization;
 
+import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.SupportedPartners;
-import com.hopper.tests.util.data.ShoppingTestDataSupplier;
+import com.hopper.tests.model.TestCriteria;
+import com.hopper.tests.util.data.ResponseSupplierFactory;
+import com.hopper.tests.util.validations.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import io.restassured.response.Response;
 
 /**
  * Implementation for Global Test scenarios definitions that can be shared across for testing different end points.
  */
 public class GlobalTestScenarioDefinitions
 {
-    private static final String NULL_STRING = "null";
-    private ShoppingTestDataSupplier m_testDataSupplier;
-    private SupportedPartners m_partner;
+    private TestCriteria m_testCriteria;
+    private CheckAPIAvailability m_checkAPIAvailability;
+    private Supplier<Response> m_responseSupplier;
 
     @Given("^simple init$")
     public void simple_init()
     {
-        m_testDataSupplier = new ShoppingTestDataSupplier();
+        m_testCriteria = new TestCriteria();
+        m_checkAPIAvailability = new CheckAPIAvailability();
     }
 
     @Given("^partner is \"(.*?)\"$")
-    public void partner_is(String partner) throws Throwable
+    public void partner_is(String partnerName) throws Throwable
     {
         try
         {
-            m_partner = SupportedPartners.valueOf(partner);
+            SupportedPartners partner = SupportedPartners.valueOf(partnerName);
+            m_testCriteria.setPartner(partner);
         }
         catch (Exception exp)
         {
-            throw new Exception("Invalid Partner : " + partner);
+            throw new Exception("Invalid Partner : " + partnerName);
         }
     }
 
     @Given("^web application endpoint url is \"(.*?)\"$")
     public void web_application_endpoint_url_is(String url)
     {
-        m_testDataSupplier.withRequestHost(url);
+        m_testCriteria.setHost(url);
     }
 
     @Given("^version is \"(.*?)\"$")
     public void version_is(String version)
     {
-        if (version != null && !NULL_STRING.equalsIgnoreCase(version))
+        if (version != null && !GlobalConstants.NULL_STRING.equalsIgnoreCase(version))
         {
-            m_testDataSupplier.withRequestVersion(version);
+            m_testCriteria.setVersion(version);
         }
     }
 
@@ -59,45 +66,46 @@ public class GlobalTestScenarioDefinitions
     public void headers_are(DataTable headers)
     {
         final Map<String, String> headerMap = headers.asMap(String.class, String.class);
-        m_testDataSupplier.withRequestHeaders(headerMap);
+        m_testCriteria.setHeaders(headerMap);
     }
 
     @Given("^Generate authHeaderKey with$")
     public void generate_authHeaderKey_with(DataTable authKeys)
     {
         final Map<String, String> authKeyMap = authKeys.asMap(String.class, String.class);
-        m_testDataSupplier.withRequestAuthKey(Authorization.getAuthKey(m_partner, authKeyMap));
+        final String authKey = Authorization.getAuthKey(m_testCriteria.getPartner(), authKeyMap);
+        m_testCriteria.setAuthKey(authKey);
     }
 
     @Given("^queryParams are$")
     public void queryparams_are(DataTable params)
     {
         final Map<String, String> paramsMap = params.asMap(String.class, String.class);
-        m_testDataSupplier.withRequestParams(paramsMap);
+        m_testCriteria.setParams(paramsMap);
     }
 
     @Given("^Basic web application is running$")
     public void basic_web_application_is_running()
     {
-        m_testDataSupplier.checkAppIsRunning();
+        m_checkAPIAvailability.test(m_testCriteria);
     }
 
     @When("^user sets GET request to \"(.*?)\"$")
     public void user_sets_GET_request_to(String uri)
     {
-        m_testDataSupplier.withRequestAPIPath(uri);
+        m_testCriteria.setApiPath(uri);
     }
 
     @When("^user sets header \"(.*?)\" value \"(.*?)\"$")
     public void user_sets_header_value(String header, String value)
     {
-        if (value.equalsIgnoreCase("null"))
+        if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
         {
-            m_testDataSupplier.removeRequestHeader(header);
+            m_testCriteria.removeHeader(header);
         }
         else
         {
-            m_testDataSupplier.addRequestHeaders(header, value);
+            m_testCriteria.addHeader(header, value);
         }
 
     }
@@ -105,33 +113,33 @@ public class GlobalTestScenarioDefinitions
     @When("^user sets queryParam \"(.*?)\" value \"(.*?)\"$")
     public void user_sets_queryParam_value(String param, String value)
     {
-        if (value.equalsIgnoreCase("null"))
+        if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
         {
-            m_testDataSupplier.removeRequestParam(param);
+            m_testCriteria.removeParam(param);
         }
         else
         {
-            m_testDataSupplier.addRequestParam(param, value);
+            m_testCriteria.addParam(param, value);
         }
     }
 
     @When("^performs GET request$")
     public void performs_GET_request()
     {
-        m_testDataSupplier.callEndPoint("GET");
+        m_responseSupplier = ResponseSupplierFactory.create(m_testCriteria, GlobalConstants.GET);
     }
 
     @Then("^the response code should be \"(.*?)\"$")
     public void the_response_code_should_be(String responseCode)
     {
         final int expectedCode = Integer.valueOf(responseCode);
-        ResponseValidationUtil.validateHTTPResponseCode(m_testDataSupplier.getResponse(), expectedCode);
+        ResponseValidationUtil.validateHTTPResponseCode(m_responseSupplier.get(), expectedCode);
     }
 
     @Then("^the response code should be (\\d+)$")
     public void the_response_code_should_be(int expectedCode)
     {
-        ResponseValidationUtil.validateHTTPResponseCode(m_testDataSupplier.getResponse(), expectedCode);
+        ResponseValidationUtil.validateHTTPResponseCode(m_responseSupplier.get(), expectedCode);
     }
 
     @Then("^user should see json response with paris on the filtered \"(.*?)\" node$")
@@ -139,7 +147,7 @@ public class GlobalTestScenarioDefinitions
     {
         final Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 
-        ResponseValidationUtil.validateResponseBody(m_testDataSupplier.getResponse(), expectedResponseMap, field);
+        ResponseValidationUtil.validateResponseBody(m_responseSupplier.get(), expectedResponseMap, field);
     }
 
 }
