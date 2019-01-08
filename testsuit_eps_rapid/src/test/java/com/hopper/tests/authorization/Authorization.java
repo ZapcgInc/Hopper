@@ -1,41 +1,64 @@
 package com.hopper.tests.authorization;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.Map;
 
+import com.hopper.tests.constants.SupportedPartners;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * Util class for generating API Authorization key
+ */
+public class Authorization
+{
+    private static final String EPS_AUTH_KEY_FORMAT = "EAN APIKey=%s,Signature=%s,timestamp=%s";
+    private static final String AUTH_API_KEY = "apikey";
+    private static final String AUTH_SECRET_KEY = "secret";
 
-public class Authorization {
-
-	public static String getAuthKey(Map<String, String> authKeyMap) {
-		String authKey = null;
-        String apiKey = authKeyMap.get("apikey");
-        String secret = authKeyMap.get("secret");
-        Date date = new java.util.Date();
-        Long timestamp = (date.getTime() / 1000);
-        String signature = null;
-        try {
-            if (StringUtils.isNotEmpty(apiKey) || StringUtils.isNotEmpty(secret)) {
-                String toBeHashed = apiKey + secret + timestamp;
-                MessageDigest md = MessageDigest.getInstance("SHA-512");
-                byte[] bytes = md.digest(toBeHashed.getBytes("UTF-8"));
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < bytes.length; i++) {
-                    sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-                }
-                signature = sb.toString();
-                authKey = "EAN APIKey=" + apiKey + ",Signature=" + signature + ",timestamp=" + timestamp;
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+    public static String getAuthKey(final SupportedPartners partner, final Map<String, String> authKeyMap)
+    {
+        switch (partner)
+        {
+            case EPS:
+                return _getEPSAuthKey(authKeyMap);
+            default:
+                throw new UnsupportedOperationException("Authorization for Partner :" + partner.name() + "is currently unsupported");
         }
-        return authKey;
     }
 
+    private static String _getEPSAuthKey(final Map<String, String> authKeyMap)
+    {
+        final String apiKey = authKeyMap.get(AUTH_API_KEY);
+        final String secret = authKeyMap.get(AUTH_SECRET_KEY);
+        final long systemTimeInUnixTimestampInSeconds = System.currentTimeMillis() / 1000L;
+
+        try
+        {
+            if (StringUtils.isNotEmpty(apiKey) || StringUtils.isNotEmpty(secret))
+            {
+                final String seed = apiKey + secret + systemTimeInUnixTimestampInSeconds;
+
+                final MessageDigest md = MessageDigest.getInstance(MessageDigestAlgorithms.SHA_512);
+                final byte[] bytes = md.digest(seed.getBytes(StandardCharsets.UTF_8));
+
+                final StringBuilder sb = new StringBuilder();
+                for (byte aByte : bytes)
+                {
+                    sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+                }
+                final String signature = sb.toString();
+
+                return String.format(EPS_AUTH_KEY_FORMAT, apiKey, signature, systemTimeInUnixTimestampInSeconds);
+            }
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
