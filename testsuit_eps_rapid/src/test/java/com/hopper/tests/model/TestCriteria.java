@@ -3,6 +3,7 @@ package com.hopper.tests.model;
 import com.hopper.tests.constants.SupportedPartners;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +19,7 @@ public class TestCriteria
     private String m_authKey;
     private Map<String, String> m_headers = new HashMap<>();
     private Map<String, String> m_params = new HashMap<>();
+    private Map<String, List<String>> m_paramsWithMultipleValues = new HashMap<>();
 
     public SupportedPartners getPartner()
     {
@@ -114,5 +116,28 @@ public class TestCriteria
     public void removeParam(String header)
     {
         m_params.remove(header);
+    }
+
+    public Map<String, List<String>> getParamsWithMultipleValues()
+    {
+        return m_paramsWithMultipleValues;
+    }
+
+    public void setParamsWithMultipleValues(Map<String, List<String>> paramsWithMultipleValues)
+    {
+        if (paramsWithMultipleValues != null)
+        {
+            m_paramsWithMultipleValues.putAll(paramsWithMultipleValues);
+        }
+    }
+
+    public void addParamWithMultipleValues(String header, List<String> multipleValues)
+    {
+        m_paramsWithMultipleValues.put(header, multipleValues);
+    }
+
+    public void removeParamWithMultipleValues(String header)
+    {
+        m_paramsWithMultipleValues.remove(header);
     }
 }

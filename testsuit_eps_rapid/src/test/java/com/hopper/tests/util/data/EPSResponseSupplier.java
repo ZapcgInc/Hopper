@@ -37,6 +37,11 @@ public class EPSResponseSupplier implements Supplier<Response>
             requestSpecifications.queryParams(request.getParams());
         }
 
+        if (request.getParamsWithMultipleValues() != null)
+        {
+            request.getParamsWithMultipleValues().forEach(requestSpecifications::queryParam);
+        }
+
         try
         {
             switch (httpMethod)

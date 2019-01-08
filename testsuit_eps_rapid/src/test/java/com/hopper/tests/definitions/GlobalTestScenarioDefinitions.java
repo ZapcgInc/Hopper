@@ -1,7 +1,11 @@
 package com.hopper.tests.definitions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.hopper.tests.authorization.Authorization;
 
@@ -116,11 +120,21 @@ public class GlobalTestScenarioDefinitions
         if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
         {
             m_testCriteria.removeParam(param);
+            m_testCriteria.removeParamWithMultipleValues(param);
         }
         else
         {
             m_testCriteria.addParam(param, value);
         }
+    }
+
+    @Given("^set multiple values for queryParam \"(.*?)\" with \"(.*?)\"$")
+    public void set_multiple_values_for_queryParam_with(String queryParam, String values)
+    {
+        final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
+                .collect(Collectors.toList());
+
+        m_testCriteria.addParamWithMultipleValues(queryParam, listOfValues);
     }
 
     @When("^performs GET request$")

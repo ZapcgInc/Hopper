@@ -1,5 +1,6 @@
 package com.hopper.tests.model;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +14,7 @@ public class EPSRequest
     private final String m_authKey;
     private final Map<String, String> m_headers;
     private final Map<String, String> m_params;
+    private final Map<String, List<String>> m_paramsWithMultipleValues;
 
     public EPSRequest(TestCriteria criteria)
     {
@@ -22,6 +24,7 @@ public class EPSRequest
         m_authKey = criteria.getAuthKey();
         m_headers = criteria.getHeaders();
         m_params = criteria.getParams();
+        m_paramsWithMultipleValues = criteria.getParamsWithMultipleValues();
     }
 
     public String getHost()
@@ -52,6 +55,11 @@ public class EPSRequest
     public Map<String, String> getParams()
     {
         return m_params;
+    }
+
+    public Map<String, List<String>> getParamsWithMultipleValues()
+    {
+        return m_paramsWithMultipleValues;
     }
 
     public String getEndPoint()
