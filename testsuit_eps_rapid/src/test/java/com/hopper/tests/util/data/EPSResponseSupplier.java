@@ -1,7 +1,8 @@
 package com.hopper.tests.util.data;
 
-import com.hopper.tests.model.EPSRequest;
-import com.hopper.tests.model.TestCriteria;
+import com.hopper.tests.constants.RequestType;
+import com.hopper.tests.model.TestContext;
+import com.hopper.tests.util.APIEndPointGenerator;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -22,24 +23,28 @@ public class EPSResponseSupplier implements Supplier<Response>
         io.restassured.RestAssured.defaultParser = io.restassured.parsing.Parser.JSON;
     }
 
-    /*package-private*/ EPSResponseSupplier(TestCriteria criteria, String httpMethod)
+    /*package-private*/ EPSResponseSupplier(final TestContext criteria,
+                                            final String httpMethod,
+                                            final RequestType requestType)
     {
-        m_response = _getEPSResponse(criteria, httpMethod);
+        m_response = _getEPSResponse(criteria, httpMethod, requestType);
+        Assert.assertNotNull("Something went wrong, API response is null", m_response);
     }
 
-    private Response _getEPSResponse(TestCriteria criteria, String httpMethod)
+    private Response _getEPSResponse(final TestContext criteria,
+                                     final String httpMethod,
+                                     final RequestType requestType)
     {
-        final EPSRequest request = new EPSRequest(criteria);
-        final RequestSpecification requestSpecifications = RestAssured.with().headers(request.getHeaders());
+        final RequestSpecification requestSpecifications = RestAssured.with().headers(criteria.getHeaders());
 
-        if (request.getParams() != null)
+        if (criteria.getParams() != null)
         {
-            requestSpecifications.queryParams(request.getParams());
+            requestSpecifications.queryParams(criteria.getParams());
         }
 
-        if (request.getParamsWithMultipleValues() != null)
+        if (criteria.getParamsWithMultipleValues() != null)
         {
-            request.getParamsWithMultipleValues().forEach(requestSpecifications::queryParam);
+            criteria.getParamsWithMultipleValues().forEach(requestSpecifications::queryParam);
         }
 
         try
@@ -47,9 +52,14 @@ public class EPSResponseSupplier implements Supplier<Response>
             switch (httpMethod)
             {
                 case "GET":
-                    return requestSpecifications.get(request.getEndPoint());
+                {
+                    final String apiEndPoint = APIEndPointGenerator.create(criteria, requestType);
+                    return requestSpecifications.get(apiEndPoint);
+                }
                 default:
+                {
                     Assert.fail("This type of method is not supported yet.");
+                }
             }
         }
         catch (Exception e)

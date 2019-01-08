@@ -1,7 +1,9 @@
 package com.hopper.tests.model;
 
+import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,17 +11,18 @@ import java.util.Map;
 /**
  * Simple POJO to hold test criteria
  */
-public class TestCriteria
+public class TestContext
 {
     private static final String AUTH_HEADER_KEY = "Authorization";
+
     private SupportedPartners m_partner;
     private String m_host;
     private String m_version;
-    private String m_apiPath;
-    private String m_authKey;
+    private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private Map<String, String> m_headers = new HashMap<>();
     private Map<String, String> m_params = new HashMap<>();
     private Map<String, List<String>> m_paramsWithMultipleValues = new HashMap<>();
+    private ShoppingResponse m_shoppingResponse = null;
 
     public SupportedPartners getPartner()
     {
@@ -51,24 +54,18 @@ public class TestCriteria
         m_version = version;
     }
 
-    public String getApiPath()
+    public String getApiPath(RequestType requestType)
     {
-        return m_apiPath;
+        return m_requestTypeToAPIPath.get(requestType);
     }
 
-    public void setApiPath(String apiPath)
+    public void setApiPath(RequestType requestType, String apiPath)
     {
-        m_apiPath = apiPath;
-    }
-
-    public String getAuthKey()
-    {
-        return m_authKey;
+        m_requestTypeToAPIPath.put(requestType, apiPath);
     }
 
     public void setAuthKey(String authKey)
     {
-        m_authKey = authKey;
         m_headers.put(AUTH_HEADER_KEY, authKey);
     }
 
@@ -123,14 +120,6 @@ public class TestCriteria
         return m_paramsWithMultipleValues;
     }
 
-    public void setParamsWithMultipleValues(Map<String, List<String>> paramsWithMultipleValues)
-    {
-        if (paramsWithMultipleValues != null)
-        {
-            m_paramsWithMultipleValues.putAll(paramsWithMultipleValues);
-        }
-    }
-
     public void addParamWithMultipleValues(String header, List<String> multipleValues)
     {
         m_paramsWithMultipleValues.put(header, multipleValues);
@@ -139,5 +128,15 @@ public class TestCriteria
     public void removeParamWithMultipleValues(String header)
     {
         m_paramsWithMultipleValues.remove(header);
+    }
+
+    public ShoppingResponse getShoppingResponse()
+    {
+        return m_shoppingResponse;
+    }
+
+    public void setShoppingResponse(ShoppingResponse shoppingResponse)
+    {
+        m_shoppingResponse = shoppingResponse;
     }
 }

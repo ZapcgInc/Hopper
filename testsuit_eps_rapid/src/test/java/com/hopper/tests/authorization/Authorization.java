@@ -23,9 +23,13 @@ public class Authorization
         switch (partner)
         {
             case EPS:
+            {
                 return _getEPSAuthKey(authKeyMap);
+            }
             default:
+            {
                 throw new UnsupportedOperationException("Authorization for Partner :" + partner.name() + "is currently unsupported");
+            }
         }
     }
 

@@ -1,8 +1,7 @@
 package com.hopper.tests.util.validations;
 
 import com.hopper.tests.constants.SupportedPartners;
-import com.hopper.tests.model.EPSRequest;
-import com.hopper.tests.model.TestCriteria;
+import com.hopper.tests.model.TestContext;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.Assert;
@@ -20,27 +19,30 @@ public class CheckAPIAvailability
         m_appRunning = false;
     }
 
-    public void test(TestCriteria criteria)
+    public void test(TestContext criteria)
     {
         final SupportedPartners partner = criteria.getPartner();
         switch (partner)
         {
             case EPS:
-                 _checkEPSAvailability(criteria);
-                 break;
+            {
+                _checkEPSAvailability(criteria);
+                break;
+            }
             default:
+            {
                 throw new UnsupportedOperationException("Authorization for Partner :" + partner.name() + "is currently unsupported");
+            }
         }
     }
 
-    private void _checkEPSAvailability(TestCriteria criteria)
+    private void _checkEPSAvailability(TestContext criteria)
     {
         if (!m_appRunning)
         {
             try
             {
-                final EPSRequest request = new EPSRequest(criteria);
-                final Response response = RestAssured.with().get(request.getHost());
+                final Response response = RestAssured.with().get(criteria.getHost());
             }
             catch (Exception e)
             {
