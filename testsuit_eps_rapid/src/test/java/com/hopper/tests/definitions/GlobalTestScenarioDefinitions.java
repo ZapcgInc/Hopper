@@ -135,11 +135,28 @@ public class GlobalTestScenarioDefinitions
         final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
         m_testContext.setApiPath(RequestType.PRE_BOOKING, shoppingResponse.getPriceCheckEndPoint());
 
-        final Response response = ResponseSupplierFactory.create(m_testContext,
-                GlobalConstants.GET,
-                RequestType.PRE_BOOKING).get();
+        final Response response = ResponseSupplierFactory.create(
+                m_testContext,
+                shoppingResponse.getPriceCheckHTTPMethod(),
+                RequestType.PRE_BOOKING
+        ).get();
 
         m_testContext.setResponse(RequestType.PRE_BOOKING, response);
+    }
+
+    @When("^run paymentOptions$")
+    public void run_paymentOptions()
+    {
+        final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
+        m_testContext.setApiPath(RequestType.PAYMENT_OPTIONS, shoppingResponse.getPaymentOptionsEndPoint());
+
+        final Response response = ResponseSupplierFactory.create(
+                m_testContext,
+                shoppingResponse.getPaymentOptionsHTTPMethod(),
+                RequestType.PAYMENT_OPTIONS
+        ).get();
+
+        m_testContext.setResponse(RequestType.PAYMENT_OPTIONS, response);
     }
 
     @Then("^the response code for \"(.*?)\" should be (\\d+)$")

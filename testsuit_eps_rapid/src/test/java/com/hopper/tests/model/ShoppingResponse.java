@@ -10,6 +10,8 @@ public class ShoppingResponse
     private final String m_rateId;
     private final String m_priceCheckEndPoint;
     private final String m_priceCheckHTTPMethod;
+    private final String m_paymentOptionsEndPoint;
+    private final String m_paymentOptionsHTTPMethod;
 
     private ShoppingResponse(Builder builder)
     {
@@ -18,6 +20,8 @@ public class ShoppingResponse
         m_rateId = builder.m_rateId;
         m_priceCheckEndPoint = builder.m_priceCheckEndPoint;
         m_priceCheckHTTPMethod = builder.m_priceCheckHTTPMethod;
+        m_paymentOptionsEndPoint = builder.m_paymentOptionsEndPoint;
+        m_paymentOptionsHTTPMethod = builder.m_paymentOptionsHTTPMethod;
     }
 
     public String getPropertyId()
@@ -45,6 +49,16 @@ public class ShoppingResponse
         return m_priceCheckEndPoint;
     }
 
+    public String getPaymentOptionsEndPoint()
+    {
+        return m_paymentOptionsEndPoint;
+    }
+
+    public String getPaymentOptionsHTTPMethod()
+    {
+        return m_paymentOptionsHTTPMethod;
+    }
+
     public static Builder builder()
     {
         return new Builder();
@@ -57,6 +71,8 @@ public class ShoppingResponse
         private String m_rateId;
         private String m_priceCheckEndPoint;
         private String m_priceCheckHTTPMethod;
+        private String m_paymentOptionsEndPoint;
+        private String m_paymentOptionsHTTPMethod;
 
         public Builder withPropertyId(String propertyId)
         {
@@ -76,15 +92,17 @@ public class ShoppingResponse
             return this;
         }
 
-        public Builder withPriceCheckEndPoint(String priceCheckEndPoint)
+        public Builder withPriceCheckEndPointDetail(String endpoint, String httpMethod)
         {
-            m_priceCheckEndPoint = priceCheckEndPoint;
+            m_priceCheckEndPoint = endpoint;
+            m_priceCheckHTTPMethod = httpMethod;
             return this;
         }
 
-        public Builder withPriceCheckHTTPMethod(String httpMethod)
+        public Builder withPaymentOptionsEndPointDetail(String endpoint, String httpMethod)
         {
-            m_priceCheckHTTPMethod = httpMethod;
+            m_paymentOptionsEndPoint = endpoint;
+            m_paymentOptionsHTTPMethod = httpMethod;
             return this;
         }
 

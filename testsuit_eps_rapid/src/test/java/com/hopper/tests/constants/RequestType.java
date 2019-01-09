@@ -7,5 +7,6 @@ public enum RequestType
 {
     SHOPPING,
     PRE_BOOKING,
+    PAYMENT_OPTIONS,
     ;
 }
