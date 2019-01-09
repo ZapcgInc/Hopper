@@ -31,18 +31,9 @@ public class GlobalTestScenarioDefinitions
     private CheckAPIAvailability m_checkAPIAvailability;
 
     @Given("^setup for partner \"(.*?)\"$")
-    public void setup_for_partner(final String partnerName) throws Throwable
+    public void setup_for_partner(final String partnerName)
     {
-        try
-        {
-            SupportedPartners partner = SupportedPartners.valueOf(partnerName);
-            m_testContext = new TestContext(SupportedPartners.valueOf(partnerName));
-        }
-        catch (Exception exp)
-        {
-            throw new Exception("Invalid Partner : " + partnerName);
-        }
-
+        m_testContext = new TestContext(SupportedPartners.valueOf(partnerName));
         m_checkAPIAvailability = new CheckAPIAvailability();
     }
 
@@ -143,6 +134,7 @@ public class GlobalTestScenarioDefinitions
     {
         final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
         m_testContext.setApiPath(RequestType.PRE_BOOKING, shoppingResponse.getPriceCheckEndPoint());
+
         final Response response = ResponseSupplierFactory.create(m_testContext,
                 GlobalConstants.GET,
                 RequestType.PRE_BOOKING).get();
@@ -153,11 +145,14 @@ public class GlobalTestScenarioDefinitions
     @Then("^the response code for \"(.*?)\" should be (\\d+)$")
     public void the_response_code_for_should_be(String requestType, int expectedCode)
     {
-        ResponseValidationUtil.validateHTTPResponseCode(m_testContext.getResponse(RequestType.valueOf(requestType)), expectedCode);
+        ResponseValidationUtil.validateHTTPResponseCode(
+                m_testContext.getResponse(RequestType.valueOf(requestType)),
+                expectedCode
+        );
     }
 
     @Then("^the response code for \"(.*?)\" should be \"(.*?)\"$")
-    public void the_response_code_for_should_be(String requestType, String expectedCode) throws Throwable
+    public void the_response_code_for_should_be(String requestType, String expectedCode)
     {
         ResponseValidationUtil.validateHTTPResponseCode(
                 m_testContext.getResponse(RequestType.valueOf(requestType)),
@@ -170,7 +165,11 @@ public class GlobalTestScenarioDefinitions
     {
         final Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 
-        ResponseValidationUtil.validateResponseBody(m_testContext.getResponse(RequestType.SHOPPING), expectedResponseMap, field);
+        ResponseValidationUtil.validateResponseBody(
+                m_testContext.getResponse(RequestType.SHOPPING),
+                expectedResponseMap,
+                field
+        );
     }
 
 }

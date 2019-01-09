@@ -11,12 +11,10 @@ import java.util.Map;
  */
 public class ResponseValidationUtil
 {
-    private static final String RESPONSE_CODE_VALIDATION_ERR_MSG = "Expected response code : %d and actual response code : %d are not matching";
-
     public static void validateHTTPResponseCode(@NotNull final Response restResponse, final int expectedCode)
     {
         final int responseCode = restResponse.getStatusCode();
-        final String errorMessage = String.format(RESPONSE_CODE_VALIDATION_ERR_MSG, expectedCode, responseCode);
+        final String errorMessage = "Expected response code : " + expectedCode + "and actual response code : " + responseCode + "are not matching";
         Assert.assertTrue(errorMessage, expectedCode == responseCode);
     }
 
@@ -29,7 +27,9 @@ public class ResponseValidationUtil
         {
             final String actualValue = fieldResponseMap.get(key);
             final String expectedValue = expectedResponseMap.get(key);
-            Assert.assertTrue(expectedValue.equals(actualValue));
+            final String errorMessage = "For field" + field + "Expected value : " + expectedValue + "and actual value : " + actualValue + "are not matching";
+
+            Assert.assertEquals(errorMessage, expectedValue, actualValue);
         }
     }
 }
