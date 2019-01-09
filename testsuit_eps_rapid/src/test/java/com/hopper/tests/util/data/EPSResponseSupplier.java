@@ -31,23 +31,23 @@ public class EPSResponseSupplier implements Supplier<Response>
         Assert.assertNotNull("Something went wrong, API response is null", m_response);
     }
 
-    private Response _getEPSResponse(final TestContext criteria,
+    private Response _getEPSResponse(final TestContext context,
                                      final String httpMethod,
                                      final RequestType requestType)
     {
-        final RequestSpecification requestSpecifications = RestAssured.with().headers(criteria.getHeaders());
+        final RequestSpecification requestSpecifications = RestAssured.with().headers(context.getHeaders());
 
-        if (criteria.getParams(requestType) != null)
+        if (context.getParams(requestType) != null)
         {
-            requestSpecifications.queryParams(criteria.getParams(requestType));
+            requestSpecifications.queryParams(context.getParams(requestType));
         }
 
-        if (criteria.getParamsWithMultipleValues(requestType) != null)
+        if (context.getParamsWithMultipleValues(requestType) != null)
         {
-            criteria.getParamsWithMultipleValues(requestType).forEach(requestSpecifications::queryParam);
+            context.getParamsWithMultipleValues(requestType).forEach(requestSpecifications::queryParam);
         }
 
-        if (criteria.LOGGING_ENABLED)
+        if (context.LOGGING_ENABLED)
         {
             System.out.println(requestSpecifications.log().all());
         }
@@ -58,10 +58,10 @@ public class EPSResponseSupplier implements Supplier<Response>
             {
                 case "GET":
                 {
-                    final String apiEndPoint = APIEndPointGenerator.create(criteria, requestType);
+                    final String apiEndPoint = APIEndPointGenerator.create(context, requestType);
                     final Response response = requestSpecifications.get(apiEndPoint);
 
-                    if (criteria.LOGGING_ENABLED)
+                    if (context.LOGGING_ENABLED)
                     {
                         System.out.println(response.asString());
                     }
