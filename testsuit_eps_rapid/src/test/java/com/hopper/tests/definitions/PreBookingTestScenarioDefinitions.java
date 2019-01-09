@@ -7,7 +7,7 @@ import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
-import com.hopper.tests.util.data.ShoppingResponseParser;
+import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
 import cucumber.api.DataTable;
 import cucumber.api.java.en.Given;
@@ -77,7 +77,7 @@ public class PreBookingTestScenarioDefinitions
     public void with_shopping_query_parameters(final DataTable shoppingQueryParams)
     {
         final Map<String, String> shoppingQueryParamsMap = shoppingQueryParams.asMap(String.class, String.class);
-        m_testContext.setParams(shoppingQueryParamsMap);
+        m_testContext.setParams(shoppingQueryParamsMap, RequestType.SHOPPING);
     }
 
     @Given("^with shopping end point \"(.*?)\"$")

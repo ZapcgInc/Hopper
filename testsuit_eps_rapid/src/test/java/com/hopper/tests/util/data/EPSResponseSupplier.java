@@ -37,15 +37,17 @@ public class EPSResponseSupplier implements Supplier<Response>
     {
         final RequestSpecification requestSpecifications = RestAssured.with().headers(criteria.getHeaders());
 
-        if (criteria.getParams() != null)
+        if (criteria.getParams(requestType) != null)
         {
-            requestSpecifications.queryParams(criteria.getParams());
+            requestSpecifications.queryParams(criteria.getParams(requestType));
         }
 
-        if (criteria.getParamsWithMultipleValues() != null)
+        if (criteria.getParamsWithMultipleValues(requestType) != null)
         {
-            criteria.getParamsWithMultipleValues().forEach(requestSpecifications::queryParam);
+            criteria.getParamsWithMultipleValues(requestType).forEach(requestSpecifications::queryParam);
         }
+
+        System.out.println(requestSpecifications.log().all());
 
         try
         {
@@ -54,7 +56,10 @@ public class EPSResponseSupplier implements Supplier<Response>
                 case "GET":
                 {
                     final String apiEndPoint = APIEndPointGenerator.create(criteria, requestType);
-                    return requestSpecifications.get(apiEndPoint);
+                    final Response response = requestSpecifications.get(apiEndPoint);
+
+                    System.out.println(response.asString());
+                    return response;
                 }
                 default:
                 {

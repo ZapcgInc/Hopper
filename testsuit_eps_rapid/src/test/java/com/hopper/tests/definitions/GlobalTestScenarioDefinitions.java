@@ -85,7 +85,7 @@ public class GlobalTestScenarioDefinitions
     public void queryparams_are(DataTable params)
     {
         final Map<String, String> paramsMap = params.asMap(String.class, String.class);
-        m_testContext.setParams(paramsMap);
+        m_testContext.setParams(paramsMap, RequestType.SHOPPING);
     }
 
     @Given("^Basic web application is running$")
@@ -125,12 +125,12 @@ public class GlobalTestScenarioDefinitions
     {
         if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
         {
-            m_testContext.removeParam(param);
-            m_testContext.removeParamWithMultipleValues(param);
+            m_testContext.removeParam(param, RequestType.SHOPPING);
+            m_testContext.removeParamWithMultipleValues(param, RequestType.SHOPPING);
         }
         else
         {
-            m_testContext.addParam(param, value);
+            m_testContext.addParam(param, value, RequestType.SHOPPING);
         }
     }
 
@@ -140,7 +140,7 @@ public class GlobalTestScenarioDefinitions
         final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
 
-        m_testContext.addParamWithMultipleValues(queryParam, listOfValues);
+        m_testContext.addParamWithMultipleValues(queryParam, listOfValues, RequestType.SHOPPING);
     }
 
     @When("^performs GET request$")
