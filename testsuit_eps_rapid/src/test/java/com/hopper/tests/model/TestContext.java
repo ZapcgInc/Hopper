@@ -2,6 +2,7 @@ package com.hopper.tests.model;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
+import io.restassured.response.Response;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -14,9 +15,10 @@ import java.util.Optional;
  */
 public class TestContext
 {
+    public static final boolean LOGGING_ENABLED = true;
     private static final String AUTH_HEADER_KEY = "Authorization";
 
-    private SupportedPartners m_partner;
+    private final SupportedPartners m_partner;
 
     private String m_host;
     private String m_version;
@@ -24,17 +26,16 @@ public class TestContext
 
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
+    private EnumMap<RequestType, Response> m_requestTypeToResponse = new EnumMap<RequestType, Response>(RequestType.class);
 
-    private ShoppingResponse m_shoppingResponse = null;
+    public TestContext(final SupportedPartners partner)
+    {
+        m_partner = partner;
+    }
 
     public SupportedPartners getPartner()
     {
         return m_partner;
-    }
-
-    public void setPartner(SupportedPartners partner)
-    {
-        m_partner = partner;
     }
 
     public String getHost()
@@ -95,14 +96,14 @@ public class TestContext
         m_headers.remove(header);
     }
 
-    public ShoppingResponse getShoppingResponse()
+    public Response getResponse(RequestType requestType)
     {
-        return m_shoppingResponse;
+        return m_requestTypeToResponse.get(requestType);
     }
 
-    public void setShoppingResponse(ShoppingResponse shoppingResponse)
+    public void setResponse(RequestType requestType, Response response)
     {
-        m_shoppingResponse = shoppingResponse;
+        m_requestTypeToResponse.put(requestType, response);
     }
 
     /* START - Request Query Params */

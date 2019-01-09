@@ -2,8 +2,7 @@
 Feature: Validations for PreBooking API.
 
   Background:
-    Given setup
-    And for partner "EPS"
+    Given setup for partner "EPS"
     And API at "https://test.ean.com"
     And for version "2.1"
     And with request headers
@@ -11,7 +10,7 @@ Feature: Validations for PreBooking API.
       | Accept-Encoding | gzip             |
       | Customer-Ip     | 127.0.0.1        |
       | User-Agent      | Hopper/1.0       |
-    And with authHeaderKey
+    And Generate authHeaderKey with
       | apikey | mq7ijoev87orvkq4mqo8dr2tf |
       | secret | 587btntj2ihg5             |
     And with shopping query parameters
@@ -30,6 +29,6 @@ Feature: Validations for PreBooking API.
     And with shopping end point "properties/availability"
 
   Scenario: PreBooking API successful response
-    Given shopping complete
+    Given run shopping
     When run preBooking
-    Then verify success response 200
+    Then the response code for "PRE_BOOKING" should be 200

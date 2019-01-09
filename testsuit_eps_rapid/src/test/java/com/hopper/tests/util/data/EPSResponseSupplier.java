@@ -47,7 +47,10 @@ public class EPSResponseSupplier implements Supplier<Response>
             criteria.getParamsWithMultipleValues(requestType).forEach(requestSpecifications::queryParam);
         }
 
-        System.out.println(requestSpecifications.log().all());
+        if (criteria.LOGGING_ENABLED)
+        {
+            System.out.println(requestSpecifications.log().all());
+        }
 
         try
         {
@@ -58,7 +61,11 @@ public class EPSResponseSupplier implements Supplier<Response>
                     final String apiEndPoint = APIEndPointGenerator.create(criteria, requestType);
                     final Response response = requestSpecifications.get(apiEndPoint);
 
-                    System.out.println(response.asString());
+                    if (criteria.LOGGING_ENABLED)
+                    {
+                        System.out.println(response.asString());
+                    }
+
                     return response;
                 }
                 default:

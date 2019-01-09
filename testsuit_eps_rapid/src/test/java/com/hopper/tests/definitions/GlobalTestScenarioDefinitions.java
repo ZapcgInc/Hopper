@@ -3,7 +3,6 @@ package com.hopper.tests.definitions;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.hopper.tests.authorization.Authorization;
@@ -11,8 +10,10 @@ import com.hopper.tests.authorization.Authorization;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
+import com.hopper.tests.model.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
+import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.validations.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
 import cucumber.api.DataTable;
@@ -28,37 +29,31 @@ public class GlobalTestScenarioDefinitions
 {
     private TestContext m_testContext;
     private CheckAPIAvailability m_checkAPIAvailability;
-    private Supplier<Response> m_responseSupplier;
 
-    @Given("^simple init$")
-    public void simple_init()
-    {
-        m_testContext = new TestContext();
-        m_checkAPIAvailability = new CheckAPIAvailability();
-    }
-
-    @Given("^partner is \"(.*?)\"$")
-    public void partner_is(String partnerName) throws Throwable
+    @Given("^setup for partner \"(.*?)\"$")
+    public void setup_for_partner(final String partnerName) throws Throwable
     {
         try
         {
             SupportedPartners partner = SupportedPartners.valueOf(partnerName);
-            m_testContext.setPartner(partner);
+            m_testContext = new TestContext(partner);
         }
         catch (Exception exp)
         {
             throw new Exception("Invalid Partner : " + partnerName);
         }
+
+        m_checkAPIAvailability = new CheckAPIAvailability();
     }
 
-    @Given("^web application endpoint url is \"(.*?)\"$")
-    public void web_application_endpoint_url_is(String url)
+    @Given("^API at \"(.*?)\"$")
+    public void api_at(final String api)
     {
-        m_testContext.setHost(url);
+        m_testContext.setHost(api);
     }
 
-    @Given("^version is \"(.*?)\"$")
-    public void version_is(String version)
+    @Given("^for version \"(.*?)\"$")
+    public void for_version(final String version)
     {
         if (version != null && !GlobalConstants.NULL_STRING.equalsIgnoreCase(version))
         {
@@ -66,12 +61,13 @@ public class GlobalTestScenarioDefinitions
         }
     }
 
-    @Given("^headers are$")
-    public void headers_are(DataTable headers)
+    @Given("^with request headers$")
+    public void with_request_headers(final DataTable headers)
     {
         final Map<String, String> headerMap = headers.asMap(String.class, String.class);
         m_testContext.setHeaders(headerMap);
     }
+
 
     @Given("^Generate authHeaderKey with$")
     public void generate_authHeaderKey_with(DataTable authKeys)
@@ -81,11 +77,11 @@ public class GlobalTestScenarioDefinitions
         m_testContext.setAuthKey(authKey);
     }
 
-    @Given("^queryParams are$")
-    public void queryparams_are(DataTable params)
+    @Given("^with shopping query parameters$")
+    public void with_shopping_query_parameters(final DataTable shoppingQueryParams)
     {
-        final Map<String, String> paramsMap = params.asMap(String.class, String.class);
-        m_testContext.setParams(paramsMap, RequestType.SHOPPING);
+        final Map<String, String> shoppingQueryParamsMap = shoppingQueryParams.asMap(String.class, String.class);
+        m_testContext.setParams(shoppingQueryParamsMap, RequestType.SHOPPING);
     }
 
     @Given("^Basic web application is running$")
@@ -94,16 +90,10 @@ public class GlobalTestScenarioDefinitions
         m_checkAPIAvailability.test(m_testContext);
     }
 
-    @When("^user sets GET request to \"(.*?)\"$")
-    public void user_sets_GET_request_to(String uri)
+    @Given("^with shopping end point \"(.*?)\"$")
+    public void with_shopping_end_point(String shoppingEndPoint)
     {
-        m_testContext.setApiPath(RequestType.SHOPPING, uri);
-    }
-
-    @Given("^set shopping end point to \"(.*?)\"$")
-    public void set_shopping_end_point_to(String uri) throws Throwable
-    {
-        m_testContext.setApiPath(RequestType.SHOPPING, uri);
+        m_testContext.setApiPath(RequestType.SHOPPING, shoppingEndPoint);
     }
 
     @When("^user sets header \"(.*?)\" value \"(.*?)\"$")
@@ -117,7 +107,6 @@ public class GlobalTestScenarioDefinitions
         {
             m_testContext.addHeader(header, value);
         }
-
     }
 
     @When("^user sets queryParam \"(.*?)\" value \"(.*?)\"$")
@@ -142,24 +131,35 @@ public class GlobalTestScenarioDefinitions
 
         m_testContext.addParamWithMultipleValues(queryParam, listOfValues, RequestType.SHOPPING);
     }
-
-    @When("^performs GET request$")
-    public void performs_GET_request()
+    @Given("^run shopping$")
+    public void run_shopping()
     {
-        m_responseSupplier = ResponseSupplierFactory.create(m_testContext, GlobalConstants.GET, RequestType.SHOPPING);
+        final Response response = ResponseSupplierFactory.create(m_testContext, GlobalConstants.GET, RequestType.SHOPPING).get();
+        m_testContext.setResponse(RequestType.SHOPPING, response);
     }
 
-    @Then("^the response code should be \"(.*?)\"$")
-    public void the_response_code_should_be(String responseCode)
+    @When("^run preBooking$")
+    public void run_preBooking()
     {
-        final int expectedCode = Integer.valueOf(responseCode);
-        ResponseValidationUtil.validateHTTPResponseCode(m_responseSupplier.get(), expectedCode);
+        final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
+        m_testContext.setApiPath(RequestType.PRE_BOOKING, shoppingResponse.getPriceCheckEndPoint());
+        final Response response = ResponseSupplierFactory.create(m_testContext, GlobalConstants.GET, RequestType.PRE_BOOKING).get();
+        m_testContext.setResponse(RequestType.PRE_BOOKING, response);
     }
 
-    @Then("^the response code should be (\\d+)$")
-    public void the_response_code_should_be(int expectedCode)
+    @Then("^the response code for \"(.*?)\" should be (\\d+)$")
+    public void the_response_code_for_should_be(String requestType, int expectedCode)
     {
-        ResponseValidationUtil.validateHTTPResponseCode(m_responseSupplier.get(), expectedCode);
+        ResponseValidationUtil.validateHTTPResponseCode(m_testContext.getResponse(RequestType.valueOf(requestType)), expectedCode);
+    }
+
+    @Then("^the response code for \"(.*?)\" should be \"(.*?)\"$")
+    public void the_response_code_for_should_be(String requestType, String expectedCode) throws Throwable
+    {
+        ResponseValidationUtil.validateHTTPResponseCode(
+                m_testContext.getResponse(RequestType.valueOf(requestType)),
+                Integer.parseInt(expectedCode)
+        );
     }
 
     @Then("^user should see json response with paris on the filtered \"(.*?)\" node$")
@@ -167,7 +167,7 @@ public class GlobalTestScenarioDefinitions
     {
         final Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 
-        ResponseValidationUtil.validateResponseBody(m_responseSupplier.get(), expectedResponseMap, field);
+        ResponseValidationUtil.validateResponseBody(m_testContext.getResponse(RequestType.SHOPPING), expectedResponseMap, field);
     }
 
 }

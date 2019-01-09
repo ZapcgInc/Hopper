@@ -21,11 +21,10 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   Raise request(s) and validate mandatory data elements checks, Validate HTTP response code and parse JSON response
 
   Background:
-    Given simple init
-    And partner is "EPS"
-    And web application endpoint url is "https://test.ean.com"
-    And version is "2.1"
-    And headers are
+    Given setup for partner "EPS"
+    And API at "https://test.ean.com"
+    And for version "2.1"
+    And with request headers
       | Accept          | application/json |
       | Accept-Encoding | gzip             |
       | Customer-Ip     | 127.0.0.1        |
@@ -39,10 +38,10 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Missing Authorization header
     Given Basic web application is running
-    When user sets GET request to "properties/availability"
+    And with shopping end point "properties/availability"
     And user sets header "Authorization" value "null"
-    And performs GET request
-    Then the response code should be 401
+    And run shopping
+    Then the response code for "SHOPPING" should be 401
     And user should see json response with paris on the filtered "." node
       | type    | request_unauthenticated                                                                                                |
       | message | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation. |
@@ -50,10 +49,10 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Invalid Authorization header
     Given Basic web application is running
-    When user sets GET request to "properties/availability"
+    And with shopping end point "properties/availability"
     And user sets header "Authorization" value "abc123"
-    And performs GET request
-    Then the response code should be 401
+    And run shopping
+    Then the response code for "SHOPPING" should be 401
     And user should see json response with paris on the filtered "." node
       | type    | request_unauthenticated                                                                                                |
       | message | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation. |
@@ -61,9 +60,9 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Invalid resource
     Given Basic web application is running
-    When user sets GET request to "properties/availability123"
-    And performs GET request
-    Then the response code should be 404
+    And with shopping end point "properties/availability123"
+    And run shopping
+    Then the response code for "SHOPPING" should be 404
     And user should see json response with paris on the filtered "." node
       | type    | resource_not_found                    |
       | message | The resource requested was not found. |
@@ -71,10 +70,10 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Invalid version
     Given Basic web application is running
-    When user sets GET request to "properties/availability"
-    And version is "1"
-    And performs GET request
-    Then the response code should be 400
+    And with shopping end point "properties/availability"
+    And for version "1"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
       | type    | version.required                                                            |
       | message | You have not specified a version, the supported versions are: [2, 2.1, 2.2] |
@@ -86,8 +85,8 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Missing version
     Given Basic web application is running
-    When user sets GET request to "properties/availability"
-    And version is "null"
-    And performs GET request
-    Then the response code should be 400
+    And with shopping end point "properties/availability"
+    And for version "null"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
 	    

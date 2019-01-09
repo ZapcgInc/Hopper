@@ -31,9 +31,10 @@ public class APIEndPointGenerator
     {
         final StringBuilder endPoint = new StringBuilder(criteria.getHost());
 
-        if (criteria.getShoppingResponse() != null && criteria.getShoppingResponse().getPriceCheckEndPoint() != null)
+        final String apiPath = criteria.getApiPath(RequestType.PRE_BOOKING);
+        if (apiPath != null)
         {
-            endPoint.append(criteria.getShoppingResponse().getPriceCheckEndPoint());
+            endPoint.append(apiPath);
         }
 
         return endPoint.toString();

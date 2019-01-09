@@ -21,11 +21,10 @@ Feature: Availability part of shopping API validations.
 
 
   Background:
-    Given simple init
-    And partner is "EPS"
-    And web application endpoint url is "https://test.ean.com"
-    And version is "2.1"
-    And headers are
+    Given setup for partner "EPS"
+    And API at "https://test.ean.com"
+    And for version "2.1"
+    And with request headers
       | Accept          | application/json |
       | Accept-Encoding | gzip             |
       | Customer-Ip     | 127.0.0.1        |
@@ -33,7 +32,7 @@ Feature: Availability part of shopping API validations.
     And Generate authHeaderKey with
       | apikey | mq7ijoev87orvkq4mqo8dr2tf |
       | secret | 587btntj2ihg5             |
-    And queryParams are
+    And with shopping query parameters
       | checkin           | 2019-02-15        |
       | checkout          | 2019-02-17        |
       | currency          | USD               |
@@ -48,15 +47,15 @@ Feature: Availability part of shopping API validations.
       | rate_option       | closed_user_group |
     And set multiple values for queryParam "occupancy" with "2-9,1|2"
     And set multiple values for queryParam "property_id" with "8521|3317|19762|9100"
-    And user sets GET request to "properties/availability"
+    And with shopping end point "properties/availability"
 
 #######################   Rapid Test Scenarios
   @rapid_test
   Scenario Outline: Availability Rapid test Header "<header>" with "<value>"
     Given Basic web application is running
     When user sets header "<header>" value "<value>"
-    And performs GET request
-    Then the response code should be "<code>"
+    And run shopping
+    Then the response code for "SHOPPING" should be "<code>"
     And user should see json response with paris on the filtered "." node
       | type    | <type>    |
       | message | <message> |
@@ -72,8 +71,8 @@ Feature: Availability part of shopping API validations.
   Scenario: Rapid test with invalid value like "Test=INVALID"
     Given Basic web application is running
     When user sets header "Test" value "INVALID"
-    And performs GET request
-    Then the response code should be 400
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
       | type    | invalid_input                                                               |
       | message | An invalid request was sent in, please check the nested errors for details. |
@@ -91,8 +90,8 @@ Feature: Availability part of shopping API validations.
   Scenario: Missing Customer-Ip in header
     Given Basic web application is running
     When user sets header "Customer-Ip" value "null"
-    And performs GET request
-    Then the response code should be 400
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
       | type    | invalid_input                                                               |
       | message | An invalid request was sent in, please check the nested errors for details. |
@@ -109,8 +108,8 @@ Feature: Availability part of shopping API validations.
   Scenario Outline: Availability API missing Query Param "<query_param>"
     Given Basic web application is running
     When user sets queryParam "<query_param>" value "null"
-    And performs GET request
-    Then the response code should be 400
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
       | type    | invalid_input                                                               |
       | message | An invalid request was sent in, please check the nested errors for details. |
@@ -136,5 +135,5 @@ Feature: Availability part of shopping API validations.
 
   Scenario: Availability API successful response
     Given Basic web application is running
-    When performs GET request
-    Then the response code should be 200
+    When run shopping
+    Then the response code for "SHOPPING" should be 200
