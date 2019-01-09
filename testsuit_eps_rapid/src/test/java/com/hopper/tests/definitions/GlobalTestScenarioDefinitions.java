@@ -36,7 +36,7 @@ public class GlobalTestScenarioDefinitions
         try
         {
             SupportedPartners partner = SupportedPartners.valueOf(partnerName);
-            m_testContext = new TestContext(partner);
+            m_testContext = new TestContext(SupportedPartners.valueOf(partnerName));
         }
         catch (Exception exp)
         {
@@ -143,7 +143,10 @@ public class GlobalTestScenarioDefinitions
     {
         final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
         m_testContext.setApiPath(RequestType.PRE_BOOKING, shoppingResponse.getPriceCheckEndPoint());
-        final Response response = ResponseSupplierFactory.create(m_testContext, GlobalConstants.GET, RequestType.PRE_BOOKING).get();
+        final Response response = ResponseSupplierFactory.create(m_testContext,
+                GlobalConstants.GET,
+                RequestType.PRE_BOOKING).get();
+
         m_testContext.setResponse(RequestType.PRE_BOOKING, response);
     }
 

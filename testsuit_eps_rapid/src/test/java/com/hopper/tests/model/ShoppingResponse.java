@@ -9,6 +9,7 @@ public class ShoppingResponse
     private final String m_roomId;
     private final String m_rateId;
     private final String m_priceCheckEndPoint;
+    private final String m_priceCheckHTTPMethod;
 
     private ShoppingResponse(Builder builder)
     {
@@ -16,6 +17,7 @@ public class ShoppingResponse
         m_roomId = builder.m_roomId;
         m_rateId = builder.m_rateId;
         m_priceCheckEndPoint = builder.m_priceCheckEndPoint;
+        m_priceCheckHTTPMethod = builder.m_priceCheckHTTPMethod;
     }
 
     public String getPropertyId()
@@ -31,6 +33,11 @@ public class ShoppingResponse
     public String getRateId()
     {
         return m_rateId;
+    }
+
+    public String getPriceCheckHTTPMethod()
+    {
+        return m_priceCheckHTTPMethod;
     }
 
     public String getPriceCheckEndPoint()
@@ -49,6 +56,7 @@ public class ShoppingResponse
         private String m_roomId;
         private String m_rateId;
         private String m_priceCheckEndPoint;
+        private String m_priceCheckHTTPMethod;
 
         public Builder withPropertyId(String propertyId)
         {
@@ -71,6 +79,12 @@ public class ShoppingResponse
         public Builder withPriceCheckEndPoint(String priceCheckEndPoint)
         {
             m_priceCheckEndPoint = priceCheckEndPoint;
+            return this;
+        }
+
+        public Builder withPriceCheckHTTPMethod(String httpMethod)
+        {
+            m_priceCheckHTTPMethod = httpMethod;
             return this;
         }
 

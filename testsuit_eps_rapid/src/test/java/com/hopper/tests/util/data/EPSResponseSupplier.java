@@ -76,6 +76,7 @@ public class EPSResponseSupplier implements Supplier<Response>
         }
         catch (Exception e)
         {
+            System.out.println(e.getMessage());
             if (e.getMessage().contains("Connection refused"))
             {
                 Assert.fail("Web application is not running.");

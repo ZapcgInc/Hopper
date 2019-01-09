@@ -1,6 +1,5 @@
 package com.hopper.tests.util.validations;
 
-import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.TestContext;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -20,23 +19,6 @@ public class CheckAPIAvailability
     }
 
     public void test(TestContext criteria)
-    {
-        final SupportedPartners partner = criteria.getPartner();
-        switch (partner)
-        {
-            case EPS:
-            {
-                _checkEPSAvailability(criteria);
-                break;
-            }
-            default:
-            {
-                throw new UnsupportedOperationException("Authorization for Partner :" + partner.name() + "is currently unsupported");
-            }
-        }
-    }
-
-    private void _checkEPSAvailability(TestContext criteria)
     {
         if (!m_appRunning)
         {
