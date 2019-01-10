@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public class TestContext
 {
-    public static final boolean LOGGING_ENABLED = false;
+    public static final boolean LOGGING_ENABLED = true;
     private static final String AUTH_HEADER_KEY = "Authorization";
 
     private final SupportedPartners m_partner;
