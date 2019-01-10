@@ -1,5 +1,10 @@
 package com.hopper.tests.stepImplementation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gherkin.deps.com.google.gson.JsonObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 
 import com.hopper.tests.Request;
@@ -7,8 +12,12 @@ import com.hopper.tests.Request;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+import javax.validation.constraints.AssertTrue;
+
+import static com.sun.corba.se.impl.util.Version.asString;
 import static io.restassured.RestAssured.with;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +26,8 @@ public class ScenarioImpl {
     private static boolean isWebAppRunning = false;
 	Request request;
     private Response restResponse = null;
+    JSONObject jsonObject = null;
+    String restResponseString = null;
     
     
 
@@ -97,4 +108,25 @@ public class ScenarioImpl {
         	Assert.assertTrue(expectedValue.equals(actualValue));
         }
     }
+
+    public void validateResponseBodyForPropertyId() throws ParseException {
+	  //  restResponseString = restResponse.asString();
+      //  jsonObject = parse_restResponseString(restResponseString);
+	    String actualPropertyId = jsonObject.get("").toString();
+	    String expectedPropertyId = request.getParams().get("property_id");
+	    Assert.assertTrue(expectedPropertyId.equals(actualPropertyId));
+    }
+
+//    private JSONObject parse_restResponseString(String restResponseString) throws ParseException, IOException {
+//
+//        // parsing the response and json conversion
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//
+//
+//        JSONParser parser = new JSONParser();
+//        JSONObject jsonObject = mapper.writeValue(restResponseString,String.class);
+//
+//        return jsonobject;
+//    }
 }
