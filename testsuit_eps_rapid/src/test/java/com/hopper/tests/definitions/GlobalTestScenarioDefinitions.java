@@ -1,8 +1,9 @@
 package com.hopper.tests.definitions;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.hopper.tests.authorization.Authorization;
@@ -17,10 +18,13 @@ import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.validations.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
 import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.restassured.response.Response;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 
 /**
  * Implementation for Global Test scenarios definitions that can be shared across for testing different end points.
@@ -75,6 +79,12 @@ public class GlobalTestScenarioDefinitions
         m_testContext.setParams(shoppingQueryParamsMap, RequestType.SHOPPING);
     }
 
+    @And("^with request DateFormat \"([^\"]*)\"$")
+    public void withRequestDateFormat(String dateFormat)
+    {
+        m_testContext.setRequestDateFormat(new SimpleDateFormat(dateFormat));
+    }
+
     @Given("^Basic web application is running$")
     public void basic_web_application_is_running()
     {
@@ -122,6 +132,7 @@ public class GlobalTestScenarioDefinitions
 
         m_testContext.addParamWithMultipleValues(queryParam, listOfValues, RequestType.SHOPPING);
     }
+
     @Given("^run shopping$")
     public void run_shopping()
     {
@@ -189,4 +200,19 @@ public class GlobalTestScenarioDefinitions
         );
     }
 
+    @Given("^set checkin \"(.*?)\" from today with lengthOfStay \"(.*?)\"$")
+    public void setCheckInDate(String numOfDaysFromToday, String lengthOfStay) throws Throwable
+    {
+        Assert.assertFalse(StringUtils.isEmpty(numOfDaysFromToday));
+        Assert.assertFalse(StringUtils.isEmpty(lengthOfStay));
+
+        final Calendar checkInDate = Calendar.getInstance();
+        checkInDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday));
+
+        final Calendar checkOutDate = Calendar.getInstance();
+        checkOutDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday) + Integer.parseInt(lengthOfStay));
+
+        m_testContext.addCheckInDate(checkInDate, RequestType.SHOPPING);
+        m_testContext.addCheckOutDate(checkOutDate, RequestType.SHOPPING);
+    }
 }

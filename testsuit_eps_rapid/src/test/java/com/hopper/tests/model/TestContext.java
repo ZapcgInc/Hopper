@@ -4,6 +4,8 @@ import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 import io.restassured.response.Response;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -15,14 +17,17 @@ import java.util.Optional;
  */
 public class TestContext
 {
-    public static final boolean LOGGING_ENABLED = true;
+    public static final boolean LOGGING_ENABLED = false;
     private static final String AUTH_HEADER_KEY = "Authorization";
+    private static final String CHECKIN_DATE_KEY = "checkin";
+    private static final String CHECKOUT_DATE_KEY = "checkout";
 
     private final SupportedPartners m_partner;
 
     private String m_host;
     private String m_version;
     private Map<String, String> m_headers = new HashMap<>();
+    private SimpleDateFormat m_requestDateFormat;
 
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
@@ -73,6 +78,16 @@ public class TestContext
         m_headers.put(AUTH_HEADER_KEY, authKey);
     }
 
+    public SimpleDateFormat getRequestDateFormat()
+    {
+        return m_requestDateFormat;
+    }
+
+    public void setRequestDateFormat(SimpleDateFormat requestDateFormat)
+    {
+        m_requestDateFormat = requestDateFormat;
+    }
+
     public Map<String, String> getHeaders()
     {
         return m_headers;
@@ -107,6 +122,16 @@ public class TestContext
     }
 
     /* START - Request Query Params */
+
+    public void addCheckInDate(Calendar date, RequestType requestType)
+    {
+        addParam(CHECKIN_DATE_KEY, _convertToDate(date), requestType);
+    }
+
+    public void addCheckOutDate(Calendar date, RequestType requestType)
+    {
+        addParam(CHECKOUT_DATE_KEY, _convertToDate(date), requestType);
+    }
 
     public void setParams(Map<String, String> params, RequestType requestType)
     {
@@ -162,4 +187,8 @@ public class TestContext
     }
     /* END - Request Query Params */
 
+    private String _convertToDate(final Calendar dateTime)
+    {
+        return m_requestDateFormat.format(dateTime.getTime());
+    }
 }
