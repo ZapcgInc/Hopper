@@ -8,12 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Util class for Response Validations
@@ -64,17 +63,268 @@ public class ResponseValidationUtil
             case "response_cancel_policies_for_refundable_rates":
                 validateResponseCancelPoliciesForRefundableRates(testContext);
                 break;
-            case "promo_fields":
-                validatePromoFields();
-                break;
             case "amenities":
-                validateAminities(testContext);
+                validateAmenities(testContext);
+                break;
             case "fenced_deal":
                 validateFencedDeal(testContext);
+                break;
             case "occupancy":
                 validateOccupancy(testContext);
-            default:
-                System.out.println("something not supported");
+                break;
+            case "deposit_policy_true":
+                validateDepositPolicies(testContext);
+                break;
+            case "stay_node":
+                validateStayNode(testContext);
+                break;
+            case "night_room_prices_are_available_for_all_LOS":
+                validateNightRoomPrices(testContext);
+                break;
+            case "total_price":
+                validateTotalPrice(testContext);
+                break;
+            case "response_currency_code":
+                validateCurrencyCode(testContext);
+                break;
+            case "no_include":
+                validateWithNoInclude(testContext);
+                break;
+        }
+    }
+
+    private static void validateWithNoInclude(TestContext testContext) {
+        if (testContext.getParams(RequestType.SHOPPING).get("include") == null) {
+            ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
+
+            for (LinkedHashMap<String, Object> m : responseAsList) {
+
+                ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
+                LinkedHashMap<String, LinkedHashMap<String, String>> links = (LinkedHashMap) m.get("links");
+                if (links == null || StringUtils.isEmpty(links.get("additional_rates").get("href"))) {
+                    Assert.fail("link for additional rates not available");
+                }
+                if (roomsArr.size() != 1) {
+                    Assert.fail("Size of rooms array is not 1 ");
+                }
+                for (LinkedHashMap<String, Object> l : roomsArr) {
+
+                    ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
+                    if (rateList.size() != 1) {
+                        Assert.fail("Size of rate array is not 1");
+                    }
+                }
+            }
+        }
+    }
+
+    private static void validateCurrencyCode(TestContext testContext) {
+        ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
+
+        for (LinkedHashMap<String, Object> m : responseAsList) {
+
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
+            for (LinkedHashMap<String, Object> l : roomsArr) {
+
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
+                String roomId = (String) l.get("id");
+                for (LinkedHashMap<String, Object> k : rateList) {
+
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
+                    for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
+                        LinkedHashMap<String, Object> s = e.getValue();
+                        ArrayList<ArrayList> list = (ArrayList) s.get("nightly");
+                        for (ArrayList<LinkedHashMap> n : list) {
+
+                            for (LinkedHashMap map : n) {
+
+                                String currency = (String) map.get("currency");
+                                if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currency))
+                                    Assert.fail("Response currency in nightly does not match with requested currency for room_id: " + roomId);
+                            }
+                        }
+
+                        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> j = (LinkedHashMap) s.get("totals");
+
+                        String currencyInclusive = j.get("inclusive").get("billable_currency").get("currency");
+                        if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyInclusive)) {
+                            Assert.fail("Response currency in totals inclusive does not match with requested currency for room_id: " + roomId);
+                        }
+                        String currencyExclusive = j.get("exclusive").get("billable_currency").get("currency");
+                        if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyInclusive)) {
+                            Assert.fail("Response currency in totals exclusive does not match with requested currency for room_id: " + roomId);
+                        }
+                        if (j.get("strikethrough") != null) {
+                            String currencyStrikethrough = j.get("strikethrough").get("billable_currency").get("currency");
+                            if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyStrikethrough)) {
+                                Assert.fail("Response currency in totals strikethrough does not match with requested currency for room_id: " + roomId);
+                            }
+                        }
+                        if (j.get("marketing_fee") != null) {
+                            String currencyMarketing = j.get("marketing_fee").get("billable_currency").get("currency");
+                            if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyMarketing)) {
+                                Assert.fail("Response currency in totals marketing does not match with requested currency for room_id: " + roomId);
+                            }
+                        }
+                        if (j.get("minimum_selling_price") != null) {
+                            String currencySP = j.get("minimum_selling_price").get("billable_currency").get("currency");
+                            if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencySP)) {
+                                Assert.fail("Response currency in totals selling_price does not match with requested currency for room_id: " + roomId);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void validateTotalPrice(TestContext testContext) {
+        ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
+        DecimalFormat df = new DecimalFormat("###.##");
+        for (LinkedHashMap<String, Object> m : responseAsList) {
+
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
+            for (LinkedHashMap<String, Object> l : roomsArr) {
+
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
+                String roomId = (String) l.get("id");
+                for (LinkedHashMap<String, Object> k : rateList) {
+
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
+                    for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
+                        Double baseRate = 0.0;
+                        Double taxRate = 0.0;
+                        Double extraPersonfee = 0.0;
+                        LinkedHashMap<String, Object> s = e.getValue();
+                        ArrayList<ArrayList> list = (ArrayList) s.get("nightly");
+                        for (ArrayList<LinkedHashMap> n : list) {
+
+                            for (LinkedHashMap map : n) {
+
+                                String value = (String) map.get("value");
+                                if (map.get("type").equals("base_rate"))
+                                    baseRate = baseRate + Double.parseDouble(value);
+                                else if (map.get("type").equals("extra_person_fee"))
+                                    extraPersonfee = extraPersonfee + Double.parseDouble(value);
+                                else
+                                    taxRate = taxRate + Double.parseDouble(value);
+                            }
+                        }
+
+                        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> j = (LinkedHashMap) s.get("totals");
+
+                        Double billableInclusiveTotal = Double.parseDouble(j.get("inclusive").get("billable_currency").get("value"));
+                        Double expectedBillableIncTotal = Double.parseDouble(df.format(baseRate + taxRate + extraPersonfee));
+                        Double billableExclusiveTotal = Double.parseDouble(j.get("exclusive").get("billable_currency").get("value"));
+                        Double expectedBillableExTotal = Double.parseDouble(df.format(baseRate + extraPersonfee));
+                        if (!billableInclusiveTotal.equals(expectedBillableIncTotal) ||
+                                !billableExclusiveTotal.equals(expectedBillableExTotal)) {
+
+                            Assert.fail("Expected totals does not match billableTotals for room_id: " + roomId);
+
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private static void validateNightRoomPrices(TestContext testContext) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String checkin = testContext.getParams(RequestType.SHOPPING).get("checkin");
+        String checkout = testContext.getParams(RequestType.SHOPPING).get("checkout");
+        long lengthOfStay = TimeUnit.MILLISECONDS.toDays(sdf.parse(checkout).getTime() - (sdf.parse(checkin)).getTime());
+        String[] allowedTypes = {"base_rate", "tax_and_service_fee", "extra_person_fee", "property_fee", "sales_tax",
+                "adjustment"};
+        ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
+        for (LinkedHashMap<String, Object> m : responseAsList) {
+
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
+            for (LinkedHashMap<String, Object> l : roomsArr) {
+
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
+                String roomId = (String) l.get("id");
+                for (LinkedHashMap<String, Object> k : rateList) {
+
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
+                    for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
+
+                        LinkedHashMap<String, Object> s = e.getValue();
+                        ArrayList<ArrayList> list = (ArrayList) s.get("nightly");
+                        if (list.size() != lengthOfStay) {
+                            Assert.fail("Night prices should be available for all LOS ");
+                        }
+                        for (ArrayList<LinkedHashMap> n : list) {
+
+                            for (LinkedHashMap map : n) {
+                                String type = (String) map.get("type");
+                                boolean contains = Arrays.stream(allowedTypes).anyMatch(type::equals);
+                                if (!contains) {
+                                    Assert.fail("type: " + type + " is invalid for room_id: " + roomId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private static void validateStayNode(TestContext testContext) {
+        ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
+        for (LinkedHashMap<String, Object> m : responseAsList) {
+
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
+            for (LinkedHashMap<String, Object> l : roomsArr) {
+
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
+                String roomId = (String) l.get("id");
+                for (LinkedHashMap<String, Object> k : rateList) {
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
+                    for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
+                        LinkedHashMap<String, LinkedHashMap> s = e.getValue();
+                        if (s.get("stay") != null) {
+                            String[] values = {"base_rate", "tax_and_service_fee", "extra_person_fee", "property_fee", "sales_tax",
+                                    "adjustment"};
+                            String type = (String) s.get("stay").get("type");
+                            boolean contains = Arrays.stream(values).anyMatch(type::equals);
+                            if (!contains) {
+                                Assert.fail("type: " + type + " is invalid for room_id: " + roomId);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private static void validateDepositPolicies(TestContext testContext) {
+        ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
+        for (LinkedHashMap<String, Object> m : responseAsList) {
+
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
+            for (LinkedHashMap<String, Object> l : roomsArr) {
+
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
+                String roomId = (String) l.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList) {
+
+                    Boolean depositRequired = (Boolean) rate.get("deposit_required");
+                    if (depositRequired) {
+
+                        LinkedHashMap<String, LinkedHashMap> linksMap = (LinkedHashMap) rate.get("links");
+                        LinkedHashMap<String, String> depositPolicies = linksMap.get("deposit_policies");
+                        if (depositPolicies != null && StringUtils.isEmpty(depositPolicies.get("href"))) {
+
+                            Assert.fail("link should be present for deposit policies when deposit_required is " +
+                                    "true for room_id: " + roomId);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -139,12 +389,7 @@ public class ResponseValidationUtil
         }
     }
 
-    private static void validatePromoFields()
-    {
-
-    }
-
-    private static void validateAminities(TestContext testContext)
+    private static void validateAmenities(TestContext testContext)
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
         for (LinkedHashMap<String, Object> m : responseAsList)
@@ -340,7 +585,10 @@ public class ResponseValidationUtil
         }
         if (responsePropIds.size() <= requestPropIds.size())
         {
-            Assert.assertTrue(CollectionUtils.containsAny(responsePropIds, requestPropIds));
+            requestPropIds.forEach(id->{
+                if(!requestPropIds.contains(id))
+                    Assert.fail("The propertyId: "+id+ " is not present in the request");
+            });
         }
         else
         {

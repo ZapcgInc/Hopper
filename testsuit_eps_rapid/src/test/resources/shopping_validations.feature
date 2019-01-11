@@ -197,21 +197,6 @@ Feature: Availability part of shopping API validations.
       | type | querystring |
 ##    |value      | 2018-12-15        |
 
-#Scenario: Availability searched beyond 500 days in advance of the current day
-# Given Basic web application is running
-# When user sets queryParam "checkin" value "2020-02-03"
-# And performs GET request
-# Then the response code should be "400"
-# And user should see json response with paris on the filterd "." node
-#   |type       | invalid_input                                                              |
-#   |message    | An invalid request was sent in, please check the nested errors for details.  |
-# And user should see json response with paris on the filterd "errors[0]" node
-#   |type     | checkin.invalid_date_too_far_out    |
-#   |message  |Checkin too far in the future. |
-# And user should see json response with paris on the filterd "errors[0].fields[0]" node
-#   |name     | checkin     |
-#   |type     | querystring       |
-#   |value      | 2020-12-15        |
 
   Scenario Outline: Availability API with "<scenario>" with "<numOfAdult>"
     Given Basic web application is running
@@ -256,8 +241,8 @@ Feature: Availability part of shopping API validations.
       | currency          | RRR   | currency.not_supported    | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, TRY, TWD, USD, VND, ZAR]                                                                              |
       | language          | as-US | language.not_supported    | Language is not supported. Supported languages are: [ar-SA, cs-CZ, da-DK, de-DE, el-GR, en-US, es-ES, es-MX, fi-FI, fr-CA, fr-FR, hr-HR, hu-HU, id-ID, is-IS, it-IT, ja-JP, ko-KR, lt-LT, ms-MY, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sk-SK, sv-SE, th-TH, tr-TR, uk-UA, vi-VN, zh-CN, zh-TW] |
       | country_code      | RRR   | country_code.invalid      | Country code is invalid.                                                                                                                                                                                                                                                                           |
-     ## |occupancy    | #   |number_of_adults.invalid_below_minimum|Number of adults must be greater than 0.                                                                                                                                                                                                                                                                                               |
-     #  |property_id  | 11111 |                                      |                                                                                                                                                                                                                                                                                                                                       |
+##    |occupancy    | #   |number_of_adults.invalid_below_minimum|Number of adults must be greater than 0.                                                                                                                                                                                                                                                                                               |
+##      |property_id  | 0 |                                      |                                                                                                                                                                                                                                                                                                                                       |
       | sales_channel     | test  | sales_channel.invalid     | Sales Channel is invalid.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta].                                                                                                                                                                          |
       | sales_environment | test  | sales_environment.invalid | Sales Environment is invalid.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].                                                                                                                                                                                        |
       | sort_type         | test  | sort_type.invalid         | Sort Type is invalid.  Accepted sort_type values are: [preferred].                                                                                                                                                                                                                                 |
@@ -282,9 +267,13 @@ Feature: Availability part of shopping API validations.
       | merchant_of_record                |
       | href_price_check                  |
       | href_payment_options              |
-     #	|response_cancel_policies_for_refundable_rates |
-     #	| promo_fields        |
+##     	|response_cancel_policies_for_refundable_rates |
       | amenities                         |
       | fenced_deal                       |
       | occupancy                         |
-
+      |deposit_policy_true |
+      |stay_node           |
+      |night_room_prices_are_available_for_all_LOS|
+      |total_price                                |
+      |response_currency_code                     |
+      |no_include                                    |
