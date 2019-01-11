@@ -220,7 +220,6 @@ public class GlobalTestScenarioDefinitions
     @Then("^validate response element \"([^\"]*)\"$")
     public void validateResponseElement(final String nodeToValidate) throws Throwable
     {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+        ResponseValidationUtil.validateResponseBodyForNode(nodeToValidate, m_testContext);
     }
 }

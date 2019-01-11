@@ -39,7 +39,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   Scenario: Missing Authorization header
     Given Basic web application is running
     And with shopping end point "properties/availability"
-    And user sets header "Authorization" value "null"
+    And set header "Authorization" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 401
     And user should see json response with paris on the filtered "." node
@@ -50,7 +50,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   Scenario: Invalid Authorization header
     Given Basic web application is running
     And with shopping end point "properties/availability"
-    And user sets header "Authorization" value "abc123"
+    And set header "Authorization" value "abc123"
     And run shopping
     Then the response code for "SHOPPING" should be 401
     And user should see json response with paris on the filtered "." node
