@@ -97,19 +97,19 @@ public class ResponseValidationUtil
         if (testContext.getParams(RequestType.SHOPPING).get("include") == null) {
             ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
 
-            for (LinkedHashMap<String, Object> m : responseAsList) {
+            for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
-                ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-                LinkedHashMap<String, LinkedHashMap<String, String>> links = (LinkedHashMap) m.get("links");
+                ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+                LinkedHashMap<String, LinkedHashMap<String, String>> links = (LinkedHashMap) responseMap.get("links");
                 if (links == null || StringUtils.isEmpty(links.get("additional_rates").get("href"))) {
                     Assert.fail("link for additional rates not available");
                 }
                 if (roomsArr.size() != 1) {
                     Assert.fail("Size of rooms array is not 1 ");
                 }
-                for (LinkedHashMap<String, Object> l : roomsArr) {
+                for (LinkedHashMap<String, Object> room : roomsArr) {
 
-                    ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
+                    ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
                     if (rateList.size() != 1) {
                         Assert.fail("Size of rate array is not 1");
                     }
@@ -121,53 +121,53 @@ public class ResponseValidationUtil
     private static void validateCurrencyCode(TestContext testContext) {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
 
-        for (LinkedHashMap<String, Object> m : responseAsList) {
+        for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr) {
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr) {
 
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList) {
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList) {
 
-                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
-                    for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
-                        LinkedHashMap<String, Object> s = e.getValue();
-                        ArrayList<ArrayList> list = (ArrayList) s.get("nightly");
-                        for (ArrayList<LinkedHashMap> n : list) {
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) rate.get("occupancies");
+                    for (Map.Entry<String, LinkedHashMap> occupancy : occupancies.entrySet()) {
+                        LinkedHashMap<String, Object> roomRates = occupancy.getValue();
+                        ArrayList<ArrayList> nightlyList = (ArrayList) roomRates.get("nightly");
+                        for (ArrayList<LinkedHashMap> nightly : nightlyList) {
 
-                            for (LinkedHashMap map : n) {
+                            for (LinkedHashMap<String,String> map : nightly) {
 
-                                String currency = (String) map.get("currency");
+                                String currency = map.get("currency");
                                 if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currency))
                                     Assert.fail("Response currency in nightly does not match with requested currency for room_id: " + roomId);
                             }
                         }
 
-                        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> j = (LinkedHashMap) s.get("totals");
+                        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> totals = (LinkedHashMap) roomRates.get("totals");
 
-                        String currencyInclusive = j.get("inclusive").get("billable_currency").get("currency");
+                        String currencyInclusive = totals.get("inclusive").get("billable_currency").get("currency");
                         if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyInclusive)) {
                             Assert.fail("Response currency in totals inclusive does not match with requested currency for room_id: " + roomId);
                         }
-                        String currencyExclusive = j.get("exclusive").get("billable_currency").get("currency");
-                        if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyInclusive)) {
+                        String currencyExclusive = totals.get("exclusive").get("billable_currency").get("currency");
+                        if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyExclusive)) {
                             Assert.fail("Response currency in totals exclusive does not match with requested currency for room_id: " + roomId);
                         }
-                        if (j.get("strikethrough") != null) {
-                            String currencyStrikethrough = j.get("strikethrough").get("billable_currency").get("currency");
+                        if (totals.get("strikethrough") != null) {
+                            String currencyStrikethrough = totals.get("strikethrough").get("billable_currency").get("currency");
                             if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyStrikethrough)) {
                                 Assert.fail("Response currency in totals strikethrough does not match with requested currency for room_id: " + roomId);
                             }
                         }
-                        if (j.get("marketing_fee") != null) {
-                            String currencyMarketing = j.get("marketing_fee").get("billable_currency").get("currency");
+                        if (totals.get("marketing_fee") != null) {
+                            String currencyMarketing = totals.get("marketing_fee").get("billable_currency").get("currency");
                             if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencyMarketing)) {
                                 Assert.fail("Response currency in totals marketing does not match with requested currency for room_id: " + roomId);
                             }
                         }
-                        if (j.get("minimum_selling_price") != null) {
-                            String currencySP = j.get("minimum_selling_price").get("billable_currency").get("currency");
+                        if (totals.get("minimum_selling_price") != null) {
+                            String currencySP = totals.get("minimum_selling_price").get("billable_currency").get("currency");
                             if (!testContext.getParams(RequestType.SHOPPING).get("currency").equals(currencySP)) {
                                 Assert.fail("Response currency in totals selling_price does not match with requested currency for room_id: " + roomId);
                             }
@@ -181,22 +181,22 @@ public class ResponseValidationUtil
     private static void validateTotalPrice(TestContext testContext) {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
         DecimalFormat df = new DecimalFormat("###.##");
-        for (LinkedHashMap<String, Object> m : responseAsList) {
+        for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr) {
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr) {
 
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList) {
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList) {
 
-                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
-                    for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) rate.get("occupancies");
+                    for (Map.Entry<String, LinkedHashMap> occupancy : occupancies.entrySet()) {
                         Double baseRate = 0.0;
                         Double taxRate = 0.0;
                         Double extraPersonfee = 0.0;
-                        LinkedHashMap<String, Object> s = e.getValue();
-                        ArrayList<ArrayList> list = (ArrayList) s.get("nightly");
+                        LinkedHashMap<String, Object> roomRates = occupancy.getValue();
+                        ArrayList<ArrayList> list = (ArrayList) roomRates.get("nightly");
                         for (ArrayList<LinkedHashMap> n : list) {
 
                             for (LinkedHashMap map : n) {
@@ -211,7 +211,7 @@ public class ResponseValidationUtil
                             }
                         }
 
-                        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> j = (LinkedHashMap) s.get("totals");
+                        LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> j = (LinkedHashMap) roomRates.get("totals");
 
                         Double billableInclusiveTotal = Double.parseDouble(j.get("inclusive").get("billable_currency").get("value"));
                         Double expectedBillableIncTotal = Double.parseDouble(df.format(baseRate + taxRate + extraPersonfee));
@@ -238,16 +238,16 @@ public class ResponseValidationUtil
         String[] allowedTypes = {"base_rate", "tax_and_service_fee", "extra_person_fee", "property_fee", "sales_tax",
                 "adjustment"};
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList) {
+        for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr) {
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr) {
 
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList) {
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList) {
 
-                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) rate.get("occupancies");
                     for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
 
                         LinkedHashMap<String, Object> s = e.getValue();
@@ -274,15 +274,15 @@ public class ResponseValidationUtil
 
     private static void validateStayNode(TestContext testContext) {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList) {
+        for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr) {
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr) {
 
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList) {
-                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) k.get("occupancies");
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList) {
+                    LinkedHashMap<String, LinkedHashMap> occupancies = (LinkedHashMap) rate.get("occupancies");
                     for (Map.Entry<String, LinkedHashMap> e : occupancies.entrySet()) {
                         LinkedHashMap<String, LinkedHashMap> s = e.getValue();
                         if (s.get("stay") != null) {
@@ -303,13 +303,13 @@ public class ResponseValidationUtil
 
     private static void validateDepositPolicies(TestContext testContext) {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList) {
+        for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr) {
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr) {
 
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
                 for (LinkedHashMap<String, Object> rate : rateList) {
 
                     Boolean depositRequired = (Boolean) rate.get("deposit_required");
@@ -333,16 +333,16 @@ public class ResponseValidationUtil
         List<String> requestOccupancies = new ArrayList<>();
         ArrayList<String> responseOccupancies = new ArrayList<>();
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    LinkedHashMap occupancies = (LinkedHashMap) k.get("occupancies");
+                    LinkedHashMap occupancies = (LinkedHashMap) rate.get("occupancies");
                     responseOccupancies.addAll(occupancies.keySet());
                 }
                 break;
@@ -370,16 +370,16 @@ public class ResponseValidationUtil
     private static void validateFencedDeal(TestContext testContext)
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    Boolean value = (Boolean) k.get("fenced_deal");
+                    Boolean value = (Boolean) rate.get("fenced_deal");
                     if (value)
                     {
                         Assert.fail("fenced_deal should be set to false for roomId: " + roomId);
@@ -392,16 +392,16 @@ public class ResponseValidationUtil
     private static void validateAmenities(TestContext testContext)
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    ArrayList<LinkedHashMap> amenities = (ArrayList<LinkedHashMap>) k.get("amenities");
+                    ArrayList<LinkedHashMap> amenities = (ArrayList<LinkedHashMap>) rate.get("amenities");
                     if (!CollectionUtils.isEmpty(amenities))
                     {
                         for (LinkedHashMap<String, Object> amenity : amenities)
@@ -422,16 +422,16 @@ public class ResponseValidationUtil
     private static void validateResponseCancelPoliciesForRefundableRates(TestContext testContext) throws ParseException
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    boolean value = (boolean) k.get("refundable");
+                    boolean value = (boolean) rate.get("refundable");
                     if (!value)
                     {
                         Assert.fail(" field refundable is not set to true in the response." + roomId);
@@ -440,7 +440,7 @@ public class ResponseValidationUtil
                     {
                         String checkin = testContext.getParams(RequestType.SHOPPING).get("checkin");
                         String checkout = testContext.getParams(RequestType.SHOPPING).get("checkout");
-                        ArrayList<LinkedHashMap> cancelPanaltyList = (ArrayList) k.get("cancel_penalties");
+                        ArrayList<LinkedHashMap> cancelPanaltyList = (ArrayList) rate.get("cancel_penalties");
                         for (LinkedHashMap<String, String> t : cancelPanaltyList)
                         {
                             String startDate = t.get("start");
@@ -472,21 +472,19 @@ public class ResponseValidationUtil
     private static void validateHrefPriceCheck(TestContext testContext)
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    ArrayList<LinkedHashMap> bedGroupsList = (ArrayList) k.get("bed_groups");
-                    for (LinkedHashMap b : bedGroupsList)
+                    ArrayList<LinkedHashMap> bedGroupsList = (ArrayList) rate.get("bed_groups");
+                    for (LinkedHashMap<String,LinkedHashMap<String,LinkedHashMap<String,String>>> bedgroup : bedGroupsList)
                     {
-                        LinkedHashMap c = (LinkedHashMap) b.get("links");
-                        LinkedHashMap d = (LinkedHashMap) c.get("price_check");
-                        String hrefLink = (String) d.get("href");
+                        String hrefLink = bedgroup.get("links").get("price_check").get("href");
                         if (StringUtils.isEmpty(hrefLink))
                         {
                             Assert.fail("hrefLink empty for roomId" + roomId);
@@ -500,16 +498,16 @@ public class ResponseValidationUtil
     private static void validateHrefPaymentOption(TestContext testContext)
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    LinkedHashMap<String, LinkedHashMap> linksMap = (LinkedHashMap) k.get("links");
+                    LinkedHashMap<String, LinkedHashMap> linksMap = (LinkedHashMap) rate.get("links");
                     LinkedHashMap<String, String> paymentOptionsMap = linksMap.get("payment_options");
                     String hrefLink = paymentOptionsMap.get("href");
                     if (StringUtils.isEmpty(hrefLink))
@@ -524,16 +522,16 @@ public class ResponseValidationUtil
     private static void validateMerchantOfRecord(TestContext testContext)
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : rateList)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    String value = (String) k.get("merchant_of_record");
+                    String value = (String) rate.get("merchant_of_record");
                     if (!("expedia".equals(value) || "property".equals(value)))
                     {
                         Assert.fail(" merchant record field matches the partner name or property for room_id: " + roomId);
@@ -546,17 +544,17 @@ public class ResponseValidationUtil
     private static void validateAvailableRooms(TestContext testContext)
     {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> m : responseAsList)
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) m.get("rooms");
-            for (LinkedHashMap<String, Object> l : roomsArr)
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
             {
-                ArrayList<LinkedHashMap> n = (ArrayList<LinkedHashMap>) l.get("rates");
-                String roomId = (String) l.get("id");
-                for (LinkedHashMap<String, Object> k : n)
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
                 {
-                    int b = (Integer) k.get("available_rooms");
-                    if (b == 0)
+                    int numAvailableRooms = (Integer) rate.get("available_rooms");
+                    if (numAvailableRooms == 0)
                     {
                         Assert.fail("Number of available rooms in the response is 0 for room_id: " + roomId);
                     }
