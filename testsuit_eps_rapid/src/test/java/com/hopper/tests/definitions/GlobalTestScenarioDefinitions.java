@@ -18,6 +18,7 @@ import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.validations.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
 import cucumber.api.DataTable;
+import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -35,20 +36,20 @@ public class GlobalTestScenarioDefinitions
     private CheckAPIAvailability m_checkAPIAvailability;
 
     @Given("^setup for partner \"(.*?)\"$")
-    public void setup_for_partner(final String partnerName)
+    public void setup(final String partnerName)
     {
         m_testContext = new TestContext(SupportedPartners.valueOf(partnerName));
         m_checkAPIAvailability = new CheckAPIAvailability();
     }
 
     @Given("^API at \"(.*?)\"$")
-    public void api_at(final String api)
+    public void setAPI(final String api)
     {
         m_testContext.setHost(api);
     }
 
     @Given("^for version \"(.*?)\"$")
-    public void for_version(final String version)
+    public void setVersion(final String version)
     {
         if (version != null && !GlobalConstants.NULL_STRING.equalsIgnoreCase(version))
         {
@@ -57,7 +58,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Given("^with request headers$")
-    public void with_request_headers(final DataTable headers)
+    public void setRequestHeaders(final DataTable headers)
     {
         final Map<String, String> headerMap = headers.asMap(String.class, String.class);
         m_testContext.setHeaders(headerMap);
@@ -65,7 +66,7 @@ public class GlobalTestScenarioDefinitions
 
 
     @Given("^Generate authHeaderKey with$")
-    public void generate_authHeaderKey_with(DataTable authKeys)
+    public void generateAuthHeaderKey(final DataTable authKeys)
     {
         final Map<String, String> authKeyMap = authKeys.asMap(String.class, String.class);
         final String authKey = Authorization.getAuthKey(m_testContext.getPartner(), authKeyMap);
@@ -73,32 +74,48 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Given("^with shopping query parameters$")
-    public void with_shopping_query_parameters(final DataTable shoppingQueryParams)
+    public void setShoppingQueryParameters(final DataTable shoppingQueryParams)
     {
         final Map<String, String> shoppingQueryParamsMap = shoppingQueryParams.asMap(String.class, String.class);
         m_testContext.setParams(shoppingQueryParamsMap, RequestType.SHOPPING);
     }
 
     @And("^with request DateFormat \"([^\"]*)\"$")
-    public void withRequestDateFormat(String dateFormat)
+    public void setRequestDateFormat(final String dateFormat)
     {
         m_testContext.setRequestDateFormat(new SimpleDateFormat(dateFormat));
     }
 
     @Given("^Basic web application is running$")
-    public void basic_web_application_is_running()
+    public void checkApiIsRunning()
     {
         m_checkAPIAvailability.test(m_testContext);
     }
 
     @Given("^with shopping end point \"(.*?)\"$")
-    public void with_shopping_end_point(String shoppingEndPoint)
+    public void setShoppingEndPoint(final String shoppingEndPoint)
     {
         m_testContext.setApiPath(RequestType.SHOPPING, shoppingEndPoint);
     }
 
-    @When("^user sets header \"(.*?)\" value \"(.*?)\"$")
-    public void user_sets_header_value(String header, String value)
+    @Given("^set checkin \"(.*?)\" from today with lengthOfStay \"(.*?)\"$")
+    public void setCheckInDate(final String numOfDaysFromToday, final String lengthOfStay)
+    {
+        Assert.assertFalse(StringUtils.isEmpty(numOfDaysFromToday));
+        Assert.assertFalse(StringUtils.isEmpty(lengthOfStay));
+
+        final Calendar checkInDate = Calendar.getInstance();
+        checkInDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday));
+
+        final Calendar checkOutDate = Calendar.getInstance();
+        checkOutDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday) + Integer.parseInt(lengthOfStay));
+
+        m_testContext.addCheckInDate(checkInDate, RequestType.SHOPPING);
+        m_testContext.addCheckOutDate(checkOutDate, RequestType.SHOPPING);
+    }
+
+    @When("^set header \"([^\"]*)\" value \"([^\"]*)\"$")
+    public void setHeaderValue(final String header, final String value)
     {
         if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
         {
@@ -110,38 +127,38 @@ public class GlobalTestScenarioDefinitions
         }
     }
 
-    @When("^user sets queryParam \"(.*?)\" value \"(.*?)\"$")
-    public void user_sets_queryParam_value(String param, String value)
+    @When("^set \"([^\"]*)\" queryParam \"([^\"]*)\" value \"([^\"]*)\"$")
+    public void setQueryParamValue(final String requestType, final String param, final String value)
     {
         if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
         {
             m_testContext.removeParam(param, RequestType.SHOPPING);
-            m_testContext.removeParamWithMultipleValues(param, RequestType.SHOPPING);
+            m_testContext.removeParamWithMultipleValues(param, RequestType.valueOf(requestType));
         }
         else
         {
-            m_testContext.addParam(param, value, RequestType.SHOPPING);
+            m_testContext.addParam(param, value, RequestType.valueOf(requestType));
         }
     }
 
-    @Given("^set multiple values for queryParam \"(.*?)\" with \"(.*?)\"$")
-    public void set_multiple_values_for_queryParam_with(String queryParam, String values)
+    @And("^set multiple values for \"([^\"]*)\" queryParam \"([^\"]*)\" with \"([^\"]*)\"$")
+    public void setMultipleValuesForQueryParamWith(final String requestType, final String queryParam, final String values)
     {
         final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
 
-        m_testContext.addParamWithMultipleValues(queryParam, listOfValues, RequestType.SHOPPING);
+        m_testContext.addParamWithMultipleValues(queryParam, listOfValues, RequestType.valueOf(requestType));
     }
 
     @Given("^run shopping$")
-    public void run_shopping()
+    public void runShopping()
     {
         final Response response = ResponseSupplierFactory.create(m_testContext, GlobalConstants.GET, RequestType.SHOPPING).get();
         m_testContext.setResponse(RequestType.SHOPPING, response);
     }
 
     @When("^run preBooking$")
-    public void run_preBooking()
+    public void runPreBooking()
     {
         final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
         m_testContext.setApiPath(RequestType.PRE_BOOKING, shoppingResponse.getPriceCheckEndPoint());
@@ -156,7 +173,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @When("^run paymentOptions$")
-    public void run_paymentOptions()
+    public void runPaymentOptions()
     {
         final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
         m_testContext.setApiPath(RequestType.PAYMENT_OPTIONS, shoppingResponse.getPaymentOptionsEndPoint());
@@ -171,7 +188,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^the response code for \"(.*?)\" should be (\\d+)$")
-    public void the_response_code_for_should_be(String requestType, int expectedCode)
+    public void validateResponseCode(final String requestType, final int expectedCode)
     {
         ResponseValidationUtil.validateHTTPResponseCode(
                 m_testContext.getResponse(RequestType.valueOf(requestType)),
@@ -180,7 +197,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^the response code for \"(.*?)\" should be \"(.*?)\"$")
-    public void the_response_code_for_should_be(String requestType, String expectedCode)
+    public void validateResponseCode(final String requestType, final String expectedCode)
     {
         ResponseValidationUtil.validateHTTPResponseCode(
                 m_testContext.getResponse(RequestType.valueOf(requestType)),
@@ -189,7 +206,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^user should see json response with paris on the filtered \"(.*?)\" node$")
-    public void user_should_see_json_response_with_paris_on_the_filtered_node(String field, DataTable expectedResponse)
+    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse)
     {
         final Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 
@@ -200,19 +217,10 @@ public class GlobalTestScenarioDefinitions
         );
     }
 
-    @Given("^set checkin \"(.*?)\" from today with lengthOfStay \"(.*?)\"$")
-    public void setCheckInDate(String numOfDaysFromToday, String lengthOfStay) throws Throwable
+    @Then("^validate response element \"([^\"]*)\"$")
+    public void validateResponseElement(final String nodeToValidate) throws Throwable
     {
-        Assert.assertFalse(StringUtils.isEmpty(numOfDaysFromToday));
-        Assert.assertFalse(StringUtils.isEmpty(lengthOfStay));
-
-        final Calendar checkInDate = Calendar.getInstance();
-        checkInDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday));
-
-        final Calendar checkOutDate = Calendar.getInstance();
-        checkOutDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday) + Integer.parseInt(lengthOfStay));
-
-        m_testContext.addCheckInDate(checkInDate, RequestType.SHOPPING);
-        m_testContext.addCheckOutDate(checkOutDate, RequestType.SHOPPING);
+        // Write code here that turns the phrase above into concrete actions
+        throw new PendingException();
     }
 }

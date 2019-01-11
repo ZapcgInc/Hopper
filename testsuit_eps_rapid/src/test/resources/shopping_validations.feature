@@ -45,8 +45,8 @@ Feature: Availability part of shopping API validations.
       | rate_option       | closed_user_group |
     And with request DateFormat "yyyy-MM-dd"
     And set checkin "10" from today with lengthOfStay "5"
-    And set multiple values for queryParam "occupancy" with "2-9,1|2"
-    And set multiple values for queryParam "property_id" with "8521|3317|19762|9100"
+    And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,1|2"
+    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
     And with shopping end point "properties/availability"
 
 
@@ -55,7 +55,7 @@ Feature: Availability part of shopping API validations.
   @rapid_test
   Scenario Outline: Availability Rapid test Header "<header>" with "<value>"
     Given Basic web application is running
-    When user sets header "<header>" value "<value>"
+    When set header "<header>" value "<value>"
     And run shopping
     Then the response code for "SHOPPING" should be "<code>"
     And user should see json response with paris on the filtered "." node
@@ -72,7 +72,7 @@ Feature: Availability part of shopping API validations.
   @rapid_test
   Scenario: Rapid test with invalid value like "Test=INVALID"
     Given Basic web application is running
-    When user sets header "Test" value "INVALID"
+    When set header "Test" value "INVALID"
     And run shopping
     Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
@@ -91,7 +91,7 @@ Feature: Availability part of shopping API validations.
   @data_test
   Scenario: Missing Customer-Ip in header
     Given Basic web application is running
-    When user sets header "Customer-Ip" value "null"
+    When set header "Customer-Ip" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
@@ -109,7 +109,7 @@ Feature: Availability part of shopping API validations.
   @data_test
   Scenario Outline: Availability API missing Query Param "<query_param>"
     Given Basic web application is running
-    When user sets queryParam "<query_param>" value "null"
+    When set "SHOPPING" queryParam "<query_param>" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
@@ -179,7 +179,7 @@ Feature: Availability part of shopping API validations.
 
   Scenario: Availability API with check-in date greater than check-out date
     Given Basic web application is running
-    When user sets queryParam "checkout" value "2018-12-15"
+    When set "SHOPPING" queryParam "checkout" value "2018-12-15"
     And run shopping
     Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
@@ -215,7 +215,7 @@ Feature: Availability part of shopping API validations.
 
   Scenario Outline: Availability API with "<scenario>" with "<numOfAdult>"
     Given Basic web application is running
-    When user sets queryParam "occupancy" value "<numOfAdult>-<ageOfChildren>"
+    When set "SHOPPING" queryParam "occupancy" value "<numOfAdult>-<ageOfChildren>"
     And run shopping
     Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
@@ -238,7 +238,7 @@ Feature: Availability part of shopping API validations.
 ####### Data Validation Tests for invalid param format
   Scenario Outline: Availability API with invalid format of <query_param>
     Given Basic web application is running
-    When user sets queryParam "<query_param>" value "<value>"
+    When set "SHOPPING" queryParam "<query_param>" value "<value>"
     And run shopping
     Then the response code for "SHOPPING" should be 400
     And user should see json response with paris on the filtered "." node
@@ -274,7 +274,7 @@ Feature: Availability part of shopping API validations.
     Given Basic web application is running
     And run shopping
     Then the response code for "SHOPPING" should be 200
-    And user should get valid response for "<node>"
+    Then validate response element "<node>"
     Examples:
       | node                              |
       | property_id                       |
