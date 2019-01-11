@@ -215,9 +215,10 @@ public class ScenarioSteps {
 		Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 		scenarioImpl.validateResponseBody(expectedResponseMap, field);
 	}
-	@Then("^user should see valid response for property_id$")
-	public void user_should_see_valid_response_for_property_id() throws Throwable {
-		scenarioImpl.validateResponseBodyForPropertyId();
+	@Then("^user should get valid response for \"(.*?)\"$")
+	public void user_should_get_valid_response_for(String node) throws Throwable {
+		scenarioImpl.validateResponseBodyForNode(node);
 	}
+
 
 }

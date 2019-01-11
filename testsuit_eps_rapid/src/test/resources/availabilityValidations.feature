@@ -254,14 +254,14 @@ Scenario Outline: Availability API with "<scenario>" with "<numOfAdult>"
 		|value      | <value>				|
 	Examples:
 	|query_param| value |error_type|error_message|
-#	|currency   | RRR   |currency.not_supported | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, TRY, TWD, USD, VND, ZAR]|
-#	|language   | as-US | language.not_supported | Language is not supported. Supported languages are: [ar-SA, cs-CZ, da-DK, de-DE, el-GR, en-US, es-ES, es-MX, fi-FI, fr-CA, fr-FR, hr-HR, hu-HU, id-ID, is-IS, it-IT, ja-JP, ko-KR, lt-LT, ms-MY, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sk-SK, sv-SE, th-TH, tr-TR, uk-UA, vi-VN, zh-CN, zh-TW]|
-#	|country_code| RRR |country_code.invalid| Country code is invalid.                                                                                                                                                                                                                                                                              |
+	|currency   | RRR   |currency.not_supported | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, TRY, TWD, USD, VND, ZAR]|
+	|language   | as-US | language.not_supported | Language is not supported. Supported languages are: [ar-SA, cs-CZ, da-DK, de-DE, el-GR, en-US, es-ES, es-MX, fi-FI, fr-CA, fr-FR, hr-HR, hu-HU, id-ID, is-IS, it-IT, ja-JP, ko-KR, lt-LT, ms-MY, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sk-SK, sv-SE, th-TH, tr-TR, uk-UA, vi-VN, zh-CN, zh-TW]|
+	|country_code| RRR |country_code.invalid| Country code is invalid.                                                                                                                                                                                                                                                                              |
 ##	|occupancy    | #   |number_of_adults.invalid_below_minimum|Number of adults must be greater than 0.                                                                                                                                                                                                                                                                                               |
 #	|property_id  | 11111 |                                      |                                                                                                                                                                                                                                                                                                                                       |
-#	|sales_channel		  |test   |  sales_channel.invalid |Sales Channel is invalid.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta].|
-#	|sales_environment    |   test    |  sales_environment.invalid|Sales Environment is invalid.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].  |
-#	|sort_type            |test       |sort_type.invalid | Sort Type is invalid.  Accepted sort_type values are: [preferred]. |
+	|sales_channel		  |test   |  sales_channel.invalid |Sales Channel is invalid.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta].|
+	|sales_environment    |   test    |  sales_environment.invalid|Sales Environment is invalid.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].  |
+	|sort_type            |test       |sort_type.invalid | Sort Type is invalid.  Accepted sort_type values are: [preferred]. |
 
 
 ################# Business Validations ################################
@@ -270,20 +270,22 @@ Scenario: Availability API successful response
 	When performs GET request
 	Then the response code should be 200
 
-#Scenario Outline : Validate "<node>" in response
-#	Given Basic web application is running
-#	When performs GET request
-#	Then the response code should be "200"
-#	And user should see valid response for "<node>"
-#	Examples:
-#	| node  |
-#	| property_id  |
-#	| href         |
-#	| merchant_of_record |
+Scenario Outline: Validation of response for <node>
+	Given Basic web application is running
+	When performs GET request
+	Then the response code should be "200"
+	And user should get valid response for "<node>"
+	Examples:
+	|node|
+	|property_id|
+	|available_rooms_for_all_room_type  |
+	|merchant_of_record                 |
+	|href_price_check                               |
+	|href_payment_options |
+#	|response_cancel_policies_for_refundable_rates |
+#	| promo_fields        |
+	| amenities|
+	|fenced_deal|
+	|occupancy  |
 
-#Scenario : Validate merchant_of_record in the response
-#	Given Basic web application is running
-#	And user sets queryParam "property_id" value "8521"
-#	When performs GET request
-#	Then the response code should be "200"
-	#And user should see valid response for merchant_of_record
+
