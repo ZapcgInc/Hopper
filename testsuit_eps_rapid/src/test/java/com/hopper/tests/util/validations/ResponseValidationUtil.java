@@ -41,6 +41,46 @@ public class ResponseValidationUtil
         }
     }
 
+    public static void validateArraySize(final Response restResponse, final String field, final int expectedSize) {
+    	final List<Object> fieldValues = restResponse.jsonPath().get(field);
+    	final String errorMessage = "Expected Array size for element \"" +field+" is: "+ expectedSize + "and actual size is : " + fieldValues.size();
+        Assert.assertTrue(errorMessage, expectedSize == fieldValues.size());
+    }
+
+    public static void validateNodeforValues(final Response restResponse, final String node, List<String> expectedValues) throws ParseException
+    {
+        switch (node)
+        {
+            case "occupancy":
+            	validateOccupancy(restResponse, expectedValues);
+                break;
+        }
+    }
+    
+    private static void validateOccupancy(final Response restResponse, final List<String> expectedValues)
+    {
+        ArrayList<LinkedHashMap> responseAsList = restResponse.as(ArrayList.class);
+        for (LinkedHashMap<String, Object> responseMap : responseAsList)
+        {
+            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
+            for (LinkedHashMap<String, Object> room : roomsArr)
+            {
+                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
+                String roomId = (String) room.get("id");
+                for (LinkedHashMap<String, Object> rate : rateList)
+                {
+                    LinkedHashMap<String, Object> occupancies = (LinkedHashMap) rate.get("occupancies");
+                    List<String> responseValues = new ArrayList<String>(occupancies.keySet());
+                	final String errorMessage = "Expected Occupancies for rate id \"" +roomId+" is: "+ expectedValues + "and actual values are : " + responseValues;
+                    Assert.assertTrue(errorMessage, CollectionUtils.isEqualCollection(responseValues, expectedValues));
+                }
+              
+            }
+
+        }
+    }
+
+    
     public static void validateResponseBodyForNode(String node, TestContext testContext) throws ParseException
     {
         switch (node)
@@ -69,9 +109,6 @@ public class ResponseValidationUtil
             case "fenced_deal":
                 validateFencedDeal(testContext);
                 break;
-            case "occupancy":
-                validateOccupancy(testContext);
-                break;
             case "deposit_policy_true":
                 validateDepositPolicies(testContext);
                 break;
@@ -87,36 +124,9 @@ public class ResponseValidationUtil
             case "response_currency_code":
                 validateCurrencyCode(testContext);
                 break;
-            case "no_include":
-                validateWithNoInclude(testContext);
-                break;
         }
     }
 
-    private static void validateWithNoInclude(TestContext testContext) {
-        if (testContext.getParams(RequestType.SHOPPING).get("include") == null) {
-            ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-
-            for (LinkedHashMap<String, Object> responseMap : responseAsList) {
-
-                ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-                LinkedHashMap<String, LinkedHashMap<String, String>> links = (LinkedHashMap) responseMap.get("links");
-                if (links == null || StringUtils.isEmpty(links.get("additional_rates").get("href"))) {
-                    Assert.fail("link for additional rates not available");
-                }
-                if (roomsArr.size() != 1) {
-                    Assert.fail("Size of rooms array is not 1 ");
-                }
-                for (LinkedHashMap<String, Object> room : roomsArr) {
-
-                    ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                    if (rateList.size() != 1) {
-                        Assert.fail("Size of rate array is not 1");
-                    }
-                }
-            }
-        }
-    }
 
     private static void validateCurrencyCode(TestContext testContext) {
         ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
@@ -328,44 +338,6 @@ public class ResponseValidationUtil
         }
     }
 
-    private static void validateOccupancy(TestContext testContext)
-    {
-        List<String> requestOccupancies = new ArrayList<>();
-        ArrayList<String> responseOccupancies = new ArrayList<>();
-        ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        for (LinkedHashMap<String, Object> responseMap : responseAsList)
-        {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-            for (LinkedHashMap<String, Object> room : roomsArr)
-            {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                String roomId = (String) room.get("id");
-                for (LinkedHashMap<String, Object> rate : rateList)
-                {
-                    LinkedHashMap occupancies = (LinkedHashMap) rate.get("occupancies");
-                    responseOccupancies.addAll(occupancies.keySet());
-                }
-                break;
-            }
-            break;
-        }
-        if (testContext.getParamsWithMultipleValues(RequestType.SHOPPING).get("occupancy") != null)
-        {
-            requestOccupancies.addAll(testContext.getParamsWithMultipleValues(RequestType.SHOPPING).get("occupancy"));
-        }
-        if (testContext.getParams(RequestType.SHOPPING).get("occupancy") != null)
-        {
-            requestOccupancies.add(testContext.getParams(RequestType.SHOPPING).get("occupancy"));
-        }
-        if (responseOccupancies.size() == requestOccupancies.size())
-        {
-            Assert.assertTrue(CollectionUtils.isEqualCollection(responseOccupancies, requestOccupancies));
-        }
-        else
-        {
-            Assert.fail("Occupancy in the response mismatches with the requested occupancy");
-        }
-    }
 
     private static void validateFencedDeal(TestContext testContext)
     {
@@ -593,5 +565,6 @@ public class ResponseValidationUtil
             Assert.fail("Property Ids in the response is more than the requested response");
         }
     }
+    
 
 }

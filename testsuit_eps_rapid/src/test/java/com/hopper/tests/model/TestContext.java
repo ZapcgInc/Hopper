@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 public class TestContext
 {
-    public static final boolean LOGGING_ENABLED = false;
+    public static final boolean LOGGING_ENABLED = true;
     private static final String AUTH_HEADER_KEY = "Authorization";
     private static final String CHECKIN_DATE_KEY = "checkin";
     private static final String CHECKOUT_DATE_KEY = "checkout";

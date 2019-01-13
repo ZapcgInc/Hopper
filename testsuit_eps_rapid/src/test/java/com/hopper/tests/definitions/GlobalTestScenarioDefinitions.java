@@ -222,4 +222,16 @@ public class GlobalTestScenarioDefinitions
     {
         ResponseValidationUtil.validateResponseBodyForNode(nodeToValidate, m_testContext);
     }
+    
+    @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be (\\d+)$")
+    public void the_element_count_per_for_should_be(String field, String arg2, String requestType, int expectedValue) throws Throwable {
+    	ResponseValidationUtil.validateArraySize(m_testContext.getResponse(RequestType.valueOf(requestType)), field, expectedValue);
+    }
+    
+    @Then("^validate \"(.*?)\" response element \"(.*?)\" matches values \"(.*?)\"$")
+    public void validate_response_element_matches_values(String requestType, String node, String values) throws Throwable {
+    	final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
+                .collect(Collectors.toList());
+    	ResponseValidationUtil.validateNodeforValues(m_testContext.getResponse(RequestType.valueOf(requestType)), node, listOfValues);
+    }
 }
