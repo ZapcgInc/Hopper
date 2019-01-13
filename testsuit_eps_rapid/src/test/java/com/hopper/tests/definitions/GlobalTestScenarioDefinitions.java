@@ -209,12 +209,16 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^user should see json response with paris on the filtered \"(.*?)\" node$")
-    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse)
-    {
+    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse) throws Throwable {
+    	user_should_see_response_with_paris_on_the_filtered_node("SHOPPING", field, expectedResponse);
+    }
+    
+    @Then("^user should see \"(.*?)\" response with paris on the filtered \"(.*?)\" node$")
+    public void user_should_see_response_with_paris_on_the_filtered_node(String requestType, final String field, final DataTable expectedResponse) throws Throwable {
         final Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 
         ResponseValidationUtil.validateResponseBody(
-                m_testContext.getResponse(RequestType.SHOPPING),
+                m_testContext.getResponse(RequestType.valueOf(requestType)),
                 expectedResponseMap,
                 field
         );

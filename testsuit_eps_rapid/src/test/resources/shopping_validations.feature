@@ -33,7 +33,7 @@ Feature: Validations for Availability API
 
   #######################   Rapid Test Scenarios
   @rapid_test
-  Scenario Outline: Availability Rapid test Header "<header>" with "<value>"
+  Scenario Outline: Availability API  Rapid test Header "<header>" with "<value>"
     Given Basic web application is running
     When set header "<header>" value "<value>"
     And run shopping
@@ -50,7 +50,7 @@ Feature: Validations for Availability API
       | Test   | forbidden              |  403 | request_forbidden      | Your request could not be authorized. Ensure that you have access. |
 
   @rapid_test
-  Scenario: Rapid test with invalid value like "Test=INVALID"
+  Scenario: Availability API Rapid test with invalid value like "Test=INVALID"
     Given Basic web application is running
     When set header "Test" value "INVALID"
     And run shopping
@@ -66,7 +66,7 @@ Feature: Validations for Availability API
   #Scenario: Missing User-Agent in header is not returning error
   #Scenario: Missing Accept-Encoding in header is not returning error
   @data_test
-  Scenario: Missing Customer-Ip in header
+  Scenario: Availability API Missing Customer-Ip in header
     Given Basic web application is running
     When set header "Customer-Ip" value "null"
     And run shopping
