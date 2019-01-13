@@ -11,12 +11,8 @@ import org.junit.Assert;
 public class CheckAPIAvailability
 {
     // To avoid checking the API for every test scenario.
-    private boolean m_appRunning;
+    private static boolean m_appRunning;
 
-    public CheckAPIAvailability()
-    {
-        m_appRunning = false;
-    }
 
     public void test(TestContext criteria)
     {

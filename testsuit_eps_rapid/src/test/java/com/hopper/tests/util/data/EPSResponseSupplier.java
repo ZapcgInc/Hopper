@@ -1,11 +1,15 @@
 package com.hopper.tests.util.data;
 
+import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.APIEndPointGenerator;
 import io.restassured.RestAssured;
+import io.restassured.config.HttpClientConfig;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+
 import org.junit.Assert;
 
 import java.util.function.Supplier;
@@ -35,8 +39,8 @@ public class EPSResponseSupplier implements Supplier<Response>
                                      final String httpMethod,
                                      final RequestType requestType)
     {
-        final RequestSpecification requestSpecifications = RestAssured.with().headers(context.getHeaders());
-
+        //final RequestSpecification requestSpecifications = RestAssured.with().headers(context.getHeaders());
+    	final RequestSpecification requestSpecifications = onrequest().with().headers(context.getHeaders());
         if (context.getParams(requestType) != null)
         {
             requestSpecifications.queryParams(context.getParams(requestType));
@@ -46,7 +50,6 @@ public class EPSResponseSupplier implements Supplier<Response>
         {
             context.getParamsWithMultipleValues(requestType).forEach(requestSpecifications::queryParam);
         }
-
         if (context.LOGGING_ENABLED)
         {
             System.out.println(requestSpecifications.log().all());
@@ -95,5 +98,17 @@ public class EPSResponseSupplier implements Supplier<Response>
     public Response get()
     {
         return m_response;
+    }
+    
+    /**
+     * initialize a RequestSpecification default timeout
+     *
+     */
+    private RequestSpecification onrequest() {
+    	HttpClientConfig httpConfig = HttpClientConfig.httpClientConfig();
+    	httpConfig.setParam("http.socket.timeout",GlobalConstants.SOCKET_TIMEOUT);
+ 	
+        return RestAssured.given()
+                      .config(RestAssuredConfig.config().httpClient(httpConfig));
     }
 }

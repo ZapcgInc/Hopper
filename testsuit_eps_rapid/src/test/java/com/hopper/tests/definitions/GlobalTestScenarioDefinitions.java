@@ -13,12 +13,15 @@ import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
+import com.hopper.tests.util.APIEndPointGenerator;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.validations.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
 import cucumber.api.DataTable;
-import cucumber.api.PendingException;
+import cucumber.api.Scenario;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -34,7 +37,7 @@ public class GlobalTestScenarioDefinitions
 {
     private TestContext m_testContext;
     private CheckAPIAvailability m_checkAPIAvailability;
-
+	
     @Given("^setup for partner \"(.*?)\"$")
     public void setup(final String partnerName)
     {
@@ -234,4 +237,61 @@ public class GlobalTestScenarioDefinitions
                 .collect(Collectors.toList());
     	ResponseValidationUtil.validateNodeforValues(m_testContext.getResponse(RequestType.valueOf(requestType)), node, listOfValues);
     }
+    
+	@Before
+	public void before(Scenario scenario) {		
+		printTestDetails(scenario);
+	}
+	
+	private void printTestDetails(Scenario scenario){		
+		log("======================================Scenario=================================================");
+		log("Scearnio id: "+ scenario.getId() );
+		log("Scenario name: "+ scenario.getName() );
+		log("Scenario tage: "+ scenario.getSourceTagNames() );
+		log("Scenario status: Started at :"+ new java.util.Date());
+	}
+	
+	@After
+	public void after(Scenario scenario) {
+		printTestStatus(scenario);
+	}
+	
+	private void printTestStatus(Scenario scenario) {
+		log("Scnario success: " + (!scenario.isFailed()));
+		log("Scenario status: " + scenario.getStatus() + " at :"+ new java.util.Date());
+		if(scenario.isFailed()) {
+			log("Scenario Execution Details :");
+			printContext();
+		}
+	}
+	
+	private void printContext() {
+		log("Host: " + m_testContext.getHost());
+    	log("Version: " + m_testContext.getVersion());
+    	for (RequestType reqType : RequestType.values()) {
+    		String apiPath = m_testContext.getApiPath(reqType);
+    		if(apiPath != null) {
+    			log(reqType.toString());
+    			log("     " + "API URI: "+ apiPath);
+    			log("     " + "RequInfo:");
+    			log("     " +  "    " + "End Point: "+ APIEndPointGenerator.create(m_testContext, reqType));
+    			log("     " +  "    " + "Headers: "+ m_testContext.getHeaders());
+    			log("     " +  "    " + "Query Params: "+ m_testContext.getParams(reqType));
+    			log("     " +  "    " + "Query Params with multiple values: "+ m_testContext.getParamsWithMultipleValues(reqType));
+    			log("     " + "Response:");
+    			log("     " + "     " +  "Status Code: "+ m_testContext.getResponse(reqType).getStatusCode());
+    			log("     " + "     " +  "Status Line: "+ m_testContext.getResponse(reqType).getStatusLine());
+    			log("     " + "     " +  "Headers: "+ m_testContext.getResponse(reqType).getHeaders());
+    			log("     " + "     " +  "Response Time: "+ m_testContext.getResponse(reqType).getTime());
+    			log("     " + "     " +  "Contet Type: "+ m_testContext.getResponse(reqType).getContentType());
+    			log("     " + "     " +  "Body: "+ m_testContext.getResponse(reqType).asString());
+    			//log("     " + "     " +  "Body: "+ m_testContext.getResponse(reqType).getBody().jsonPath().prettyPrint());    			
+    		}
+    	}
+
+	}
+	
+	private void log(String line) {
+		System.out.println(line);
+	}
 }

@@ -9,4 +9,5 @@ public class GlobalConstants
     public static final String MULTI_VALUE_DELIMITER = "\\|";
     public static final String GET = "GET";
     public static final String POST = "POST";
+    public static final long SOCKET_TIMEOUT = 10000;   
 }

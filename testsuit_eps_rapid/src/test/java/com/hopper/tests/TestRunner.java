@@ -10,11 +10,10 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/resources",
         glue = "com.hopper.tests.definitions",
-        format={"json:target/cucumber.json"},
+        plugin={"json:target/cucumber.json"},
         dryRun = false,
         strict = false,
         monochrome = true
-
 )
 
 public class TestRunner {

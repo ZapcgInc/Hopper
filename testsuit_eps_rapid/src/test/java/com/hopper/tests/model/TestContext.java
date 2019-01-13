@@ -3,6 +3,7 @@ package com.hopper.tests.model;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,7 +18,7 @@ import java.util.Optional;
  */
 public class TestContext
 {
-    public static final boolean LOGGING_ENABLED = true;
+    public static final boolean LOGGING_ENABLED = false;
     private static final String AUTH_HEADER_KEY = "Authorization";
     private static final String CHECKIN_DATE_KEY = "checkin";
     private static final String CHECKOUT_DATE_KEY = "checkout";
@@ -32,6 +33,7 @@ public class TestContext
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
     private EnumMap<RequestType, Response> m_requestTypeToResponse = new EnumMap<RequestType, Response>(RequestType.class);
+    
 
     public TestContext(final SupportedPartners partner)
     {
@@ -115,12 +117,11 @@ public class TestContext
     {
         return m_requestTypeToResponse.get(requestType);
     }
-
+    
     public void setResponse(RequestType requestType, Response response)
     {
         m_requestTypeToResponse.put(requestType, response);
     }
-
     /* START - Request Query Params */
 
     public void addCheckInDate(Calendar date, RequestType requestType)
