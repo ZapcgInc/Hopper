@@ -129,6 +129,20 @@ Feature: Validations for Availability API
       | type  | querystring |
       | value |         251 |
 
+
+  @data_test
+  Scenario: Availability API with total length of stay <days>
+    Given Basic web application is running
+    When set checkin "3" from today with lengthOfStay "29"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
+    And user should see json response with paris on the filtered "." node
+      | type    | invalid_input                                                               |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+    And user should see json response with paris on the filtered "errors[0]" node
+      | type    | checkout.invalid_length_of_stay_too_long                                           |
+      | message | Invalid date range. Checkin and checkout dates cannot differ by more than 28 days. |
+
   @data_test
   Scenario: Availability API with invalid date format for Query Param "checkin" and "checkout"
     Given Basic web application is running
@@ -153,7 +167,7 @@ Feature: Validations for Availability API
       | type | querystring |
 
   @data_test
-  Scenario Outline: Availability API with "<scenario>" for Qyert Param "checkin"
+  Scenario Outline: Availability API with "<scenario>" for query Param "checkin"
     Given Basic web application is running
     When set checkin "<days>" from today with lengthOfStay "5"
     And run shopping
@@ -170,7 +184,7 @@ Feature: Validations for Availability API
 
     Examples: 
       | scenario            | days | error_type                       | error_message                  |
-      | past-dates          |   -2 | checkin.invalid_date_in_the_past | Checkin cannot be in the past. |
+  #    | past-dates          |   -2 | checkin.invalid_date_in_the_past | Checkin cannot be in the past. |
       | Too-Advance-Checkin |  510 | checkin.invalid_date_too_far_out | Checkin too far in the future. |
 
   @data_test
@@ -230,55 +244,33 @@ Feature: Validations for Availability API
     And user should see json response with paris on the filtered "errors[0].fields[0]" node
       | name  | <query_param> |
       | type  | querystring   |
-      | value | <value>       |
 
     Examples: 
-      | query_param       | value | error_type                | error_message                                                                                                                                                                                                                                                                                      |  |
-      | currency          | RRR   | currency.not_supported    | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, TRY, TWD, USD, VND, ZAR]                                                                              |  |
-      | language          | as-US | language.not_supported    | Language is not supported. Supported languages are: [ar-SA, cs-CZ, da-DK, de-DE, el-GR, en-US, es-ES, es-MX, fi-FI, fr-CA, fr-FR, hr-HR, hu-HU, id-ID, is-IS, it-IT, ja-JP, ko-KR, lt-LT, ms-MY, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sk-SK, sv-SE, th-TH, tr-TR, uk-UA, vi-VN, zh-CN, zh-TW] |  |
-      | country_code      | RRR   | country_code.invalid      | Country code is invalid.                                                                                                                                                                                                                                                                           |  |
-      | sales_channel     | test  | sales_channel.invalid     | Sales Channel is invalid.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta].                                                                                                                                                                          |  |
-      | sales_environment | test  | sales_environment.invalid | Sales Environment is invalid.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].                                                                                                                                                                                        |  |
-      | sort_type         | test  | sort_type.invalid         | Sort Type is invalid.  Accepted sort_type values are: [preferred].                                                                                                                                                                                                                                 |  |
+      | query_param       | value | error_type                | error_message                                                                                                                                                                                                                                                                                      |
+      | currency          | RRR   | currency.not_supported    | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, TRY, TWD, USD, VND, ZAR]                                                                              |
+      | language          | as-US | language.not_supported    | Language is not supported. Supported languages are: [ar-SA, cs-CZ, da-DK, de-DE, el-GR, en-US, es-ES, es-MX, fi-FI, fr-CA, fr-FR, hr-HR, hu-HU, id-ID, is-IS, it-IT, ja-JP, ko-KR, lt-LT, ms-MY, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sk-SK, sv-SE, th-TH, tr-TR, uk-UA, vi-VN, zh-CN, zh-TW] |
+      | country_code      | RRR   | country_code.invalid      | Country code is invalid.                                                                                                                                                                                                                                                                           |
+      | rate_option       | test  | rate_option.invalid   | Rate Option is invalid.  Accepted rate_option values are: [net_rates, closed_user_group].                                                                                                                                      |
+      | sales_channel     | test  | sales_channel.invalid     | Sales Channel is invalid.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta].                                                                                                                                                                          |
+      | sales_environment | test  | sales_environment.invalid | Sales Environment is invalid.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].                                                                                                                                                                                        |
+      | sort_type         | test  | sort_type.invalid         | Sort Type is invalid.  Accepted sort_type values are: [preferred].                                                                                                                                                                                                                                 |
+      |filter             | test  | filter.invalid            | Filter is invalid.  Accepted filter values are: [refundable, expedia_collect, property_collect].                                                                                                                                                                                                   |
 
-  ################# Business Validations ################################
   @busiess_test
   Scenario: Availability API successful response
     Given Basic web application is running
     And run shopping
     Then the response code for "SHOPPING" should be 200
 
-  @busiess_test
-  Scenario Outline: Availability API Validation of response for <node>
-    Given Basic web application is running
-    And run shopping
-    Then the response code for "SHOPPING" should be 200
-    Then validate response element "<node>"
 
-    Examples: 
-      | node                                        |
-      | property_id                                 |
-      | available_rooms_for_all_room_type           |
-      | merchant_of_record                          |
-      | href_price_check                            |
-      | href_payment_options                        |
-      ##    |response_cancel_policies_for_refundable_rates |
-      | amenities                                   |
-      | fenced_deal                                 |
-      | deposit_policy_true                         |
-      | stay_node                                   |
-      | night_room_prices_are_available_for_all_LOS |
-      | total_price                                 |
-      | response_currency_code                      |
-
-  @busiess_test
+  @business_test
   Scenario: Availability API response validation matching occupancies with single Query Param "occupancy" and "property_id"
     Given Basic web application is running
     And run shopping
     Then the response code for "SHOPPING" should be 200
     And validate "SHOPPING" response element "occupancy" matches values "2-9,4"
 
-  @busiess_test
+  @business_test
   Scenario: Availability API response validation matching occupancies with multiple Query Param "occupancy" and single Query Param "property_id"
     Given Basic web application is running
     When set "SHOPPING" queryParam "occupancy" value "null"
@@ -287,7 +279,7 @@ Feature: Validations for Availability API
     Then the response code for "SHOPPING" should be 200
     And validate "SHOPPING" response element "occupancy" matches values "2-9,4|3"
 
-  @busiess_test
+  @business_test
   Scenario: Availability API response validation matching occupancies with single Query Param "occupancy" and multiple Query Param "property_id"
     Given Basic web application is running
     When set "SHOPPING" queryParam "property_id" value "null"
@@ -296,7 +288,7 @@ Feature: Validations for Availability API
     Then the response code for "SHOPPING" should be 200
     And validate "SHOPPING" response element "occupancy" matches values "2-9,4"
 
-  @busiess_test
+  @business_test
   Scenario: Availability API response validation matching occupancies with multiple Query Param "occupancy" and multiple Query Param "property_id"
     Given Basic web application is running
     When set "SHOPPING" queryParam "property_id" value "null"
@@ -307,7 +299,15 @@ Feature: Validations for Availability API
     Then the response code for "SHOPPING" should be 200
     And validate "SHOPPING" response element "occupancy" matches values "2-9,4|3"
 
-  @busiess_test
+  @business_test
+  Scenario: Availability API response validation with child age 0
+    Given Basic web application is running
+    And set "SHOPPING" queryParam "occupancy" value "2-0"
+    And run shopping
+    Then the response code for "SHOPPING" should be 200
+    And validate "SHOPPING" response element "occupancy" matches values "2-0"
+
+  @business_test
   Scenario: Availability API response validation for missing Query Param "include"
     Given Basic web application is running
     When set "SHOPPING" queryParam "include" value "null"
@@ -317,9 +317,102 @@ Feature: Validations for Availability API
     And the element "rooms[0].rates" count per "property room" for "SHOPPING" should be 1
     And the element "links" count per "property" for "SHOPPING" should be 1
 
-  @busiess_test
+  @business_test
   Scenario: Availability API response validation with "all_rates" for Query Param "include"
     Given Basic web application is running
     And run shopping
     Then the response code for "SHOPPING" should be 200
     And the element "$.links" count per "property" for "SHOPPING" should be 0
+
+  @business_test
+  Scenario: Availability API response validation for "available_rooms"
+     Given Basic web application is running
+     And run shopping
+     Then the response code for "SHOPPING" should be "200"
+     And the element "available_rooms" count per "rooms" for "SHOPPING" should be between "0" and "2147483647"
+
+  @business_test
+  Scenario: Availability API response validation for "merchant_of_records"
+     Given Basic web application is running
+     And run shopping
+     Then the response code for "SHOPPING" should be "200"
+     And the element "merchant_of_record" for "SHOPPING" should have value belongs to "expedia,property"
+
+  @business_test
+  Scenario Outline: Availability API response validation for "href" in "<field>"
+      Given Basic web application is running
+      And run shopping
+      Then the response code for "SHOPPING" should be "200"
+      And the element "<field>.href"  for "SHOPPING" should not be "null"
+      Examples:
+      |field|
+      |price_check|
+      |payment_option|
+
+  @business_test
+  Scenario: Availability API response validation for "cancel_policies" if "refundable_rates" sets to "true"
+      Given Basic web application is running
+      And set checkin "05" from today with lengthOfStay "2"
+      And run shopping
+      Then the response code for "SHOPPING" should be "200"
+      And the element "cancel_policies" start and end date (under cancel_penalties) for "SHOPPING" are within check in and check out dates
+
+  @business_test
+  Scenario: Availability API response validation for "amenities"
+       Given Basic web application is running
+       And run shopping
+       Then the response code for "SHOPPING" should be "200"
+       And the element "amenities" for "SHOPPING" either have both amenityId and description or have no amenity ID and description (mutually inclusive)
+
+  @business_test
+  Scenario: Availability API response validation for "fenced_deal"
+        Given Basic web application is running
+        And run shopping
+        Then the response code for "SHOPPING" should be "200"
+        And the element "fenced_deal" per "property" for "SHOPPING" should be "false"
+
+  @business_test
+  Scenario: Availability API response validation for "deposit_policies" if true
+    Given Basic web application is running
+    And run shopping
+    Then the response code for "SHOPPING" should be "200"
+    And the element "links.deposit_policies"  for "SHOPPING" should not be "null"
+
+  @business_test
+  Scenario: Availability API response validation for "stay_node"
+    Given Basic web application is running
+    And run shopping
+    Then the response code for "SHOPPING" should be "200"
+    And the element "stay_node" for "SHOPPING" should have value belongs to "base_rate,tax_and_service_fee,extra_person_fee,property_fee,sales_tax,adjustment"
+
+  @business_test
+  Scenario: Availability API response validation for "night_prices"
+    Given Basic web application is running
+    And set checkin "5" from today with lengthOfStay "2"
+    And run shopping
+    Then the response code for "SHOPPING" should be "200"
+    And the element "nightly_type" for "SHOPPING" should have value belongs to "base_rate,tax_and_service_fee,extra_person_fee,property_fee,sales_tax,adjustment"
+    And "nightly" for "SHOPPING"  per "property" are available for "2" days
+
+  @business_test
+  Scenario: Availability API response validation for "total_price"
+    Given Basic web application is running
+    And run shopping
+    Then the response code for "SHOPPING" should be "200"
+    And validate that "totals" for "SHOPPING" is the sum of individual room stay values with taxes and fees
+
+  @business_test
+  Scenario: Availability API response validation for "currency"
+    Given Basic web application is running
+    And set "SHOPPING" queryParam "currency" value "INR"
+    And run shopping
+    Then the response code for "SHOPPING" should be "200"
+    And the element "currency" per "property" for "SHOPPING" should be "INR"
+    And the "billable_currency" for "SHOPPING" should be equal to "requested_currency"
+
+
+
+
+
+
+
