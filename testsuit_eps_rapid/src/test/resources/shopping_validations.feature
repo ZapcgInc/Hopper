@@ -411,7 +411,7 @@ Feature: Validations for Availability API
 
 
   @business_test
-  Scenario: Availability API response validation for "currency"
+  Scenario: Availability API response validation for "billable_currency"
     Given Basic web application is running
     And set "SHOPPING" queryParam "currency" value "INR"
     And run shopping
