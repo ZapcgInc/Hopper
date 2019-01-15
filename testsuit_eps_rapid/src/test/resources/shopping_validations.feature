@@ -184,7 +184,7 @@ Feature: Validations for Availability API
 
     Examples: 
       | scenario            | days | error_type                       | error_message                  |
-  #    | past-dates          |   -2 | checkin.invalid_date_in_the_past | Checkin cannot be in the past. |
+      | past-dates          |   -2 | checkin.invalid_date_in_the_past | Checkin cannot be in the past. |
       | Too-Advance-Checkin |  510 | checkin.invalid_date_too_far_out | Checkin too far in the future. |
 
   @data_test
@@ -383,7 +383,7 @@ Feature: Validations for Availability API
     Given Basic web application is running
     And run shopping
     Then the response code for "SHOPPING" should be "200"
-    And the element "stay_node" for "SHOPPING" should have value belongs to "base_rate,tax_and_service_fee,extra_person_fee,property_fee,sales_tax,adjustment"
+    And the element "stay_node" for "SHOPPING" should have value belongs to "base_rate|tax_and_service_fee|extra_person_fee|property_fee|sales_tax|adjustment"
 
   @business_test
   Scenario: Availability API response validation for "night_prices"
@@ -391,7 +391,7 @@ Feature: Validations for Availability API
     And set checkin "5" from today with lengthOfStay "2"
     And run shopping
     Then the response code for "SHOPPING" should be "200"
-    And the element "nightly_type" for "SHOPPING" should have value belongs to "base_rate,tax_and_service_fee,extra_person_fee,property_fee,sales_tax,adjustment"
+    And the element "nightly_type" for "SHOPPING" should have value belongs to "base_rate|tax_and_service_fee|extra_person_fee|property_fee|sales_tax|adjustment"
     And "nightly" for "SHOPPING"  per "property" are available for "2" days
 
   @business_test
@@ -408,7 +408,15 @@ Feature: Validations for Availability API
     And run shopping
     Then the response code for "SHOPPING" should be "200"
     And the element "currency" per "property" for "SHOPPING" should be "INR"
-    And the "billable_currency" for "SHOPPING" should be equal to "requested_currency"
+
+
+  @business_test
+  Scenario: Availability API response validation for "currency"
+    Given Basic web application is running
+    And set "SHOPPING" queryParam "currency" value "INR"
+    And run shopping
+    Then the response code for "SHOPPING" should be "200"
+    And the "billable_currency" for "SHOPPING" should be equal to "request_currency"
 
 
 
