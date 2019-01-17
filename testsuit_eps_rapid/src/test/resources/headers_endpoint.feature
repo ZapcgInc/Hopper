@@ -71,4 +71,100 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And for version "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
-	    
+
+#  @basic_test
+#  Scenario: Invalid Accept header
+#    Given Basic web application is running
+#    And with shopping end point "properties/availability"
+#    And set header "Accept" value "abc123"
+#    And run shopping
+#    Then the response code for "SHOPPING" should be 406
+#    And user should see json response with paris on the filtered "." node
+#      | type    | not_acceptable                                                            |
+#      | message | The server can't provide an accceptable response matching the request, please check the nested errors for details. |
+#    And user should see json response with paris on the filtered "errors[0]" node
+#      | type  | accept.not_accepted  |
+#      | message  | Accept header is required and must accept application/json.    |
+
+
+  @basic_test
+  Scenario: Missing Accept header
+    Given Basic web application is running
+    And with shopping end point "properties/availability"
+    And set header "Accept" value "null"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
+    And user should see json response with paris on the filtered "." node
+      | type    | invalid_input                                                                                                |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+
+#  @basic_test
+#    Scenario: Invalid Accept-Encoding header
+#      Given Basic web application is running
+#      And with shopping end point "properties/availability"
+#      And set header "Accept-Encoding" value "abc123"
+#      And run shopping
+#      Then the response code for "SHOPPING" should be 400
+#      And user should see json response with paris on the filtered "." node
+#        | type    | invalid_input                                            |
+#        | message | An invalid request was sent in, please check the nested errors for details. |
+
+  @basic_test
+  Scenario: Missing Accept-Encoding header
+    Given Basic web application is running
+    And with shopping end point "properties/availability"
+    And set header "Accept-Encoding" value "null"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
+    And user should see json response with paris on the filtered "." node
+      | type    | invalid_input                                                                                                |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+
+  @basic_test
+  Scenario: Invalid Customer IP header
+    Given Basic web application is running
+    And with shopping end point "properties/availability"
+    And set header "Customer IP" value "abc123"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
+    And user should see json response with paris on the filtered "." node
+      | type    | invalid_input                                            |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+
+  @basic_test
+  Scenario: Missing Customer IP header
+    Given Basic web application is running
+    And with shopping end point "properties/availability"
+    And set header "Customer IP" value "null"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
+    And user should see json response with paris on the filtered "." node
+      | type    | invalid_input                                                                                                |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+
+#  @basic_test
+#  Scenario: Invalid User-Agent header
+#    Given Basic web application is running
+#    And with shopping end point "properties/availability"
+#    And set header "User-Agent" value "abc123"
+#    And run shopping
+#    Then the response code for "SHOPPING" should be 400
+#    And user should see json response with paris on the filtered "." node
+#      | type    | invalid_input                                            |
+#      | message | An invalid request was sent in, please check the nested errors for details. |
+#
+
+  @basic_test
+  Scenario: Missing User-Agent header
+    Given Basic web application is running
+    And with shopping end point "properties/availability"
+    And set header "User-Agent" value "null"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
+    And user should see json response with paris on the filtered "." node
+      | type    | invalid_input                                                                                                |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+
+
+
+

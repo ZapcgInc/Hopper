@@ -129,6 +129,23 @@ Feature: Validations for Availability API
       | type  | querystring |
       | value |         251 |
 
+  @data_test
+  Scenario: Availabilty API with more than 8 values for Query Param "occupancy"
+    Given Basic web application is running
+    When set "SHOPPING" queryParam "occupancy" value "null"
+    And set multiple values for "SHOPPING" queryParam "occupancy" with "1|2|3|4|5|6|7|8|8|"
+    And run shopping
+    Then the response code for "SHOPPING" should be 400
+    And user should see json response with paris on the filtered "." node
+      | type    | invalid_input                                                               |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+    And user should see json response with paris on the filtered "errors[0]" node
+      | type    |number_of_occupancies.invalid_above_maximum                                           |
+      | message |Number of occupancies must be less than 9.|
+    And user should see json response with paris on the filtered "errors[0].fields[0]" node
+      | name  | occupancy |
+      | type  | querystring |
+      | value |         9 |
 
   @data_test
   Scenario: Availability API with total length of stay <days>
