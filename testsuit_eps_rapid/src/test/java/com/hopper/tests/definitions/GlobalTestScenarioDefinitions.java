@@ -237,15 +237,11 @@ public class GlobalTestScenarioDefinitions
     }
     @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be between \"(.*?)\" and \"(.*?)\"$")
     public void the_element_count_per_for_should_be_between_and(String field2, String arg2, String requestType, String minValue, String maxValue)  {
-        ResponseValidationUtil.validateArraySizeAv(m_testContext.getResponse(RequestType.valueOf(requestType)),field2,minValue,maxValue);
+        ResponseValidationUtil.validateArraySizeBetweenVal(m_testContext.getResponse(RequestType.valueOf(requestType)),field2,minValue,maxValue);
     }
     @Then("^the element \"(.*?)\" for \"(.*?)\" should have value belongs to \"(.*?)\"$")
     public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedArr) throws Throwable {
         ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(m_testContext.getResponse(RequestType.valueOf(requestType)),field+"_"+requestType,expectedArr);
-    }
-    @Then("^\"(.*?)\" for \"(.*?)\"  per \"(.*?)\" are available for \"(.*?)\" days$")
-    public void for_per_are_available_for_days(String field, String requestType, String arg, String expectedSize) throws Throwable {
-        ResponseValidationUtil.validateFieldValueAsExpectedValue(field,m_testContext.getResponse(RequestType.valueOf(requestType)),expectedSize);
     }
 
     @Then("^the element \"(.*?)\"  for \"(.*?)\" should not be \"(.*?)\"$")
@@ -264,10 +260,6 @@ public class GlobalTestScenarioDefinitions
     @Then("^the element \"(.*?)\" for \"(.*?)\" either have both amenityId and description or have no amenity ID and description \\(mutually inclusive\\)$")
     public void the_element_for_either_have_both_amenity_ID_and_description_or_have_no_amenity_ID_and_description_mutually_inclusive(String field, String requestType) throws Throwable {
         ResponseValidationUtil.validateResponseBodyForNode(field+"_"+requestType,m_testContext.getParams(RequestType.valueOf(requestType)),m_testContext.getResponse(RequestType.valueOf(requestType)));
-    }
-    @Then("^the element \"(.*?)\" per \"(.*?)\" for \"(.*?)\" should be \"(.*?)\"$")
-    public void the_element_for_should_be(String field, String arg, String requestType, String expectedValue) throws Throwable {
-        ResponseValidationUtil.validateFieldValueAsExpectedValue(field,m_testContext.getResponse(RequestType.valueOf(requestType)),expectedValue);
     }
 
     @Then("^validate that \"(.*?)\" for \"(.*?)\" is the sum of individual room stay values with taxes and fees$")

@@ -43,7 +43,7 @@ public class ResponseValidationUtil {
         Assert.assertTrue(errorMessage, expectedSize == fieldValues.size());
     }
 
-    public static void validateArraySizeAv(final Response restResponse, String field2, String minValue, String maxValue) {
+    public static void validateArraySizeBetweenVal(final Response restResponse, String field2, String minValue, String maxValue) {
         switch (field2) {
             case "available_rooms":
                 validateAvailableRooms(restResponse, maxValue);
@@ -70,6 +70,8 @@ public class ResponseValidationUtil {
             case "currency_SHOPPING":
                 validateCurrencyCode(restResponse,expectedValues.get(0));
                 break;
+            case "fenced_deal_SHOPPING":
+                validateFencedDeal(restResponse,expectedValues.get(0));
         }
     }
 
@@ -144,12 +146,14 @@ public class ResponseValidationUtil {
 
     public static void validateResponseBodyForNode(String node, Map<String, String> paramMap, Response response) throws ParseException {
         switch (node) {
-            case "cancel_policies_SHOPPING":
+            case "cancel_policies":
                 validateCancelPoliciesForRefundableRates(paramMap, response);
                 break;
-            case "amenities_SHOPPING":
+            case "amenities":
                 validateAmenities(response);
                 break;
+                default:
+                    System.out.println("Request Not Present");
 
         }
     }
@@ -468,7 +472,7 @@ public class ResponseValidationUtil {
     }
 
     private static void validateMerchantOfRecord(Response response, String expectedValues) {
-        String[] expectedArr = expectedValues.split("|");
+        String[] expectedArr = expectedValues.split("\\|");
         ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
         for (LinkedHashMap<String, Object> responseMap : responseAsList) {
             ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
@@ -586,16 +590,6 @@ public class ResponseValidationUtil {
 
     }
 
-    public static void validateFieldValueAsExpectedValue(String field, Response response, String expectedValue) {
-        switch (field) {
-            case "fenced_deal":
-                validateFencedDeal(response, expectedValue);
-                break;
-            case "currency":
-                validateCurrencyCode(response, expectedValue);
-                break;
-        }
-    }
 
     public static void validateNodeInResponseBody(String field, Response response) {
         switch (field) {

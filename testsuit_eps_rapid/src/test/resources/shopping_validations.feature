@@ -385,7 +385,7 @@ Feature: Validations for Availability API
         Given Basic web application is running
         And run shopping
         Then the response code for "SHOPPING" should be "200"
-        And the element "fenced_deal" per "property" for "SHOPPING" should be "false"
+        And validate "SHOPPING" response element "fenced_deal" matches values "false"
 
   @business_test
   Scenario: Availability API response validation for "deposit_policies" if true
