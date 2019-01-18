@@ -11,9 +11,9 @@ import com.hopper.tests.authorization.Authorization;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
+import com.hopper.tests.model.Link;
 import com.hopper.tests.model.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
-import com.hopper.tests.util.APIEndPointGenerator;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.validations.CheckAPIAvailability;
@@ -37,7 +37,7 @@ public class GlobalTestScenarioDefinitions
 {
     private TestContext m_testContext;
     private CheckAPIAvailability m_checkAPIAvailability;
-	
+
     @Given("^setup for partner \"(.*?)\"$")
     public void setup(final String partnerName)
     {
@@ -159,34 +159,41 @@ public class GlobalTestScenarioDefinitions
     {
         final Response response = ResponseSupplierFactory.create(m_testContext, GlobalConstants.GET, RequestType.SHOPPING).get();
         m_testContext.setResponse(RequestType.SHOPPING, response);
+        final ShoppingResponse[] shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
+        m_testContext.setShoppingResponses(shoppingResponse);
     }
 
     @When("^run preBooking$")
     public void runPreBooking()
     {
-        final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
-        m_testContext.setApiPath(RequestType.PRE_BOOKING, shoppingResponse.getPriceCheckEndPoint());
+        final Link priceCheckLink = m_testContext.getShoppingResponses()[0].getRooms().get(0).getRates().get(0).getBedGroups().get(0).getLinks().get("price_check");
+
+        m_testContext.setApiPath(RequestType.PRE_BOOKING, priceCheckLink.getHref());
         final Response response = ResponseSupplierFactory.create(
                 m_testContext,
-                shoppingResponse.getPriceCheckHTTPMethod(),
+                priceCheckLink.getMethod(),
                 RequestType.PRE_BOOKING
         ).get();
 
         m_testContext.setResponse(RequestType.PRE_BOOKING, response);
+
     }
 
     @When("^run paymentOptions$")
     public void runPaymentOptions()
     {
-        final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
-        m_testContext.setApiPath(RequestType.PAYMENT_OPTIONS, shoppingResponse.getPaymentOptionsEndPoint());
+
+        final Link paymentMethodLink = m_testContext.getShoppingResponses()[0].getRooms().get(0).getRates().get(0).getLinks().get("payment_options");
+
+        m_testContext.setApiPath(RequestType.PAYMENT_OPTIONS, paymentMethodLink.getHref());
 
         final Response response = ResponseSupplierFactory.create(
                 m_testContext,
-                shoppingResponse.getPaymentOptionsHTTPMethod(),
+                paymentMethodLink.getMethod(),
                 RequestType.PAYMENT_OPTIONS
         ).get();
 
+        System.out.println(response);
         m_testContext.setResponse(RequestType.PAYMENT_OPTIONS, response);
     }
 
@@ -209,12 +216,14 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^user should see json response with paris on the filtered \"(.*?)\" node$")
-    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse) throws Throwable {
-    	user_should_see_response_with_paris_on_the_filtered_node("SHOPPING", field, expectedResponse);
+    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse) throws Throwable
+    {
+        user_should_see_response_with_paris_on_the_filtered_node("SHOPPING", field, expectedResponse);
     }
-    
+
     @Then("^user should see \"(.*?)\" response with paris on the filtered \"(.*?)\" node$")
-    public void user_should_see_response_with_paris_on_the_filtered_node(String requestType, final String field, final DataTable expectedResponse) throws Throwable {
+    public void user_should_see_response_with_paris_on_the_filtered_node(String requestType, final String field, final DataTable expectedResponse) throws Throwable
+    {
         final Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 
         ResponseValidationUtil.validateResponseBody(
@@ -223,107 +232,100 @@ public class GlobalTestScenarioDefinitions
                 field
         );
     }
-    
+
     @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be (\\d+)$")
-    public void the_element_count_per_for_should_be(String field, String arg2, String requestType, int expectedValue) throws Throwable {
-    	ResponseValidationUtil.validateArraySize(m_testContext.getResponse(RequestType.valueOf(requestType)), field, expectedValue);
+    public void the_element_count_per_for_should_be(String field, String arg2, String requestType, int expectedValue) throws Throwable
+    {
+        ResponseValidationUtil.validateArraySize(m_testContext.getResponse(RequestType.valueOf(requestType)), field, expectedValue);
     }
-    
+
     @Then("^validate \"(.*?)\" response element \"(.*?)\" matches values \"(.*?)\"$")
-    public void validate_response_element_matches_values(String requestType, String node, String values) throws Throwable {
-    	final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
+    public void validate_response_element_matches_values(String requestType, String node, String values) throws Throwable
+    {
+        final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
-    	ResponseValidationUtil.validateNodeforValues(m_testContext.getResponse(RequestType.valueOf(requestType)), node+"_"+requestType, listOfValues);
+        ResponseValidationUtil.validateNodeforValues(m_testContext.getResponse(RequestType.valueOf(requestType)), node + "_" + requestType, listOfValues);
     }
+
     @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be between \"(.*?)\" and \"(.*?)\"$")
-    public void the_element_count_per_for_should_be_between_and(String field2, String arg2, String requestType, String minValue, String maxValue)  {
-        ResponseValidationUtil.validateArraySizeBetweenVal(m_testContext.getResponse(RequestType.valueOf(requestType)),field2,minValue,maxValue);
+    public void the_element_count_per_for_should_be_between_and(String field2, String arg2, String requestType, String minValue, String maxValue)
+    {
+        ResponseValidationUtil.validateArraySizeBetweenVal(m_testContext.getResponse(RequestType.valueOf(requestType)), field2, minValue, maxValue);
     }
+
     @Then("^the element \"(.*?)\" for \"(.*?)\" should have value belongs to \"(.*?)\"$")
-    public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedValues) throws Throwable {
+    public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedValues) throws Throwable
+    {
         final List<String> listOfValues = Arrays.stream(expectedValues.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
-        ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(m_testContext.getResponse(RequestType.valueOf(requestType)),field+"_"+requestType,listOfValues);
+        ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(m_testContext.getResponse(RequestType.valueOf(requestType)), field + "_" + requestType, listOfValues);
     }
 
     @Then("^the element \"(.*?)\"  for \"(.*?)\" should not be \"(.*?)\"$")
-    public void the_element_for_should_not_be(String field, String requestType, String value) throws Throwable {
-        ResponseValidationUtil.validateFieldValueNotEqualTo(m_testContext.getResponse(RequestType.valueOf(requestType)),field,value);
+    public void the_element_for_should_not_be(String field, String requestType, String value) throws Throwable
+    {
+        ResponseValidationUtil.validateFieldValueNotEqualTo(m_testContext.getResponse(RequestType.valueOf(requestType)), field, value);
     }
+
     @Then("^the \"(.*?)\" for \"(.*?)\" should be equal to \"(.*?)\"$")
-    public void the_for_should_be_equal_to(String field1, String responseType, String field2)  {
-        ResponseValidationUtil.validateFieldsInResponseBody(field1,m_testContext.getResponse(RequestType.valueOf(responseType)),field2);
+    public void the_for_should_be_equal_to(String field1, String responseType, String field2)
+    {
+        ResponseValidationUtil.validateFieldsInResponseBody(field1, m_testContext.getResponse(RequestType.valueOf(responseType)), field2);
     }
 
     @Then("^the element \"(.*?)\" start and end date \\(under cancel_penalties\\) for \"(.*?)\" are within check in and check out dates$")
-    public void the_element_start_and_end_date_under_cancel_penalties_for_are_within_check_in_and_check_out_dates(String field, String requestType) throws Throwable {
-        ResponseValidationUtil.validateResponseBodyForNode(field,m_testContext.getParams(RequestType.valueOf(requestType)),m_testContext.getResponse(RequestType.valueOf(requestType)));
+    public void the_element_start_and_end_date_under_cancel_penalties_for_are_within_check_in_and_check_out_dates(String field, String requestType) throws Throwable
+    {
+        ResponseValidationUtil.validateResponseBodyForNode(field, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)));
     }
+
     @Then("^the element \"(.*?)\" for \"(.*?)\" either have both amenityId and description or have no amenity ID and description \\(mutually inclusive\\)$")
-    public void the_element_for_either_have_both_amenity_ID_and_description_or_have_no_amenity_ID_and_description_mutually_inclusive(String field, String requestType) throws Throwable {
-        ResponseValidationUtil.validateResponseBodyForNode(field+"_"+requestType,m_testContext.getParams(RequestType.valueOf(requestType)),m_testContext.getResponse(RequestType.valueOf(requestType)));
+    public void the_element_for_either_have_both_amenity_ID_and_description_or_have_no_amenity_ID_and_description_mutually_inclusive(String field, String requestType) throws Throwable
+    {
+        ResponseValidationUtil.validateResponseBodyForNode(field + "_" + requestType, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)));
     }
 
     @Then("^validate that \"(.*?)\" for \"(.*?)\" is the sum of individual room stay values with taxes and fees$")
-    public void validate_that_for_is_the_sum_of_individual_room_stay_values_with_taxes_and_fees(String field, String responseType) throws Throwable {
-        ResponseValidationUtil.validateNodeInResponseBody(field+"_"+responseType,m_testContext.getResponse(RequestType.valueOf(responseType)));
+    public void validate_that_for_is_the_sum_of_individual_room_stay_values_with_taxes_and_fees(String field, String responseType) throws Throwable
+    {
+        ResponseValidationUtil.validateNodeInResponseBody(field + "_" + responseType, m_testContext.getResponse(RequestType.valueOf(responseType)));
     }
 
 
     @Before
-	public void before(Scenario scenario) {		
-		printTestDetails(scenario);
-	}
-	
-	private void printTestDetails(Scenario scenario){		
-		log("======================================Scenario=================================================");
-		log("Scearnio id: "+ scenario.getId() );
-		log("Scenario name: "+ scenario.getName() );
-		log("Scenario tage: "+ scenario.getSourceTagNames() );
-		log("Scenario status: Started at :"+ new java.util.Date());
-	}
-	
-	@After
-	public void after(Scenario scenario) {
-		printTestStatus(scenario);
-	}
-	
-	private void printTestStatus(Scenario scenario) {
-		log("Scnario success: " + (!scenario.isFailed()));
-		log("Scenario status: " + scenario.getStatus() + " at :"+ new java.util.Date());
-		if(scenario.isFailed()) {
-			log("Scenario Execution Details :");
-			printContext();
-		}
-	}
-	
-	private void printContext() {
-		log("Host: " + m_testContext.getHost());
-    	log("Version: " + m_testContext.getVersion());
-    	for (RequestType reqType : RequestType.values()) {
-    		String apiPath = m_testContext.getApiPath(reqType);
-    		if(apiPath != null) {
-    			log(reqType.toString());
-    			log("     " + "API URI: "+ apiPath);
-    			log("     " + "RequInfo:");
-    			log("     " +  "    " + "End Point: "+ APIEndPointGenerator.create(m_testContext, reqType));
-    			log("     " +  "    " + "Headers: "+ m_testContext.getHeaders());
-    			log("     " +  "    " + "Query Params: "+ m_testContext.getParams(reqType));
-    			log("     " +  "    " + "Query Params with multiple values: "+ m_testContext.getParamsWithMultipleValues(reqType));
-    			log("     " + "Response:");
-    			log("     " + "     " +  "Status Code: "+ m_testContext.getResponse(reqType).getStatusCode());
-    			log("     " + "     " +  "Status Line: "+ m_testContext.getResponse(reqType).getStatusLine());
-    			log("     " + "     " +  "Headers: "+ m_testContext.getResponse(reqType).getHeaders());
-    			log("     " + "     " +  "Response Time: "+ m_testContext.getResponse(reqType).getTime());
-    			log("     " + "     " +  "Contet Type: "+ m_testContext.getResponse(reqType).getContentType());
-    			log("     " + "     " +  "Body: "+ m_testContext.getResponse(reqType).asString());
-    			//log("     " + "     " +  "Body: "+ m_testContext.getResponse(reqType).getBody().jsonPath().prettyPrint());    			
-    		}
-    	}
+    public void before(Scenario scenario)
+    {
+        printTestDetails(scenario);
+    }
 
-	}
-	
-	private void log(String line) {
-		System.out.println(line);
-	}
+    private void printTestDetails(Scenario scenario)
+    {
+        log("======================================Scenario=================================================");
+        log("Scearnio id: " + scenario.getId());
+        log("Scenario name: " + scenario.getName());
+        log("Scenario stage: " + scenario.getSourceTagNames());
+        log("Scenario status: Started at :" + new java.util.Date());
+    }
+
+    @After
+    public void after(Scenario scenario)
+    {
+        printTestStatus(scenario);
+    }
+
+    private void printTestStatus(Scenario scenario)
+    {
+        log("Scenario success: " + (!scenario.isFailed()));
+        log("Scenario status: " + scenario.getStatus() + " at :" + new java.util.Date());
+        if (scenario.isFailed())
+        {
+            log("Scenario Execution Details :");
+            log(m_testContext.toString());
+        }
+    }
+
+    private void log(String line)
+    {
+        System.out.println(line);
+    }
 }

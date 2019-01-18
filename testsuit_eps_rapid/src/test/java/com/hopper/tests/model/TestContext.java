@@ -2,6 +2,7 @@ package com.hopper.tests.model;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
+import com.hopper.tests.util.APIEndPointGenerator;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
@@ -33,7 +34,8 @@ public class TestContext
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
     private EnumMap<RequestType, Response> m_requestTypeToResponse = new EnumMap<RequestType, Response>(RequestType.class);
-    
+
+    private ShoppingResponse[] m_shoppingResponses;
 
     public TestContext(final SupportedPartners partner)
     {
@@ -122,6 +124,17 @@ public class TestContext
     {
         m_requestTypeToResponse.put(requestType, response);
     }
+
+    public ShoppingResponse[] getShoppingResponses()
+    {
+        return m_shoppingResponses;
+    }
+
+    public void setShoppingResponses(ShoppingResponse[] shoppingResponses)
+    {
+        m_shoppingResponses = shoppingResponses;
+    }
+
     /* START - Request Query Params */
 
     public void addCheckInDate(Calendar date, RequestType requestType)
@@ -191,5 +204,42 @@ public class TestContext
     private String _convertToDate(final Calendar dateTime)
     {
         return m_requestDateFormat.format(dateTime.getTime());
+    }
+
+    public String printTextContext()
+    {
+        final StringBuilder sb = new StringBuilder();
+
+        sb.append("HOST").append(" : ").append(getHost()).append("\n");
+        sb.append("VERSION").append(" : ").append(getVersion()).append("\n");
+
+        for (RequestType reqType : RequestType.values())
+        {
+            final String apiPath = getApiPath(reqType);
+            if (apiPath != null)
+            {
+
+                sb.append("\t").append("Request Type").append(" : ").append(reqType).append("\n");
+                sb.append("\t").append("API End Point").append(" : ").append(getApiPath(reqType)).append("\n");
+
+                sb.append("\t").append("Request Information").append("\n");
+
+                sb.append("\t").append("\t").append("End Point").append(" : ").append(APIEndPointGenerator.create(this, reqType)).append("\n");
+                sb.append("\t").append("\t").append("Headers").append(" : ").append(getHeaders()).append("\n");
+                sb.append("\t").append("\t").append("Query Params").append(" : ").append(getParams(reqType)).append("\n");
+                sb.append("\t").append("\t").append("Query Params with multiple values").append(" : ").append(getParamsWithMultipleValues(reqType)).append("\n");
+
+
+                sb.append("\t").append("Response Information").append("\n");
+                sb.append("\t").append("\t").append("Status Code").append(" : ").append(getResponse(reqType).getStatusCode()).append("\n");
+                sb.append("\t").append("\t").append("Status Line").append(" : ").append(getResponse(reqType).getStatusLine()).append("\n");
+                sb.append("\t").append("\t").append("Headers").append(" : ").append(getResponse(reqType).getHeaders()).append("\n");
+                sb.append("\t").append("\t").append("Response Time").append(" : ").append(getResponse(reqType).getTime()).append("\n");
+                sb.append("\t").append("\t").append("Content Type").append(" : ").append(getResponse(reqType).getContentType()).append("\n");
+                sb.append("\t").append("\t").append("Body").append(" : ").append(getResponse(reqType).asString()).append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 }
