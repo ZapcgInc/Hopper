@@ -279,7 +279,6 @@ Feature: Validations for Availability API
     And run shopping
     Then the response code for "SHOPPING" should be 200
 
-
   @business_test
   Scenario: Availability API response validation matching occupancies with single Query Param "occupancy" and "property_id"
     Given Basic web application is running
@@ -353,7 +352,7 @@ Feature: Validations for Availability API
      Given Basic web application is running
      And run shopping
      Then the response code for "SHOPPING" should be "200"
-     And the element "merchant_of_record" for "SHOPPING" should have value belongs to "expedia,property"
+     And the element "merchant_of_record" for "SHOPPING" should have value belongs to "expedia|property"
 
   @business_test
   Scenario Outline: Availability API response validation for "href" in "<field>"
@@ -409,7 +408,7 @@ Feature: Validations for Availability API
     And run shopping
     Then the response code for "SHOPPING" should be "200"
     And the element "nightly_type" for "SHOPPING" should have value belongs to "base_rate|tax_and_service_fee|extra_person_fee|property_fee|sales_tax|adjustment"
-    And "nightly" for "SHOPPING"  per "property" are available for "2" days
+    And validate "SHOPPING" response element "nightly" matches values "2"
 
   @business_test
   Scenario: Availability API response validation for "total_price"
@@ -424,7 +423,7 @@ Feature: Validations for Availability API
     And set "SHOPPING" queryParam "currency" value "INR"
     And run shopping
     Then the response code for "SHOPPING" should be "200"
-    And the element "currency" per "property" for "SHOPPING" should be "INR"
+    And validate "SHOPPING" response element "currency" matches values "INR"
 
 
   @business_test
