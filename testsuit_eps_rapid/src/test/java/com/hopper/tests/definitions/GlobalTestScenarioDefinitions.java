@@ -240,8 +240,10 @@ public class GlobalTestScenarioDefinitions
         ResponseValidationUtil.validateArraySizeBetweenVal(m_testContext.getResponse(RequestType.valueOf(requestType)),field2,minValue,maxValue);
     }
     @Then("^the element \"(.*?)\" for \"(.*?)\" should have value belongs to \"(.*?)\"$")
-    public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedArr) throws Throwable {
-        ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(m_testContext.getResponse(RequestType.valueOf(requestType)),field+"_"+requestType,expectedArr);
+    public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedValues) throws Throwable {
+        final List<String> listOfValues = Arrays.stream(expectedValues.split(GlobalConstants.MULTI_VALUE_DELIMITER))
+                .collect(Collectors.toList());
+        ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(m_testContext.getResponse(RequestType.valueOf(requestType)),field+"_"+requestType,listOfValues);
     }
 
     @Then("^the element \"(.*?)\"  for \"(.*?)\" should not be \"(.*?)\"$")

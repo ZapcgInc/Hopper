@@ -58,27 +58,12 @@ Feature: Validations for PreBooking API.
       | Test   | price_changed |  409 | price_changed |
       | Test   | sold_out      |  410 | sold_out      |
 
-#  @data_test
-#  Scenario: PreBooking API "property_id" parameter missing
-#    Given run shopping
-#    When set "PRE_BOOKING" param "property_id" value "null"
-#    And run preBooking
-#    Then the response code for "PRE_BOOKING" should be "400"
-#
-#  @data_test
-#  Scenario Outline: PreBooking API "<query_param>" unique parameter
-#    Given run shopping
-#    When set "SHOPPING" queryParam "<query_param>" value "134"
-#    And run preBooking
-#    Then the response code for "PRE_BOOKING" should be "404"
-#    Examples:
-#      |query_param|
-#      |property_id|
-##      |rateId    |
-
-
-
-
+#    @rapid_test
+#      Scenario: PreBooking API Rapid test Header "Test" with "standard"
+#      Given run shopping
+#      When set header "Test" value "standard"
+#      And run preBooking
+#      Then the response code for "PRE_BOOKING" should be 200
 
   ################# Business Validations ################################
   @busiess_test
@@ -117,5 +102,18 @@ Feature: Validations for PreBooking API.
         And validate "PRE_BOOKING" response element "stay_node" matches values "base_rate|tax_and_service_fee|extra_person_fee|property_fee|sales_tax|adjustment"
 
 
+Scenario Outline: PreBooking API validation for "href" in "<field>"
+    Given run shopping
+    When run preBooking
+    Then the response code for "PRE_BOOKING" should be 200
+    And the element "links.<field>.href"  for "PRE_BOOKING" should not be "null"
+    Examples:
+    |field|
+    |book |
+    |shop |
 
-
+Scenario: PreBooking API validation for "status"
+  Given run shopping
+  When run preBooking
+  Then the response code for "PRE_BOOKING" should be "200"
+  And the element "status" for "PRE_BOOKING" should have value belongs to "matched|price_change|sold_out"

@@ -32,3 +32,10 @@ Feature: Validations for Payment Options API.
     Given run shopping
     When run paymentOptions
     Then the response code for "PAYMENT_OPTIONS" should be 200
+
+
+    Scenario: Payment Options API for validation of "credit_card"
+      Given run shopping
+      When run paymentOptions
+      Then the response code for "PAYMENT_OPTIONS" should be 200
+      And the element "card_type"  for "PAYMENT_OPTIONS" should not be "null"

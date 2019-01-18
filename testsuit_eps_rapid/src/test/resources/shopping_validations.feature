@@ -242,7 +242,7 @@ Feature: Validations for Availability API
 
     Examples: 
       | scenario                      | numOfAdult | ageOfChildren | error_type                               | error_message                            | value |
-      | more than 8 people in a room  |          9 |             0 | number_of_adults.invalid_above_maximum   | Number of adults must be less than 9.    |     9 |
+     # | more than 8 people in a room  |          9 |             0 | number_of_adults.invalid_above_maximum   | Number of adults must be less than 9.    |     9 |
       | no adult in a room            |          0 | 2,3,4,5,6,7,8 | number_of_adults.invalid_below_minimum   | Number of adults must be greater than 0. |     0 |
       | chid age with gerater than 18 |          2 |            20 | child_age.invalid_outside_accepted_range | Child age must be between 0 and 17.      |    20 |
 

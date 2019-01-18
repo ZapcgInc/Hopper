@@ -75,8 +75,7 @@ public class ResponseValidationUtil {
         }
     }
 
-    private static void validateStayNodePreBooking(Response restResponse, String expectedValues) {
-        String[] allowedTypes = expectedValues.split("\\|");
+    private static void validateStayNodePreBooking(Response restResponse, List<String> expectedValues) {
         HashMap<String, HashMap> roomPriceCheckMap = restResponse.jsonPath().get(".");
         HashMap<String, HashMap> occupancies = roomPriceCheckMap.get("occupancies");
         for (Map.Entry<String, HashMap> occupancy : occupancies.entrySet()) {
@@ -87,7 +86,7 @@ public class ResponseValidationUtil {
             if(stayNodeList!=null) {
                 for (HashMap stayNode : stayNodeList) {
                     String type = (String) stayNode.get("type");
-                    Assert.assertTrue(errorMessage, Arrays.stream(allowedTypes).anyMatch(type::equals));
+                    Assert.assertTrue(errorMessage,expectedValues.contains(type));
                 }
             }
         }
@@ -117,11 +116,45 @@ public class ResponseValidationUtil {
         switch (field) {
             case "price_check_href":
                 validateHrefPriceCheck(restResponse);
+                break;
             case "payment_option_href":
                 validateHrefPaymentOption(restResponse);
+                break;
             case "links.deposit_policies":
                 validateDepositPolicies(restResponse);
+                break;
+            case "links.book.href":
+                validateHrefInBook(restResponse);
+                break;
+            case "links.shop.href":
+                validateHrefInShop(restResponse);
+                break;
+            case "card_type":
+                validateCardType(restResponse);
         }
+    }
+
+    private static void validateCardType(Response restResponse) {
+        HashMap<String,HashMap> paymentOptionMap = restResponse.jsonPath().get(".");
+        ArrayList<HashMap> cardOptions = (ArrayList) paymentOptionMap.get("credit_card").get("card_options");
+        cardOptions.forEach(cardOption -> {
+            Assert.assertTrue(
+                    "Card name and Card type is not found",cardOption.get("name") != null && cardOption.get("card_type") != null);
+        });
+    }
+
+    private static void validateHrefInShop(Response restResponse) {
+        HashMap<String, HashMap<String,HashMap>> roomPriceCheckMap = restResponse.jsonPath().get(".");
+        if("sold_out".equals(roomPriceCheckMap.get("status"))) {
+            String hrefShop = (String) roomPriceCheckMap.get("links").get("shop").get("href");
+            Assert.assertTrue("href is not found", hrefShop != null);
+        }
+    }
+
+    private static void validateHrefInBook(Response restResponse) {
+        HashMap<String, HashMap<String,HashMap>> roomPriceCheckMap = restResponse.jsonPath().get(".");
+        String hrefShop =(String)roomPriceCheckMap.get("links").get("book").get("href");
+        Assert.assertTrue("href is not found", hrefShop!=null);
     }
 
     private static void validateOccupancy(final Response restResponse, final List<String> expectedValues) {
@@ -295,8 +328,7 @@ public class ResponseValidationUtil {
 
     }
 
-    private static void validateStayNode(Response response, String expectedValues) {
-        String[] allowedTypes = expectedValues.split("\\|");
+    private static void validateStayNode(Response response, List<String> expectedValues) {
         ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
         for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
@@ -313,7 +345,7 @@ public class ResponseValidationUtil {
                         if (stayNodes != null) {
                             for (LinkedHashMap stayNode : stayNodes) {
                                 String type = (String) stayNode.get("type");
-                                boolean contains = Arrays.stream(allowedTypes).anyMatch(type::equals);
+                                boolean contains = expectedValues.contains(type);
                                 if (!contains) {
                                     Assert.fail("type: " + type + " is invalid for room_id: " + roomId);
                                 }
@@ -471,8 +503,7 @@ public class ResponseValidationUtil {
         }
     }
 
-    private static void validateMerchantOfRecord(Response response, String expectedValues) {
-        String[] expectedArr = expectedValues.split("\\|");
+    private static void validateMerchantOfRecord(Response response, List<String> values) {
         ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
         for (LinkedHashMap<String, Object> responseMap : responseAsList) {
             ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
@@ -482,7 +513,7 @@ public class ResponseValidationUtil {
                 for (LinkedHashMap<String, Object> rate : rateList) {
                     String value = (String) rate.get("merchant_of_record");
 
-                    if (!Arrays.stream(expectedArr).anyMatch(value::equals)) {
+                    if (!values.contains(value)) {
                         Assert.fail(" merchant record field does not match any of the expected values for roomId: " + roomId);
                     }
                 }
@@ -539,25 +570,33 @@ public class ResponseValidationUtil {
     })*/
 
 
-    public static void validateFieldValueBelongsToExpectedValues(Response response, String field, String expectedArr) {
+    public static void validateFieldValueBelongsToExpectedValues(Response response, String field, List<String> values) {
         switch (field) {
             case "merchant_of_record_SHOPPING":
-                validateMerchantOfRecord(response, expectedArr);
+                validateMerchantOfRecord(response, values);
                 break;
             case "nightly_type_SHOPPING":
-                validateNightlyTypes(response, expectedArr);
+                validateNightlyTypes(response, values);
                 break;
             case "stay_node_SHOPPING":
-                validateStayNode(response, expectedArr);
+                validateStayNode(response, values);
                 break;
             case "stay_node_PRE_BOOKING":
-                validateStayNodePreBooking(response,expectedArr);
+                validateStayNodePreBooking(response,values);
+            case "status_PRE_BOOKING":
+                validateStatus(response,values);
                 break;
         }
     }
 
-    private static void validateNightlyTypes(Response response, String expectedArr) {
-        String[] allowedTypes = expectedArr.split("\\|");
+    private static void validateStatus(Response response, List<String> values) {
+        HashMap<String,Object> roomRateMap = response.jsonPath().get(".");
+        String status = (String) roomRateMap.get("status");
+        Assert.assertTrue("status invalid",values.contains(status));
+    }
+
+    private static void validateNightlyTypes(Response response, List<String> expectedValues) {
+
         ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
         for (LinkedHashMap<String, Object> responseMap : responseAsList) {
 
@@ -577,7 +616,7 @@ public class ResponseValidationUtil {
 
                             for (LinkedHashMap map : n) {
                                 String type = (String) map.get("type");
-                                boolean contains = Arrays.stream(allowedTypes).anyMatch(type::equals);
+                                boolean contains = expectedValues.contains(type);
                                 if (!contains) {
                                     Assert.fail("type: " + type + " is invalid for room_id: " + roomId);
                                 }
