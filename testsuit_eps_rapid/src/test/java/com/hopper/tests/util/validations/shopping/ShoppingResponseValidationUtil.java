@@ -7,7 +7,6 @@ import com.hopper.tests.model.response.shopping.Rate;
 import com.hopper.tests.model.response.shopping.Room;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.shopping.CancelPolicies;
-import com.hopper.tests.util.validations.CleanUpValidationUtil;
 import com.hopper.tests.util.validations.CommonValidationUtil;
 import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import com.hopper.tests.util.validations.model.Range;
@@ -55,7 +54,7 @@ public class ShoppingResponseValidationUtil
             }
             case TOTAL_PRICE:
             {
-                CleanUpValidationUtil.validateTotalPrice(context.getResponse(RequestType.SHOPPING));
+                _validateRateFields(context, ResponseValidationField.TOTAL_PRICE, null, null);
                 break;
             }
             default:
@@ -144,12 +143,12 @@ public class ShoppingResponseValidationUtil
             }
             case CURRENCY_CODE:
             {
-                CleanUpValidationUtil.validateCurrencyCode(context.getResponse(RequestType.SHOPPING), expectedValues.get(0));
+                _validateRateFields(context, ResponseValidationField.CURRENCY_CODE, expectedValues, null);
                 break;
             }
             case BILLABLE_CURRENCY:
             {
-                CleanUpValidationUtil.validateBillableCurrency(context.getResponse(RequestType.SHOPPING), expectedValues.get(0));
+                _validateRateFields(context, ResponseValidationField.BILLABLE_CURRENCY, expectedValues, null);
                 break;
             }
             default:
@@ -227,6 +226,21 @@ public class ShoppingResponseValidationUtil
                         case NIGHTLY_PRICE_COUNT:
                         {
                             CommonValidationUtil.nightlyPriceCountValidator(rate.getRoomPriceByOccupancy().values(), expectedValues);
+                            break;
+                        }
+                        case CURRENCY_CODE:
+                        {
+                            CommonValidationUtil.validateCurrencyCode(rate.getRoomPriceByOccupancy().values(), expectedValues.get(0));
+                            break;
+                        }
+                        case BILLABLE_CURRENCY:
+                        {
+                            CommonValidationUtil.validateBillableCurrency(rate.getRoomPriceByOccupancy().values());
+                            break;
+                        }
+                        case TOTAL_PRICE:
+                        {
+                            CommonValidationUtil.validateTotalPrice(rate.getRoomPriceByOccupancy().values());
                             break;
                         }
                         default:

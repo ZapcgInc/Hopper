@@ -125,7 +125,6 @@ public class GlobalTestScenarioDefinitions
         }
     }
 
-
     @When("^set \"([^\"]*)\" queryParam \"([^\"]*)\" value \"([^\"]*)\"$")
     public void setQueryParamValue(final String requestType, final String param, final String value)
     {

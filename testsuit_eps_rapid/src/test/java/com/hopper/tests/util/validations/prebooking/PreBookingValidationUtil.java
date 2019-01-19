@@ -3,7 +3,6 @@ package com.hopper.tests.util.validations.prebooking;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.prebooking.PreBookingResponse;
-import com.hopper.tests.util.validations.CleanUpValidationUtil;
 import com.hopper.tests.util.validations.CommonValidationUtil;
 import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import com.hopper.tests.util.validations.model.Range;
@@ -38,7 +37,7 @@ public class PreBookingValidationUtil
             }
             case TOTAL_PRICE:
             {
-                CleanUpValidationUtil.validateTotalPricePreBooking(context.getResponse(RequestType.PRE_BOOKING));
+                CommonValidationUtil.validateTotalPrice(response.getRoomPriceByOccupany().values());
                 break;
             }
             default:

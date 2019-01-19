@@ -10,7 +10,7 @@ public class Price
     private String type;
 
     @JsonProperty("value")
-    private String value;
+    private Double value;
 
     @JsonProperty("currency")
     private String currency;
@@ -22,7 +22,7 @@ public class Price
         return type;
     }
 
-    public String getValue()
+    public Double getValue()
     {
         return value;
     }

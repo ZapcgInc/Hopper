@@ -15,7 +15,13 @@ public class RoomPrice
     @JsonProperty("stay")
     private List<Price> stayPrice;
 
-    public RoomPrice(){}
+    @JsonProperty("fees")
+    private List<Price> fees;
+
+    @JsonProperty("totals")
+    private TotalPrice totals;
+
+    public RoomPrice() {}
 
     public List<List<Price>> getNightlyPrice()
     {
@@ -25,5 +31,15 @@ public class RoomPrice
     public List<Price> getStayPrice()
     {
         return stayPrice != null ? stayPrice : ImmutableList.of();
+    }
+
+    public List<Price> getFees()
+    {
+        return fees != null ? fees : ImmutableList.of();
+    }
+
+    public TotalPrice getTotals()
+    {
+        return totals;
     }
 }
