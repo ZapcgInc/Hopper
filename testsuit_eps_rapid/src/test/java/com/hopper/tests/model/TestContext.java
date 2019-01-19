@@ -4,6 +4,7 @@ import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.request.RequestParams;
 import com.hopper.tests.model.response.payment.PaymentOptionResponse;
+import com.hopper.tests.model.response.prebooking.PreBookingResponse;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.util.api.APIEndPointGenerator;
 import io.restassured.response.Response;
@@ -41,6 +42,7 @@ public class TestContext
 
     private ShoppingResponse m_shoppingResponse;
     private PaymentOptionResponse m_paymentOptionResponse;
+    private PreBookingResponse m_preBookingResponse;
 
     public TestContext(final SupportedPartners partner)
     {
@@ -231,6 +233,16 @@ public class TestContext
     public void setPaymentOptionResponse(PaymentOptionResponse paymentOptionResponse)
     {
         m_paymentOptionResponse = paymentOptionResponse;
+    }
+
+    public PreBookingResponse getPreBookingResponse()
+    {
+        return m_preBookingResponse;
+    }
+
+    public void setPreBookingResponse(PreBookingResponse m_preBookingResponse)
+    {
+        this.m_preBookingResponse = m_preBookingResponse;
     }
 
     /* END - Request Query Params */

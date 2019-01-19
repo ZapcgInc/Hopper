@@ -2,6 +2,7 @@ package com.hopper.tests.util.validations;
 
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.payment.PaymentOptionResponse;
+import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
@@ -12,13 +13,7 @@ import java.util.Optional;
  */
 public class PaymentOptionsResponseValidationUtil
 {
-    enum ValidatorField
-    {
-        CARD_TYPE,
-        ;
-    }
-
-    public static void validate(final TestContext context, ValidatorField field)
+    public static void validate(final TestContext context, ResponseValidationField field)
     {
         switch (field)
         {

@@ -7,69 +7,53 @@ import com.hopper.tests.model.response.Rate;
 import com.hopper.tests.model.response.Room;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.shopping.CancelPolicies;
-import io.restassured.response.Response;
+import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Util class for Shopping Response Validations
  */
 public class ShoppingResponseValidationUtil
 {
-    enum ValidatorField
-    {
-        PRICE_CHECK_LINK,
-        PAYMENT_OPTIONS_LINK,
-        DEPOSIT_POLICIES_LINK,
-        CANCEL_PENALTIES,
-        AVAILABLE_ROOMS,
-        AMENITIES,
-        ;
-    }
 
-
-    public static void validateFieldValueNotEqualTo(final TestContext context, String validateField, String maxValue)
+    public static void validate(final TestContext context, final ResponseValidationField validateField, final List<String> expectedValues)
     {
         switch (validateField)
         {
-            case "price_check.href":
+            case PRICE_CHECK_LINK:
             {
-                _validateRateFields(context, ValidatorField.PRICE_CHECK_LINK, maxValue);
+                _validateRateFields(context, ResponseValidationField.PRICE_CHECK_LINK, expectedValues);
                 break;
             }
-            case "payment_option.href":
+            case PAYMENT_OPTIONS_LINK:
             {
-                _validateRateFields(context, ValidatorField.PAYMENT_OPTIONS_LINK, maxValue);
+                _validateRateFields(context, ResponseValidationField.PAYMENT_OPTIONS_LINK, expectedValues);
                 break;
             }
-            case "links.deposit_policies":
+            case DEPOSIT_POLICIES_LINK:
             {
-                _validateRateFields(context, ValidatorField.DEPOSIT_POLICIES_LINK, maxValue);
+                _validateRateFields(context, ResponseValidationField.DEPOSIT_POLICIES_LINK, expectedValues);
                 break;
             }
-            case "links.shop.href":
+            case CANCEL_PENALTIES:
             {
-                _validateHrefInShop(context.getResponse(RequestType.SHOPPING));
+                _validateRateFields(context, ResponseValidationField.CANCEL_PENALTIES, expectedValues);
                 break;
             }
-            case "cancel_penalties" :
+            case AVAILABLE_ROOMS:
             {
-                _validateRateFields(context, ValidatorField.CANCEL_PENALTIES, maxValue);
+                _validateRateFields(context, ResponseValidationField.AVAILABLE_ROOMS, expectedValues);
                 break;
             }
-            case "available_rooms":
+            case AMENITIES:
             {
-                _validateRateFields(context, ValidatorField.AVAILABLE_ROOMS, maxValue);
-                break;
-            }
-            case "amenities":
-            {
-                _validateRateFields(context, ValidatorField.AMENITIES, maxValue);
+                _validateRateFields(context, ResponseValidationField.AMENITIES, expectedValues);
                 break;
             }
             default:
@@ -79,7 +63,7 @@ public class ShoppingResponseValidationUtil
         }
     }
 
-    private static void _validateRateFields(final TestContext context, ValidatorField validatorField, String maxValue)
+    private static void _validateRateFields(final TestContext context, ResponseValidationField validatorField, final List<String> expectedValues)
     {
         for (Property property : context.getShoppingResponse().getProperties())
         {
@@ -89,6 +73,10 @@ public class ShoppingResponseValidationUtil
                 {
                     switch (validatorField)
                     {
+                        case MERCHANT_OF_RECORD:
+                        {
+                            _validateMerchantOfRecord(rate, room.getId(), expectedValues);
+                        }
                         case PRICE_CHECK_LINK:
                         {
                             _priceCheckLinkValidator(rate, room.getId());
@@ -111,7 +99,7 @@ public class ShoppingResponseValidationUtil
                         }
                         case AVAILABLE_ROOMS:
                         {
-                            _availableRoomsValidator(rate, room.getId(), maxValue);
+                            _availableRoomsValidator(rate, room.getId(), expectedValues.get(0));
                             break;
                         }
                         case AMENITIES:
@@ -137,7 +125,8 @@ public class ShoppingResponseValidationUtil
         }
 
         rate.getAmenities()
-                .forEach(amenity -> {
+                .forEach(amenity ->
+                {
                     if ((StringUtils.isNotEmpty(amenity.getId()) && StringUtils.isEmpty(amenity.getName()))
                             || (StringUtils.isEmpty(amenity.getId()) && StringUtils.isNotEmpty(amenity.getName())))
                     {
@@ -184,53 +173,95 @@ public class ShoppingResponseValidationUtil
     // TODO: clean up this code.
     private static boolean validateStartEndDate(String checkin, String checkout, String startDate, String endDate)
     {
-        boolean flag = false;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try
         {
             if (sdf.parse(startDate).before(sdf.parse(checkin)) && sdf.parse(endDate).before(sdf.parse(checkout)))
             {
-                flag = true;
+                return true;
             }
         }
         catch (ParseException e)
         {
             Assert.fail("Unable to Parse dates");
         }
-        return flag;
+
+        return false;
     }
 
     private static void _priceCheckLinkValidator(final Rate rate, final String roomId)
     {
         for (BedGroups bedGroup : rate.getBedGroups())
         {
-            Assert.assertTrue("Response doesn't contain Price Check Link for Room Id" + roomId, bedGroup.getLinks().containsKey("price_check"));
-            Assert.assertTrue("Price Check Method empty of Room Id" + roomId, StringUtils.isNotEmpty(bedGroup.getLinks().get("price_check").getMethod()));
-            Assert.assertTrue("Price Check HREF empty of Room Id" + roomId, StringUtils.isNotEmpty(bedGroup.getLinks().get("price_check").getHref()));
+            CommonValidationUtil.validateLink(
+                    bedGroup.getLinks().get("price_check"),
+                    RequestType.SHOPPING,
+                    "room ID" + roomId,
+                    "price_check"
+            );
         }
     }
 
     private static void _paymentOptionsLinkValidator(final Rate rate, final String roomId)
     {
-        Assert.assertTrue("Response doesn't contain Payment Options Link for Room Id" + roomId, rate.getLinks().containsKey("payment_options"));
-        Assert.assertTrue("Payment Options Method empty of Room Id" + roomId, StringUtils.isNotEmpty(rate.getLinks().get("payment_options").getMethod()));
-        Assert.assertTrue("Payment Options HREF empty of Room Id" + roomId, StringUtils.isNotEmpty(rate.getLinks().get("payment_options").getHref()));
+        CommonValidationUtil.validateLink(
+                rate.getLinks().get("payment_options"),
+                RequestType.SHOPPING,
+                "room ID" + roomId,
+                "payment_options"
+        );
     }
 
     private static void _depositPoliciesLinkValidator(final Rate rate, final String roomId)
     {
-        Assert.assertTrue("Response doesn't contain Deposit Policies Link for Room Id" + roomId, rate.getLinks().containsKey("payment_options"));
-        Assert.assertTrue("Deposit Policies Method empty of Room Id" + roomId, StringUtils.isNotEmpty(rate.getLinks().get("payment_options").getMethod()));
-        Assert.assertTrue("Deposit Policies HREF empty of Room Id" + roomId, StringUtils.isNotEmpty(rate.getLinks().get("payment_options").getHref()));
+        if (rate.isDepositRequired())
+        {
+            CommonValidationUtil.validateLink(
+                    rate.getLinks().get("deposit_policies"),
+                    RequestType.SHOPPING,
+                    "room ID" + roomId,
+                    "deposit_policies"
+            );
+
+        }
     }
 
-    private static void _validateHrefInShop(Response restResponse)
+    private static void _validateMerchantOfRecord(final Rate rate, final String roomId, List<String> expectedValues)
     {
-        HashMap<String, HashMap<String, HashMap>> roomPriceCheckMap = restResponse.jsonPath().get(".");
-        if ("sold_out".equals(roomPriceCheckMap.get("status")))
+        if (!expectedValues.contains(rate.getMerchantOfRecord()))
         {
-            String hrefShop = (String) roomPriceCheckMap.get("links").get("shop").get("href");
-            Assert.assertTrue("href is not found", hrefShop != null);
+            Assert.fail(" merchant record field does not match any of the expected values for roomId :[" + roomId + "]");
+        }
+    }
+
+    private static void _validatePropertyId(TestContext testContext)
+    {
+        List<String> requestPropertyIds = testContext.getParamValues(RequestType.SHOPPING, "property_id");
+
+        if (requestPropertyIds == null || requestPropertyIds.isEmpty())
+        {
+            return;
+        }
+
+        List<String> responsePropertyIds = testContext.getShoppingResponse().getProperties()
+                .stream()
+                .map(Property::getPropertyId)
+                .collect(Collectors.toList());
+
+
+        if (responsePropertyIds.size() <= requestPropertyIds.size())
+        {
+            responsePropertyIds.forEach(id ->
+            {
+                if (!requestPropertyIds.contains(id))
+                {
+                    Assert.fail("The propertyId: " + id + " is not present in the request");
+                }
+            });
+        }
+        else
+        {
+            Assert.fail("Property Ids in the response is more than the requested response");
         }
     }
 }

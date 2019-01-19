@@ -1,7 +1,7 @@
 package com.hopper.tests.constants;
 
 /**
- * Constants the define the type of API Request
+ * ResponseValidationField the define the type of API Request
  */
 public enum RequestType
 {

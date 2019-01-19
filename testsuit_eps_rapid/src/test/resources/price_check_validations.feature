@@ -106,11 +106,11 @@ Scenario Outline: PreBooking API validation for "href" in "<field>"
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be 200
-    And the element "links.<field>.href"  for "PRE_BOOKING" should not be "null"
+    And the element "<field>"  for "PRE_BOOKING" should not be "null"
     Examples:
     |field|
-    |book |
-    |shop |
+    |BOOKING_LINK |
+    |SHOPPING_LINK |
 
 Scenario: PreBooking API validation for "status"
   Given run shopping

@@ -1,19 +1,17 @@
 package com.hopper.tests.util.validations;
 
+import com.google.common.collect.ImmutableList;
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.model.response.Property;
 import com.hopper.tests.model.TestContext;
+import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import io.restassured.response.Response;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Util class for Response Validations
@@ -56,14 +54,14 @@ public class ResponseValidationUtil
             switch (validationField)
             {
                 case "available_rooms":
-                    ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, "available_rooms", maxValue);
+                    ShoppingResponseValidationUtil.validate(context, ResponseValidationField.valueOf(validationField), ImmutableList.of(maxValue));
                     break;
             }
         }
 
     }
 
-    public static void validateNodeForValues(final Response restResponse, final String node, List<String> expectedValues) throws ParseException
+    public static void validateNodeForValues(final Response restResponse, final String node, List<String> expectedValues)
     {
         switch (node)
         {
@@ -137,17 +135,17 @@ public class ResponseValidationUtil
         {
             case SHOPPING:
             {
-                ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, field, value);
+                ShoppingResponseValidationUtil.validate(context, ResponseValidationField.valueOf(field), ImmutableList.of(value));
                 break;
             }
             case PAYMENT_OPTIONS:
             {
-                PaymentOptionsResponseValidationUtil.validate(context, PaymentOptionsResponseValidationUtil.ValidatorField.CARD_TYPE);
+                PaymentOptionsResponseValidationUtil.validate(context, ResponseValidationField.valueOf(field));
                 break;
             }
             case PRE_BOOKING:
             {
-                PreBookingValidationUtil.validateField(context, "links.book.href");
+                PreBookingValidationUtil.validateField(context, ResponseValidationField.valueOf(field), null);
                 break;
             }
             default:
@@ -180,15 +178,12 @@ public class ResponseValidationUtil
         }
     }
 
-    public static void validateResponseBodyForNode(String node, Map<String, String> paramMap, Response response, TestContext context) throws ParseException
+    public static void validateResponseBodyForNode(final String node, final RequestType requestType, final TestContext context) throws ParseException
     {
-        switch (node)
+        switch (requestType)
         {
-            case "cancel_policies":
-                ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, "cancel_penalties", null);
-                break;
-            case "amenities":
-                ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, "amenities", null);
+            case SHOPPING:
+                ShoppingResponseValidationUtil.validate(context, ResponseValidationField.valueOf(node), null);
                 break;
             default:
                 System.out.println("Request Not Present");
@@ -444,64 +439,25 @@ public class ResponseValidationUtil
         }
     }
 
-    private static void _validatePropertyId(TestContext testContext)
-    {
-        List<String> requestPropertyIds = testContext.getParamValues(RequestType.SHOPPING, "property_id");
-
-        if (requestPropertyIds == null || requestPropertyIds.isEmpty())
-        {
-            return;
-        }
-
-        List<String> responsePropertyIds = testContext.getShoppingResponse().getProperties()
-                .stream()
-                .map(Property::getPropertyId)
-                .collect(Collectors.toList());
-
-
-        if (responsePropertyIds.size() <= requestPropertyIds.size())
-        {
-            responsePropertyIds.forEach(id ->
-            {
-                if (!requestPropertyIds.contains(id))
-                {
-                    Assert.fail("The propertyId: " + id + " is not present in the request");
-                }
-            });
-        }
-        else
-        {
-            Assert.fail("Property Ids in the response is more than the requested response");
-        }
-    }
-
-
-    public static void validateFieldValueBelongsToExpectedValues(Response response, String field, List<String> values)
+    public static void validateFieldValueBelongsToExpectedValues(String field, TestContext context, RequestType requestType, List<String> values)
     {
         switch (field)
         {
             case "merchant_of_record_SHOPPING":
-                validateMerchantOfRecord(response, values);
+                ShoppingResponseValidationUtil.validate(context, ResponseValidationField.valueOf(field), values);
                 break;
             case "nightly_type_SHOPPING":
-                validateNightlyTypes(response, values);
+                //validateNightlyTypes(response, values);
                 break;
             case "stay_node_SHOPPING":
-                validateStayNode(response, values);
+                //validateStayNode(response, values);
                 break;
             case "stay_node_PRE_BOOKING":
-                validateStayNodePreBooking(response, values);
+                //validateStayNodePreBooking(response, values);
             case "status_PRE_BOOKING":
-                validateStatus(response, values);
+                PreBookingValidationUtil.validateField(context, ResponseValidationField.valueOf(field), values);
                 break;
         }
-    }
-
-    private static void validateStatus(Response response, List<String> values)
-    {
-        HashMap<String, Object> roomRateMap = response.jsonPath().get(".");
-        String status = (String) roomRateMap.get("status");
-        Assert.assertTrue("status invalid", values.contains(status));
     }
 
     private static void validateNightlyTypes(Response response, List<String> expectedValues)

@@ -14,4 +14,16 @@ public class PreBookingResponse
 
     @JsonProperty("links")
     private Map<String, Link> links;
+
+    public PreBookingResponse(){}
+
+    public String getStatus()
+    {
+        return status;
+    }
+
+    public Map<String, Link> getLinks()
+    {
+        return links;
+    }
 }

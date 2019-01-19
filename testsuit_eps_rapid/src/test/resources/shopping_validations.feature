@@ -345,7 +345,7 @@ Feature: Validations for Availability API
      Given Basic web application is running
      And run shopping
      Then the response code for "SHOPPING" should be "200"
-     And the element "available_rooms" count per "rooms" for "SHOPPING" should be between "0" and "2147483647"
+     And the element "AVAILABLE_ROOMS" count per "rooms" for "SHOPPING" should be between "0" and "2147483647"
 
   @business_test
   Scenario: Availability API response validation for "merchant_of_records"
@@ -359,11 +359,11 @@ Feature: Validations for Availability API
       Given Basic web application is running
       And run shopping
       Then the response code for "SHOPPING" should be "200"
-      And the element "<field>.href"  for "SHOPPING" should not be "null"
+      And the element "<field>"  for "SHOPPING" should not be "null"
       Examples:
       |field|
-      |price_check|
-      |payment_option|
+      |PRICE_CHECK_LINK|
+      |PAYMENT_OPTIONS_LINK|
 
   @business_test
   Scenario: Availability API response validation for "cancel_policies" if "refundable_rates" sets to "true"
@@ -371,14 +371,14 @@ Feature: Validations for Availability API
       And set checkin "05" from today with lengthOfStay "2"
       And run shopping
       Then the response code for "SHOPPING" should be "200"
-      And the element "cancel_policies" start and end date (under cancel_penalties) for "SHOPPING" are within check in and check out dates
+      And the element "CANCEL_PENALTIES" start and end date (under cancel_penalties) for "SHOPPING" are within check in and check out dates
 
   @business_test
   Scenario: Availability API response validation for "amenities"
        Given Basic web application is running
        And run shopping
        Then the response code for "SHOPPING" should be "200"
-       And the element "amenities" for "SHOPPING" either have both amenityId and description or have no amenity ID and description (mutually inclusive)
+       And the element "AMENITIES" for "SHOPPING" either have both amenityId and description or have no amenity ID and description (mutually inclusive)
 
   @business_test
   Scenario: Availability API response validation for "fenced_deal"
@@ -392,7 +392,7 @@ Feature: Validations for Availability API
     Given Basic web application is running
     And run shopping
     Then the response code for "SHOPPING" should be "200"
-    And the element "links.deposit_policies"  for "SHOPPING" should not be "null"
+    And the element "DEPOSIT_POLICIES_LINK"  for "SHOPPING" should not be "null"
 
   @business_test
   Scenario: Availability API response validation for "stay_node"

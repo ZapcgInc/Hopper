@@ -16,6 +16,7 @@ import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
 import com.hopper.tests.util.parser.PaymentOptionResponseParser;
+import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.api.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
@@ -177,7 +178,7 @@ public class GlobalTestScenarioDefinitions
         ).get();
 
         m_testContext.setResponse(RequestType.PRE_BOOKING, response);
-
+        m_testContext.setPreBookingResponse(PreBookingResponseParser.parse(response));
     }
 
     @When("^run paymentOptions$")
@@ -223,7 +224,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^user should see \"(.*?)\" response with paris on the filtered \"(.*?)\" node$")
-    public void user_should_see_response_with_paris_on_the_filtered_node(String requestType, final String field, final DataTable expectedResponse) throws Throwable
+    public void user_should_see_response_with_paris_on_the_filtered_node(String requestType, final String field, final DataTable expectedResponse)
     {
         final Map<String, String> expectedResponseMap = expectedResponse.asMap(String.class, String.class);
 
@@ -235,13 +236,13 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be (\\d+)$")
-    public void the_element_count_per_for_should_be(String field, String arg2, String requestType, int expectedValue) throws Throwable
+    public void the_element_count_per_for_should_be(String field, String arg2, String requestType, int expectedValue)
     {
         ResponseValidationUtil.validateArraySize(m_testContext.getResponse(RequestType.valueOf(requestType)), field, expectedValue);
     }
 
     @Then("^validate \"(.*?)\" response element \"(.*?)\" matches values \"(.*?)\"$")
-    public void validate_response_element_matches_values(String requestType, String node, String values) throws Throwable
+    public void validateResponseField(String requestType, String node, String values) throws Throwable
     {
         final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
@@ -255,15 +256,20 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^the element \"(.*?)\" for \"(.*?)\" should have value belongs to \"(.*?)\"$")
-    public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedValues) throws Throwable
+    public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedValues)
     {
         final List<String> listOfValues = Arrays.stream(expectedValues.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
-        ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(m_testContext.getResponse(RequestType.valueOf(requestType)), field + "_" + requestType, listOfValues);
+
+        ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(
+                field,
+                m_testContext,
+                RequestType.valueOf(requestType),
+                listOfValues);
     }
 
     @Then("^the element \"(.*?)\"  for \"(.*?)\" should not be \"(.*?)\"$")
-    public void the_element_for_should_not_be(String field, String requestType, String value) throws Throwable
+    public void the_element_for_should_not_be(String field, String requestType, String value)
     {
         ResponseValidationUtil.validateFieldValueNotEqualTo(
                 m_testContext,
@@ -281,13 +287,13 @@ public class GlobalTestScenarioDefinitions
     @Then("^the element \"(.*?)\" start and end date \\(under cancel_penalties\\) for \"(.*?)\" are within check in and check out dates$")
     public void validateShoppingCancelPenalties(String field, String requestType) throws Throwable
     {
-        ResponseValidationUtil.validateResponseBodyForNode(field, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)), m_testContext);
+        ResponseValidationUtil.validateResponseBodyForNode(field, RequestType.valueOf(requestType), m_testContext);
     }
 
     @Then("^the element \"(.*?)\" for \"(.*?)\" either have both amenityId and description or have no amenity ID and description \\(mutually inclusive\\)$")
     public void the_element_for_either_have_both_amenity_ID_and_description_or_have_no_amenity_ID_and_description_mutually_inclusive(String field, String requestType) throws Throwable
     {
-        ResponseValidationUtil.validateResponseBodyForNode(field + "_" + requestType, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)), m_testContext);
+        ResponseValidationUtil.validateResponseBodyForNode(field, RequestType.valueOf(requestType), m_testContext);
     }
 
     @Then("^validate that \"(.*?)\" for \"(.*?)\" is the sum of individual room stay values with taxes and fees$")
