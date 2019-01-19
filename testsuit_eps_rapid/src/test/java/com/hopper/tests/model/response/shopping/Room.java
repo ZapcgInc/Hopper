@@ -1,9 +1,8 @@
-package com.hopper.tests.model.response;
+package com.hopper.tests.model.response.shopping;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
-import com.hopper.tests.model.response.Rate;
 
 import java.util.List;
 

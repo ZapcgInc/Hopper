@@ -7,6 +7,10 @@ import io.restassured.response.Response;
 
 import java.util.function.Supplier;
 
+/**
+ * Factory Class for {@link Response} Supplier.
+ * Calls the End point and returns the Response.
+ */
 public class ResponseSupplierFactory
 {
     public static Supplier<Response> create(final TestContext criteria,

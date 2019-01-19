@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableList;
 import com.hopper.tests.authorization.Authorization;
 
 import com.hopper.tests.constants.GlobalConstants;
@@ -20,6 +21,8 @@ import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.api.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
+import com.hopper.tests.util.validations.constants.ResponseValidationField;
+import com.hopper.tests.util.validations.model.Range;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
@@ -39,6 +42,18 @@ public class GlobalTestScenarioDefinitions
 {
     private TestContext m_testContext;
     private CheckAPIAvailability m_checkAPIAvailability;
+
+    @Before
+    public void before(Scenario scenario)
+    {
+        printTestDetails(scenario);
+    }
+
+    @After
+    public void after(Scenario scenario)
+    {
+        printTestStatus(scenario);
+    }
 
     @Given("^setup for partner \"(.*?)\"$")
     public void setup(final String partnerName)
@@ -218,7 +233,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^user should see json response with paris on the filtered \"(.*?)\" node$")
-    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse) throws Throwable
+    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse)
     {
         user_should_see_response_with_paris_on_the_filtered_node("SHOPPING", field, expectedResponse);
     }
@@ -235,99 +250,119 @@ public class GlobalTestScenarioDefinitions
         );
     }
 
-    @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be (\\d+)$")
-    public void the_element_count_per_for_should_be(String field, String arg2, String requestType, int expectedValue)
-    {
-        ResponseValidationUtil.validateArraySize(m_testContext.getResponse(RequestType.valueOf(requestType)), field, expectedValue);
-    }
-
     @Then("^validate \"(.*?)\" response element \"(.*?)\" matches values \"(.*?)\"$")
-    public void validateResponseField(String requestType, String node, String values) throws Throwable
+    public void validateResponseField(String requestType, String node, String values)
     {
         final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
-        ResponseValidationUtil.validateNodeForValues(m_testContext.getResponse(RequestType.valueOf(requestType)), node + "_" + requestType, listOfValues);
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(node),
+                RequestType.valueOf(requestType),
+                m_testContext,
+                listOfValues);
     }
 
     @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be between \"(.*?)\" and \"(.*?)\"$")
-    public void the_element_count_per_for_should_be_between_and(String validationField, String parentNode, String requestType, String minValue, String maxValue)
+    public void validateRange(String validationField, String parentNode, String requestType, String minValue, String maxValue)
     {
-        ResponseValidationUtil.validateArraySizeBetweenVal(RequestType.valueOf(requestType), m_testContext, validationField, minValue, maxValue);
+        final Range<Integer> range = new Range<>(Integer.parseInt(minValue),
+                Integer.parseInt(maxValue),
+                Range.BoundType.INCLUSIVE);
+
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(validationField),
+                RequestType.valueOf(requestType),
+                m_testContext,
+                range
+        );
     }
 
     @Then("^the element \"(.*?)\" for \"(.*?)\" should have value belongs to \"(.*?)\"$")
-    public void the_element_for_should_have_value_belongs_to(String field, String requestType, String expectedValues)
+    public void validateValueBelongsTo(String field, String requestType, String expectedValues)
     {
         final List<String> listOfValues = Arrays.stream(expectedValues.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
 
-        ResponseValidationUtil.validateFieldValueBelongsToExpectedValues(
-                field,
-                m_testContext,
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(field),
                 RequestType.valueOf(requestType),
+                m_testContext,
                 listOfValues);
     }
 
-    @Then("^the element \"(.*?)\"  for \"(.*?)\" should not be \"(.*?)\"$")
-    public void the_element_for_should_not_be(String field, String requestType, String value)
-    {
-        ResponseValidationUtil.validateFieldValueNotEqualTo(
-                m_testContext,
-                RequestType.valueOf(requestType),
-                field,
-                value);
-    }
-
     @Then("^the \"(.*?)\" for \"(.*?)\" should be equal to \"(.*?)\"$")
-    public void the_for_should_be_equal_to(String field1, String responseType, String field2)
+    public void validateValueEqualsTo(String validationField, String requestType, String expectedValue)
     {
-        ResponseValidationUtil.validateFieldsInResponseBody(field1, m_testContext.getResponse(RequestType.valueOf(responseType)), field2);
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(validationField),
+                RequestType.valueOf(requestType),
+                m_testContext,
+                ImmutableList.of(expectedValue)
+        );
     }
 
     @Then("^the element \"(.*?)\" start and end date \\(under cancel_penalties\\) for \"(.*?)\" are within check in and check out dates$")
-    public void validateShoppingCancelPenalties(String field, String requestType) throws Throwable
+    public void validateShoppingCancelPenalties(String validationField, String requestType)
     {
-        ResponseValidationUtil.validateResponseBodyForNode(field, RequestType.valueOf(requestType), m_testContext);
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(validationField),
+                RequestType.valueOf(requestType),
+                m_testContext)
+        ;
     }
 
     @Then("^the element \"(.*?)\" for \"(.*?)\" either have both amenityId and description or have no amenity ID and description \\(mutually inclusive\\)$")
-    public void the_element_for_either_have_both_amenity_ID_and_description_or_have_no_amenity_ID_and_description_mutually_inclusive(String field, String requestType) throws Throwable
+    public void validateAmenities(String validationField, String requestType)
     {
-        ResponseValidationUtil.validateResponseBodyForNode(field, RequestType.valueOf(requestType), m_testContext);
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(validationField),
+                RequestType.valueOf(requestType),
+                m_testContext)
+        ;
     }
 
     @Then("^validate that \"(.*?)\" for \"(.*?)\" is the sum of individual room stay values with taxes and fees$")
-    public void validate_that_for_is_the_sum_of_individual_room_stay_values_with_taxes_and_fees(String field, String responseType) throws Throwable
+    public void validateTotalPrice(String field, String requestType)
     {
-        ResponseValidationUtil.validateNodeInResponseBody(field + "_" + responseType, m_testContext.getResponse(RequestType.valueOf(responseType)));
+        ResponseValidationUtil.validate(ResponseValidationField.valueOf(field), RequestType.valueOf(requestType), m_testContext);
+    }
+
+    @And("^validate \"([^\"]*)\" for \"([^\"]*)\" should be (\\d+)$")
+    public void validateCount(String validationField, String requestType, int count)
+    {
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(validationField),
+                RequestType.valueOf(requestType),
+                m_testContext,
+                count
+        );
     }
 
 
-    @Before
-    public void before(Scenario scenario)
+    @And("^validate \"([^\"]*)\"  for \"([^\"]*)\"$")
+    public void validate(String validationField, String requestType)
     {
-        printTestDetails(scenario);
+        ResponseValidationUtil.validate(
+                ResponseValidationField.valueOf(validationField),
+                RequestType.valueOf(requestType),
+                m_testContext
+        );
     }
 
     private void printTestDetails(Scenario scenario)
     {
         log("======================================Scenario=================================================");
-        log("Scearnio id: " + scenario.getId());
-        log("Scenario name: " + scenario.getName());
-        log("Scenario stage: " + scenario.getSourceTagNames());
-        log("Scenario status: Started at :" + new java.util.Date());
+        log("Scenario ID                 : " + scenario.getId());
+        log("Scenario Name               : " + scenario.getName());
+        log("Scenario Stage              : " + scenario.getSourceTagNames());
+        log("Scenario Status: Started at : " + new java.util.Date());
     }
 
-    @After
-    public void after(Scenario scenario)
-    {
-        printTestStatus(scenario);
-    }
 
     private void printTestStatus(Scenario scenario)
     {
-        log("Scenario success: " + (!scenario.isFailed()));
-        log("Scenario status: " + scenario.getStatus() + " at :" + new java.util.Date());
+        log("Scenario Success : " + (!scenario.isFailed()));
+        log("Scenario Status  : " + scenario.getStatus() + " at :" + new java.util.Date());
         if (scenario.isFailed())
         {
             log("Scenario Execution Details :");
@@ -339,4 +374,5 @@ public class GlobalTestScenarioDefinitions
     {
         System.out.println(line);
     }
+
 }

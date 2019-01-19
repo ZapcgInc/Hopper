@@ -1,7 +1,7 @@
 package com.hopper.tests.util.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hopper.tests.model.response.Property;
+import com.hopper.tests.model.response.shopping.Property;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import io.restassured.response.Response;
 import org.junit.Assert;

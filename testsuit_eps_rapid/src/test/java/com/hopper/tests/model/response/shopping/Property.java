@@ -1,9 +1,10 @@
-package com.hopper.tests.model.response;
+package com.hopper.tests.model.response.shopping;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
-import com.hopper.tests.model.response.shopping.Amenities;
+import com.google.common.collect.ImmutableMap;
+import com.hopper.tests.model.response.Link;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,6 @@ public class Property
 
     public Map<String, Link> getLinks()
     {
-        return links;
+        return links != null ? links : ImmutableMap.of();
     }
 }

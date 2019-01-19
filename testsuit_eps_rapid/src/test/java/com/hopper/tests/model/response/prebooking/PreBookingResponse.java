@@ -2,7 +2,9 @@ package com.hopper.tests.model.response.prebooking;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.model.response.Link;
+import com.hopper.tests.model.response.RoomPrice;
 
 import java.util.Map;
 
@@ -15,6 +17,9 @@ public class PreBookingResponse
     @JsonProperty("links")
     private Map<String, Link> links;
 
+    @JsonProperty("occupancies")
+    private Map<String, RoomPrice> roomPriceByOccupany;
+
     public PreBookingResponse(){}
 
     public String getStatus()
@@ -25,5 +30,10 @@ public class PreBookingResponse
     public Map<String, Link> getLinks()
     {
         return links;
+    }
+
+    public Map<String, RoomPrice> getRoomPriceByOccupany()
+    {
+        return roomPriceByOccupany != null ? roomPriceByOccupany : ImmutableMap.of();
     }
 }

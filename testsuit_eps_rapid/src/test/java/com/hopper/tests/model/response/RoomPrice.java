@@ -2,6 +2,7 @@ package com.hopper.tests.model.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -18,11 +19,11 @@ public class RoomPrice
 
     public List<List<Price>> getNightlyPrice()
     {
-        return nightlyPrice;
+        return nightlyPrice != null ? nightlyPrice : ImmutableList.of();
     }
 
     public List<Price> getStayPrice()
     {
-        return stayPrice;
+        return stayPrice != null ? stayPrice : ImmutableList.of();
     }
 }

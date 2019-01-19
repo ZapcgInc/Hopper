@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Simple POJO to Hold Request Header Parameters.
+ */
 public class RequestParams
 {
     private final Map<String, String> m_params = new HashMap<>();

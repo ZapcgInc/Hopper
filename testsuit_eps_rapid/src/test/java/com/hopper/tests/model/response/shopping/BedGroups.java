@@ -1,8 +1,9 @@
-package com.hopper.tests.model.response;
+package com.hopper.tests.model.response.shopping;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import com.hopper.tests.model.response.Link;
 
 import java.util.Map;
 

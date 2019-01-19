@@ -1,11 +1,13 @@
-package com.hopper.tests.util.validations;
+package com.hopper.tests.util.validations.paymentoptions;
 
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.payment.PaymentOptionResponse;
 import com.hopper.tests.util.validations.constants.ResponseValidationField;
+import com.hopper.tests.util.validations.model.Range;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -13,15 +15,48 @@ import java.util.Optional;
  */
 public class PaymentOptionsResponseValidationUtil
 {
-    public static void validate(final TestContext context, ResponseValidationField field)
+    public static void validate(final TestContext context, final ResponseValidationField validationField)
     {
-        switch (field)
+        switch (validationField)
         {
             case CARD_TYPE:
             {
                 _validateCardType(context);
                 break;
             }
+            default:
+            {
+                throw new UnsupportedOperationException("field [" + validationField.name() + "], not supported.");
+            }
+        }
+    }
+
+    public static void validate(final TestContext context, final ResponseValidationField validateField, final int count)
+    {
+        switch (validateField)
+        {
+            default:
+            {
+                throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
+            }
+        }
+    }
+
+    public static void validate(final TestContext context, ResponseValidationField field, Range<Integer> expectedRange)
+    {
+        switch (field)
+        {
+            default:
+            {
+                throw new UnsupportedOperationException("field [" + field.name() + "], not supported.");
+            }
+        }
+    }
+
+    public static void validate(final TestContext context, ResponseValidationField field, List<String> expectedValues)
+    {
+        switch (field)
+        {
             default:
             {
                 throw new UnsupportedOperationException("field [" + field.name() + "], not supported.");
