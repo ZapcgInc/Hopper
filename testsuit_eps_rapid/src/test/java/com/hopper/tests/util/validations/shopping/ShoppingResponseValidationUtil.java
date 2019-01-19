@@ -400,9 +400,9 @@ public class ShoppingResponseValidationUtil
         }
     }
 
-    private static void _validatePropertyId(TestContext testContext)
+    private static void _validatePropertyId(final TestContext testContext)
     {
-        List<String> requestPropertyIds = testContext.getParamValues(RequestType.SHOPPING, "property_id");
+        final List<String> requestPropertyIds = testContext.getParamValues(RequestType.SHOPPING, "property_id");
 
         if (requestPropertyIds == null || requestPropertyIds.isEmpty())
         {
@@ -413,7 +413,6 @@ public class ShoppingResponseValidationUtil
                 .stream()
                 .map(Property::getPropertyId)
                 .collect(Collectors.toList());
-
 
         if (responsePropertyIds.size() <= requestPropertyIds.size())
         {
