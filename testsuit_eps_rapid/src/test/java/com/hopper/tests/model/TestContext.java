@@ -35,7 +35,7 @@ public class TestContext
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
     private EnumMap<RequestType, Response> m_requestTypeToResponse = new EnumMap<RequestType, Response>(RequestType.class);
 
-    private ShoppingResponse[] m_shoppingResponses;
+    private ShoppingResponse m_shoppingResponse;
 
     public TestContext(final SupportedPartners partner)
     {
@@ -125,14 +125,14 @@ public class TestContext
         m_requestTypeToResponse.put(requestType, response);
     }
 
-    public ShoppingResponse[] getShoppingResponses()
+    public ShoppingResponse getShoppingResponse()
     {
-        return m_shoppingResponses;
+        return m_shoppingResponse;
     }
 
-    public void setShoppingResponses(ShoppingResponse[] shoppingResponses)
+    public void setShoppingResponse(ShoppingResponse shoppingResponse)
     {
-        m_shoppingResponses = shoppingResponses;
+        m_shoppingResponse = shoppingResponse;
     }
 
     /* START - Request Query Params */

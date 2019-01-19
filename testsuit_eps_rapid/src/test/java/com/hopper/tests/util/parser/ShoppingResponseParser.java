@@ -1,6 +1,7 @@
 package com.hopper.tests.util.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hopper.tests.model.Property;
 import com.hopper.tests.model.ShoppingResponse;
 import io.restassured.response.Response;
 import org.junit.Assert;
@@ -13,13 +14,21 @@ import java.io.IOException;
 public class ShoppingResponseParser
 {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    public static ShoppingResponse[] parse(final Response apiResponse)
+    public static ShoppingResponse parse(final Response apiResponse)
     {
         Assert.assertNotNull("Shopping API response is null", apiResponse);
 
         try
         {
-            return OBJECT_MAPPER.readValue(apiResponse.getBody().asString(), ShoppingResponse[].class);
+            if (apiResponse.getStatusCode() == 200)
+            {
+                Property[] properties = OBJECT_MAPPER.readValue(apiResponse.getBody().asString(), Property[].class);
+                return new ShoppingResponse(properties);
+            }
+            else
+            {
+                return OBJECT_MAPPER.readValue(apiResponse.getBody().asString(), ShoppingResponse.class);
+            }
         }
         catch (IOException e)
         {

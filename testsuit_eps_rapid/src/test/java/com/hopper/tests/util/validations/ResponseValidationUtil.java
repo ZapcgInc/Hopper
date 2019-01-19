@@ -1,6 +1,10 @@
 package com.hopper.tests.util.validations;
 
 import com.hopper.tests.constants.RequestType;
+import com.hopper.tests.model.Property;
+import com.hopper.tests.model.Rate;
+import com.hopper.tests.model.Room;
+import com.hopper.tests.model.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import io.restassured.response.Response;
 import org.apache.commons.collections.CollectionUtils;
@@ -12,7 +16,6 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Util class for Response Validations
@@ -48,14 +51,18 @@ public class ResponseValidationUtil
         Assert.assertTrue(errorMessage, expectedSize == fieldValues.size());
     }
 
-    public static void validateArraySizeBetweenVal(final Response restResponse, String field2, String minValue, String maxValue)
+    public static void validateArraySizeBetweenVal(final RequestType requestType, final TestContext context, String validationField, String minValue, String maxValue)
     {
-        switch (field2)
+        if (requestType == RequestType.SHOPPING)
         {
-            case "available_rooms":
-                validateAvailableRooms(restResponse, maxValue);
-                break;
+            switch (validationField)
+            {
+                case "available_rooms":
+                    validateAvailableRooms(requestType, context, maxValue);
+                    break;
+            }
         }
+
     }
 
     public static void validateNodeforValues(final Response restResponse, final String node, List<String> expectedValues) throws ParseException
@@ -627,22 +634,28 @@ public class ResponseValidationUtil
         }
     }
 
-    private static void validateAvailableRooms(Response restResponse, String maxVal)
+    private static void validateAvailableRooms(final RequestType requestType, final TestContext context, String maxValue)
     {
-        ArrayList<LinkedHashMap> responseAsList = restResponse.as(ArrayList.class);
-        for (LinkedHashMap<String, Object> responseMap : responseAsList)
+        if (requestType == RequestType.SHOPPING)
         {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-            for (LinkedHashMap<String, Object> room : roomsArr)
+            List<Property> properties = context.getShoppingResponse().getProperties();
+            for (Property property : properties)
             {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                String roomId = (String) room.get("id");
-                for (LinkedHashMap<String, Object> rate : rateList)
+                if (property.getRooms() != null)
                 {
-                    int numAvailableRooms = (Integer) rate.get("available_rooms");
-                    if (numAvailableRooms <= 0 || numAvailableRooms > Integer.parseInt(maxVal))
+                    for (Room room : property.getRooms())
                     {
-                        Assert.fail("Number of available rooms in the response is invalid for room_id: " + roomId);
+                        if (room.getRates() != null)
+                        {
+                            for (Rate rate : room.getRates())
+                            {
+                                int numAvailableRooms = rate.getAvailableRooms();
+                                if (numAvailableRooms <= 0 || numAvailableRooms > Integer.parseInt(maxValue))
+                                {
+                                    Assert.fail("Number of available rooms in the response is invalid for room_id: " + room.getId());
+                                }
+                            }
+                        }
                     }
                 }
             }

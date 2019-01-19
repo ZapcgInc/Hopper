@@ -159,14 +159,14 @@ public class GlobalTestScenarioDefinitions
     {
         final Response response = ResponseSupplierFactory.create(m_testContext, GlobalConstants.GET, RequestType.SHOPPING).get();
         m_testContext.setResponse(RequestType.SHOPPING, response);
-        final ShoppingResponse[] shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
-        m_testContext.setShoppingResponses(shoppingResponse);
+        final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(m_testContext.getResponse(RequestType.SHOPPING));
+        m_testContext.setShoppingResponse(shoppingResponse);
     }
 
     @When("^run preBooking$")
     public void runPreBooking()
     {
-        final Link priceCheckLink = m_testContext.getShoppingResponses()[0].getRooms().get(0).getRates().get(0).getBedGroups().get(0).getLinks().get("price_check");
+        final Link priceCheckLink = m_testContext.getShoppingResponse().getProperties().get(0).getRooms().get(0).getRates().get(0).getBedGroups().get(0).getLinks().get("price_check");
 
         m_testContext.setApiPath(RequestType.PRE_BOOKING, priceCheckLink.getHref());
         final Response response = ResponseSupplierFactory.create(
@@ -183,7 +183,7 @@ public class GlobalTestScenarioDefinitions
     public void runPaymentOptions()
     {
 
-        final Link paymentMethodLink = m_testContext.getShoppingResponses()[0].getRooms().get(0).getRates().get(0).getLinks().get("payment_options");
+        final Link paymentMethodLink = m_testContext.getShoppingResponse().getProperties().get(0).getRooms().get(0).getRates().get(0).getLinks().get("payment_options");
 
         m_testContext.setApiPath(RequestType.PAYMENT_OPTIONS, paymentMethodLink.getHref());
 
@@ -248,9 +248,9 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be between \"(.*?)\" and \"(.*?)\"$")
-    public void the_element_count_per_for_should_be_between_and(String field2, String arg2, String requestType, String minValue, String maxValue)
+    public void the_element_count_per_for_should_be_between_and(String validationField, String parentNode, String requestType, String minValue, String maxValue)
     {
-        ResponseValidationUtil.validateArraySizeBetweenVal(m_testContext.getResponse(RequestType.valueOf(requestType)), field2, minValue, maxValue);
+        ResponseValidationUtil.validateArraySizeBetweenVal(RequestType.valueOf(requestType), m_testContext, validationField, minValue, maxValue);
     }
 
     @Then("^the element \"(.*?)\" for \"(.*?)\" should have value belongs to \"(.*?)\"$")

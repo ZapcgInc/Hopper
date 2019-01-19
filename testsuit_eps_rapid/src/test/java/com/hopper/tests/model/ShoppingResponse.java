@@ -1,10 +1,9 @@
 package com.hopper.tests.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Simple Value Object for Shopping Response.
@@ -12,37 +11,20 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ShoppingResponse
 {
-    @JsonProperty("property_id")
-    private String propertyId;
+    private final List<Property> m_properties;
 
-    @JsonProperty("rooms")
-    private List<Room> rooms;
-
-    @JsonProperty("score")
-    private String score;
-
-    @JsonProperty("links")
-    private Map<String, Link> links;
-
-    public ShoppingResponse(){}
-
-    public String getPropertyId()
+    public ShoppingResponse()
     {
-        return propertyId;
+        m_properties = null;
     }
 
-    public List<Room> getRooms()
+    public ShoppingResponse(Property[] properties)
     {
-        return rooms;
+        m_properties = Arrays.asList(properties);
     }
 
-    public String getScore()
+    public List<Property> getProperties()
     {
-        return score;
-    }
-
-    public Map<String, Link> getLinks()
-    {
-        return links;
+        return m_properties;
     }
 }
