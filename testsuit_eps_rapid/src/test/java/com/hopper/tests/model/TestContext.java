@@ -55,6 +55,7 @@ public class TestContext
                 AUTH_HEADER_KEY,
                 Authorization.getAuthKey(config.getPartner(), config.getAuthParams())
         );
+        m_requestTypeToAPIPath.put(RequestType.SHOPPING, config.getShoppingEndPoint());
     }
 
     public SupportedPartners getPartner()

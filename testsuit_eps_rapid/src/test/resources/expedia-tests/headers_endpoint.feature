@@ -10,7 +10,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Missing Authorization header
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And set header "Authorization" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 401
@@ -21,7 +20,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Invalid Authorization header
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And set header "Authorization" value "abc123"
     And run shopping
     Then the response code for "SHOPPING" should be 401
@@ -42,7 +40,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Invalid version
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And for version "1"
     And run shopping
     Then the response code for "SHOPPING" should be 400
@@ -57,7 +54,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Missing version
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And for version "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
@@ -102,7 +98,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Missing Accept-Encoding header
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And set header "Accept-Encoding" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
@@ -113,7 +108,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Invalid Customer IP header
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And set header "Customer IP" value "abc123"
     And run shopping
     Then the response code for "SHOPPING" should be 400
@@ -124,7 +118,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Missing Customer IP header
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And set header "Customer IP" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
@@ -147,7 +140,6 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   @basic_test
   Scenario: Missing User-Agent header
     Given Basic web application is running
-    And with shopping end point "properties/availability"
     And set header "User-Agent" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400

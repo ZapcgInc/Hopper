@@ -16,7 +16,6 @@ Feature: Validations for Availability API
       | rate_option       | closed_user_group |
     And with request DateFormat "yyyy-MM-dd"
     And set checkin "90" from today with lengthOfStay "5"
-    And with shopping end point "properties/availability"
 
 #    And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,0|2"
 #    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
@@ -423,10 +422,3 @@ Feature: Validations for Availability API
     And run shopping
     Then the response code for "SHOPPING" should be "200"
     And the "BILLABLE_CURRENCY" for "SHOPPING" should be equal to "request_currency"
-
-
-
-
-
-
-

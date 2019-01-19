@@ -10,3 +10,4 @@ headers:
 auth_params:
       apikey: mq7ijoev87orvkq4mqo8dr2tf
       secret: 587btntj2ihg5
+shopping_end_point : "properties/availability"

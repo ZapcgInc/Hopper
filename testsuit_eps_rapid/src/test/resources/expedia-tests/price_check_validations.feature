@@ -16,7 +16,6 @@ Feature: Validations for PreBooking API.
       | rate_option       | closed_user_group |
     And with request DateFormat "yyyy-MM-dd"
     And set checkin "90" from today with lengthOfStay "5"
-    And with shopping end point "properties/availability"
 
   #######################   Rapid Test Scenarios
   @rapid_test

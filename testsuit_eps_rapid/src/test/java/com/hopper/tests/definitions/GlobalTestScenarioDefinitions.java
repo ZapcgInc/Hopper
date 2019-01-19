@@ -24,6 +24,7 @@ import com.hopper.tests.util.validations.ResponseValidationUtil;
 import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import com.hopper.tests.util.validations.model.Range;
 import cucumber.api.DataTable;
+import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -323,5 +324,10 @@ public class GlobalTestScenarioDefinitions
                 RequestType.valueOf(requestType),
                 m_testContext
         );
+    }
+
+    @And("^run shopping and preBooking for Booking$")
+    public void runShoppingAndPreBookingForBooking()
+    {
     }
 }

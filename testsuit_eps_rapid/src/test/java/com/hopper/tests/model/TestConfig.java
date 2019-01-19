@@ -29,6 +29,9 @@ public class TestConfig
     @JsonProperty("auth_params")
     private Map<String, String> authParams = new HashMap<>();
 
+    @JsonProperty("shopping_end_point")
+    private String shoppingEndPoint;
+
     public TestConfig(){}
 
     public SupportedPartners getPartner()
@@ -54,5 +57,10 @@ public class TestConfig
     public Map<String, String> getAuthParams()
     {
         return authParams != null ? authParams : ImmutableMap.of();
+    }
+
+    public String getShoppingEndPoint()
+    {
+        return shoppingEndPoint;
     }
 }
