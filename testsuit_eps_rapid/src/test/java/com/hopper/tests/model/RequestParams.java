@@ -1,5 +1,7 @@
 package com.hopper.tests.model;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,5 +47,22 @@ public class RequestParams
     public Map<String, List<String>> getParamsWithMultipleValues()
     {
         return m_paramsWithMultipleValues;
+    }
+
+    public List<String> getParamValues(String paramKey)
+    {
+        final ImmutableList.Builder<String> builder = ImmutableList.builder();
+
+        if (m_params.containsKey(paramKey))
+        {
+            builder.add(m_params.get(paramKey));
+        }
+
+        if (m_paramsWithMultipleValues.containsKey(paramKey))
+        {
+            builder.addAll(m_paramsWithMultipleValues.get(paramKey));
+        }
+
+        return builder.build();
     }
 }

@@ -4,7 +4,6 @@ import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.Property;
 import com.hopper.tests.model.Rate;
 import com.hopper.tests.model.Room;
-import com.hopper.tests.model.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import io.restassured.response.Response;
 import org.apache.commons.collections.CollectionUtils;
@@ -16,6 +15,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Util class for Response Validations
@@ -65,7 +65,7 @@ public class ResponseValidationUtil
 
     }
 
-    public static void validateNodeforValues(final Response restResponse, final String node, List<String> expectedValues) throws ParseException
+    public static void validateNodeForValues(final Response restResponse, final String node, List<String> expectedValues) throws ParseException
     {
         switch (node)
         {
@@ -133,50 +133,39 @@ public class ResponseValidationUtil
         }
     }
 
-    public static void validateFieldValueNotEqualTo(final Response restResponse, String field, String value)
+    public static void validateFieldValueNotEqualTo(final TestContext context, final RequestType requestType, final Response restResponse, String field, String value)
     {
         switch (field)
         {
-            case "price_check_href":
-                validateHrefPriceCheck(restResponse);
-                break;
-            case "payment_option_href":
-                validateHrefPaymentOption(restResponse);
-                break;
             case "links.deposit_policies":
                 validateDepositPolicies(restResponse);
                 break;
             case "links.book.href":
                 validateHrefInBook(restResponse);
                 break;
-            case "links.shop.href":
-                validateHrefInShop(restResponse);
+        }
+    }
+
+    private static void validateFieldValueNotEqualTo(final TestContext context, final RequestType requestType, String field, String value)
+    {
+        switch (requestType)
+        {
+            case SHOPPING:
+            {
+                ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, field, value);
                 break;
-            case "card_type":
-                validateCardType(restResponse);
+            }
+            case PAYMENT_OPTIONS:
+            {
+                PaymentOptionsResponseValidationUtil.validateCardType(context.getResponse(RequestType.PAYMENT_OPTIONS));
+            }
+            default:
+            {
+                throw new UnsupportedOperationException("Request Type : [" + requestType.name() + "], unsupported");
+            }
         }
     }
 
-    private static void validateCardType(Response restResponse)
-    {
-        HashMap<String, HashMap> paymentOptionMap = restResponse.jsonPath().get(".");
-        ArrayList<HashMap> cardOptions = (ArrayList) paymentOptionMap.get("credit_card").get("card_options");
-        cardOptions.forEach(cardOption ->
-        {
-            Assert.assertTrue(
-                    "Card name and Card type is not found", cardOption.get("name") != null && cardOption.get("card_type") != null);
-        });
-    }
-
-    private static void validateHrefInShop(Response restResponse)
-    {
-        HashMap<String, HashMap<String, HashMap>> roomPriceCheckMap = restResponse.jsonPath().get(".");
-        if ("sold_out".equals(roomPriceCheckMap.get("status")))
-        {
-            String hrefShop = (String) roomPriceCheckMap.get("links").get("shop").get("href");
-            Assert.assertTrue("href is not found", hrefShop != null);
-        }
-    }
 
     private static void validateHrefInBook(Response restResponse)
     {
@@ -561,55 +550,6 @@ public class ResponseValidationUtil
         return flag;
     }
 
-    private static void validateHrefPriceCheck(Response restResponse)
-    {
-        ArrayList<LinkedHashMap> responseAsList = restResponse.as(ArrayList.class);
-        for (LinkedHashMap<String, Object> responseMap : responseAsList)
-        {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-            for (LinkedHashMap<String, Object> room : roomsArr)
-            {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                String roomId = (String) room.get("id");
-                for (LinkedHashMap<String, Object> rate : rateList)
-                {
-                    ArrayList<LinkedHashMap> bedGroupsList = (ArrayList) rate.get("bed_groups");
-                    for (LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, String>>> bedgroup : bedGroupsList)
-                    {
-                        String hrefLink = bedgroup.get("links").get("price_check").get("href");
-                        if (StringUtils.isEmpty(hrefLink))
-                        {
-                            Assert.fail("hrefLink empty for roomId" + roomId);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static void validateHrefPaymentOption(Response response)
-    {
-        ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
-        for (LinkedHashMap<String, Object> responseMap : responseAsList)
-        {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-            for (LinkedHashMap<String, Object> room : roomsArr)
-            {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                String roomId = (String) room.get("id");
-                for (LinkedHashMap<String, Object> rate : rateList)
-                {
-                    LinkedHashMap<String, LinkedHashMap> linksMap = (LinkedHashMap) rate.get("links");
-                    LinkedHashMap<String, String> paymentOptionsMap = linksMap.get("payment_options");
-                    String hrefLink = paymentOptionsMap.get("href");
-                    if (StringUtils.isEmpty(hrefLink))
-                    {
-                        Assert.fail("hrefLink empty for roomId" + roomId);
-                    }
-                }
-            }
-        }
-    }
 
     private static void validateMerchantOfRecord(Response response, List<String> values)
     {
@@ -662,36 +602,36 @@ public class ResponseValidationUtil
         }
     }
 
-  /*  private static void validatePropertyId(TestContext testContext)
+    private static void _validatePropertyId(TestContext testContext)
     {
-        ArrayList<LinkedHashMap> responseAsList = testContext.getResponse(RequestType.SHOPPING).as(ArrayList.class);
-        List<String> requestPropIds = new ArrayList<>();
-        ArrayList<String> responsePropIds = new ArrayList<>();
-        for (LinkedHashMap response : responseAsList)
+        List<String> requestPropertyIds = testContext.getParamValues(RequestType.SHOPPING, "property_id");
+
+        if (requestPropertyIds == null || requestPropertyIds.isEmpty())
         {
-            String value = response.get("property_id").toString();
-            responsePropIds.add(value);
+            return;
         }
-        if (testContext.getParamsWithMultipleValues(RequestType.SHOPPING).get("property_id") != null)
+
+        List<String> responsePropertyIds = testContext.getShoppingResponse().getProperties()
+                .stream()
+                .map(Property::getPropertyId)
+                .collect(Collectors.toList());
+
+
+        if (responsePropertyIds.size() <= requestPropertyIds.size())
         {
-            requestPropIds.addAll(testContext.getParamsWithMultipleValues(RequestType.SHOPPING).get("property_id"));
-        }
-        if (testContext.getParams(RequestType.SHOPPING).get("property_id") != null)
-        {
-            requestPropIds.add(testContext.getParams(RequestType.SHOPPING).get("property_id"));
-        }
-        if (responsePropIds.size() <= requestPropIds.size())
-        {
-            requestPropIds.forEach(id->{
-                if(!requestPropIds.contains(id))
-                    Assert.fail("The propertyId: "+id+ " is not present in the request");
+            responsePropertyIds.forEach(id ->
+            {
+                if (!requestPropertyIds.contains(id))
+                {
+                    Assert.fail("The propertyId: " + id + " is not present in the request");
+                }
             });
         }
         else
         {
             Assert.fail("Property Ids in the response is more than the requested response");
         }
-    })*/
+    }
 
 
     public static void validateFieldValueBelongsToExpectedValues(Response response, String field, List<String> values)

@@ -2,6 +2,7 @@ package com.hopper.tests.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -15,6 +16,6 @@ public class BedGroups
 
     public Map<String, Link> getLinks()
     {
-        return links;
+        return links != null ? links : ImmutableMap.of();
     }
 }

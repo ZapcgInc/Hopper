@@ -192,6 +192,12 @@ public class TestContext
     }
 
 
+    public List<String> getParamValues(RequestType requestType, String queryParam)
+    {
+        return m_requestTypeToQueryParams.containsKey(requestType)
+                ? m_requestTypeToQueryParams.get(requestType).getParamValues(queryParam)
+                : null;
+    }
     private void _initRequestParams(RequestType requestType)
     {
         if (!m_requestTypeToQueryParams.containsKey(requestType))

@@ -244,7 +244,7 @@ public class GlobalTestScenarioDefinitions
     {
         final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
-        ResponseValidationUtil.validateNodeforValues(m_testContext.getResponse(RequestType.valueOf(requestType)), node + "_" + requestType, listOfValues);
+        ResponseValidationUtil.validateNodeForValues(m_testContext.getResponse(RequestType.valueOf(requestType)), node + "_" + requestType, listOfValues);
     }
 
     @Then("^the element \"(.*?)\" count per \"(.*?)\" for \"(.*?)\" should be between \"(.*?)\" and \"(.*?)\"$")
@@ -264,7 +264,7 @@ public class GlobalTestScenarioDefinitions
     @Then("^the element \"(.*?)\"  for \"(.*?)\" should not be \"(.*?)\"$")
     public void the_element_for_should_not_be(String field, String requestType, String value) throws Throwable
     {
-        ResponseValidationUtil.validateFieldValueNotEqualTo(m_testContext.getResponse(RequestType.valueOf(requestType)), field, value);
+        ResponseValidationUtil.validateFieldValueNotEqualTo(m_testContext, RequestType.valueOf(requestType), m_testContext.getResponse(RequestType.valueOf(requestType)), field, value);
     }
 
     @Then("^the \"(.*?)\" for \"(.*?)\" should be equal to \"(.*?)\"$")

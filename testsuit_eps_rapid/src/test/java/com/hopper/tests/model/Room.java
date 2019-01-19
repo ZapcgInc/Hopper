@@ -2,6 +2,7 @@ package com.hopper.tests.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -31,6 +32,6 @@ public class Room
 
     public List<Rate> getRates()
     {
-        return rates;
+        return rates != null ? rates : ImmutableList.of();
     }
 }

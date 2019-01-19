@@ -2,6 +2,7 @@ package com.hopper.tests.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,6 @@ public class Rate
 
     public List<BedGroups> getBedGroups()
     {
-        return bedGroups;
+        return bedGroups != null ? bedGroups : ImmutableList.of();
     }
 }

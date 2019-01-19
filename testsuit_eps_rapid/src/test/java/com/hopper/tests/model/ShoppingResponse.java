@@ -1,6 +1,7 @@
 package com.hopper.tests.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 public class ShoppingResponse
 {
     private final List<Property> m_properties;
+    private ErrorResponse errorResponse;
 
     public ShoppingResponse()
     {
@@ -25,6 +27,6 @@ public class ShoppingResponse
 
     public List<Property> getProperties()
     {
-        return m_properties;
+        return m_properties != null ? m_properties : ImmutableList.of();
     }
 }
