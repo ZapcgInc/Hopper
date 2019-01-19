@@ -2,17 +2,7 @@
 Feature: Validations for PreBooking API.
 
   Background:
-    Given setup for partner "EPS"
-    And API at "https://test.ean.com"
-    And for version "2.1"
-    And with request headers
-      | Accept          | application/json |
-      | Accept-Encoding | gzip             |
-      | Customer-Ip     | 127.0.0.1        |
-      | User-Agent      | Hopper/1.0       |
-    And Generate authHeaderKey with
-      | apikey | mq7ijoev87orvkq4mqo8dr2tf |
-      | secret | 587btntj2ihg5             |
+    Given setup for partner with config at "expedia-config.yml"
     And with shopping query parameters
       | currency          | USD               |
       | language          | en-US             |

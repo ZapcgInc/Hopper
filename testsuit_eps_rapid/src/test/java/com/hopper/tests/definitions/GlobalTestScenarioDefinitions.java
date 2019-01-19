@@ -7,15 +7,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.hopper.tests.authorization.Authorization;
 
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.response.Link;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
+import com.hopper.tests.util.config.ConfigurationFileParser;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
+import com.hopper.tests.util.logging.LoggingUtil;
 import com.hopper.tests.util.parser.PaymentOptionResponseParser;
 import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
@@ -46,51 +46,29 @@ public class GlobalTestScenarioDefinitions
     @Before
     public void before(Scenario scenario)
     {
-        printTestDetails(scenario);
+        LoggingUtil.printTestDetails(scenario);
     }
 
     @After
     public void after(Scenario scenario)
     {
-        printTestStatus(scenario);
+        LoggingUtil.printTestStatus(scenario, m_testContext);
     }
 
-    @Given("^setup for partner \"(.*?)\"$")
-    public void setup(final String partnerName)
+    @Given("^setup for partner with config at \"([^\"]*)\"$")
+    public void setUp(final String pathToConfig)
     {
-        m_testContext = new TestContext(SupportedPartners.valueOf(partnerName));
+        m_testContext = new TestContext(ConfigurationFileParser.parse(pathToConfig));
         m_checkAPIAvailability = new CheckAPIAvailability();
     }
 
-    @Given("^API at \"(.*?)\"$")
-    public void setAPI(final String api)
-    {
-        m_testContext.setHost(api);
-    }
-
-    @Given("^for version \"(.*?)\"$")
-    public void setVersion(final String version)
+    @And("^for version \"([^\"]*)\"$")
+    public void forVersion(String version)
     {
         if (version != null && !GlobalConstants.NULL_STRING.equalsIgnoreCase(version))
         {
             m_testContext.setVersion(version);
         }
-    }
-
-    @Given("^with request headers$")
-    public void setRequestHeaders(final DataTable headers)
-    {
-        final Map<String, String> headerMap = headers.asMap(String.class, String.class);
-        m_testContext.setHeaders(headerMap);
-    }
-
-
-    @Given("^Generate authHeaderKey with$")
-    public void generateAuthHeaderKey(final DataTable authKeys)
-    {
-        final Map<String, String> authKeyMap = authKeys.asMap(String.class, String.class);
-        final String authKey = Authorization.getAuthKey(m_testContext.getPartner(), authKeyMap);
-        m_testContext.setAuthKey(authKey);
     }
 
     @Given("^with shopping query parameters$")
@@ -338,7 +316,6 @@ public class GlobalTestScenarioDefinitions
         );
     }
 
-
     @And("^validate \"([^\"]*)\"  for \"([^\"]*)\"$")
     public void validate(String validationField, String requestType)
     {
@@ -348,31 +325,4 @@ public class GlobalTestScenarioDefinitions
                 m_testContext
         );
     }
-
-    private void printTestDetails(Scenario scenario)
-    {
-        log("======================================Scenario=================================================");
-        log("Scenario ID                 : " + scenario.getId());
-        log("Scenario Name               : " + scenario.getName());
-        log("Scenario Stage              : " + scenario.getSourceTagNames());
-        log("Scenario Status: Started at : " + new java.util.Date());
-    }
-
-
-    private void printTestStatus(Scenario scenario)
-    {
-        log("Scenario Success : " + (!scenario.isFailed()));
-        log("Scenario Status  : " + scenario.getStatus() + " at :" + new java.util.Date());
-        if (scenario.isFailed())
-        {
-            log("Scenario Execution Details :");
-            log(m_testContext.toString());
-        }
-    }
-
-    private void log(String line)
-    {
-        System.out.println(line);
-    }
-
 }

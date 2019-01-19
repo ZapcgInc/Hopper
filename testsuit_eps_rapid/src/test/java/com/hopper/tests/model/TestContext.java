@@ -1,5 +1,6 @@
 package com.hopper.tests.model;
 
+import com.hopper.tests.authorization.Authorization;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.request.RequestParams;
@@ -44,9 +45,16 @@ public class TestContext
     private PaymentOptionResponse m_paymentOptionResponse;
     private PreBookingResponse m_preBookingResponse;
 
-    public TestContext(final SupportedPartners partner)
+    public TestContext(final TestConfig config)
     {
-        m_partner = partner;
+        m_partner = config.getPartner();
+        m_host = config.getAPI();
+        m_version = config.getVersion();
+        m_headers.putAll(config.getHeaders());
+        m_headers.put(
+                AUTH_HEADER_KEY,
+                Authorization.getAuthKey(config.getPartner(), config.getAuthParams())
+        );
     }
 
     public SupportedPartners getPartner()
@@ -57,11 +65,6 @@ public class TestContext
     public String getHost()
     {
         return m_host;
-    }
-
-    public void setHost(String host)
-    {
-        m_host = host;
     }
 
     public String getVersion()
@@ -84,16 +87,6 @@ public class TestContext
         m_requestTypeToAPIPath.put(requestType, apiPath);
     }
 
-    public void setAuthKey(String authKey)
-    {
-        m_headers.put(AUTH_HEADER_KEY, authKey);
-    }
-
-    public SimpleDateFormat getRequestDateFormat()
-    {
-        return m_requestDateFormat;
-    }
-
     public void setRequestDateFormat(SimpleDateFormat requestDateFormat)
     {
         m_requestDateFormat = requestDateFormat;
@@ -102,14 +95,6 @@ public class TestContext
     public Map<String, String> getHeaders()
     {
         return m_headers;
-    }
-
-    public void setHeaders(Map<String, String> headers)
-    {
-        if (headers != null)
-        {
-            m_headers.putAll(headers);
-        }
     }
 
     public void addHeader(String header, String value)

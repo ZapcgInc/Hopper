@@ -1,0 +1,12 @@
+---
+partner: "EPS"
+api: "https://test.ean.com"
+version: "2.1"
+headers:
+      Accept: application/json
+      Accept-Encoding: gzip
+      Customer-Ip: 127.0.0.1
+      User-Agent: Hopper/1.0
+auth_params:
+      apikey: mq7ijoev87orvkq4mqo8dr2tf
+      secret: 587btntj2ihg5
