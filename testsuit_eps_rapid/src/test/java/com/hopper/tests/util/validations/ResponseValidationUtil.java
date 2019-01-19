@@ -1,9 +1,7 @@
 package com.hopper.tests.util.validations;
 
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.model.Property;
-import com.hopper.tests.model.Rate;
-import com.hopper.tests.model.Room;
+import com.hopper.tests.model.response.Property;
 import com.hopper.tests.model.TestContext;
 import io.restassured.response.Response;
 import org.apache.commons.collections.CollectionUtils;
@@ -58,7 +56,7 @@ public class ResponseValidationUtil
             switch (validationField)
             {
                 case "available_rooms":
-                    validateAvailableRooms(requestType, context, maxValue);
+                    ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, "available_rooms", maxValue);
                     break;
             }
         }
@@ -133,20 +131,7 @@ public class ResponseValidationUtil
         }
     }
 
-    public static void validateFieldValueNotEqualTo(final TestContext context, final RequestType requestType, final Response restResponse, String field, String value)
-    {
-        switch (field)
-        {
-            case "links.deposit_policies":
-                validateDepositPolicies(restResponse);
-                break;
-            case "links.book.href":
-                validateHrefInBook(restResponse);
-                break;
-        }
-    }
-
-    private static void validateFieldValueNotEqualTo(final TestContext context, final RequestType requestType, String field, String value)
+    public static void validateFieldValueNotEqualTo(final TestContext context, final RequestType requestType, String field, String value)
     {
         switch (requestType)
         {
@@ -157,21 +142,19 @@ public class ResponseValidationUtil
             }
             case PAYMENT_OPTIONS:
             {
-                PaymentOptionsResponseValidationUtil.validateCardType(context.getResponse(RequestType.PAYMENT_OPTIONS));
+                PaymentOptionsResponseValidationUtil.validate(context, PaymentOptionsResponseValidationUtil.ValidatorField.CARD_TYPE);
+                break;
+            }
+            case PRE_BOOKING:
+            {
+                PreBookingValidationUtil.validateField(context, "links.book.href");
+                break;
             }
             default:
             {
                 throw new UnsupportedOperationException("Request Type : [" + requestType.name() + "], unsupported");
             }
         }
-    }
-
-
-    private static void validateHrefInBook(Response restResponse)
-    {
-        HashMap<String, HashMap<String, HashMap>> roomPriceCheckMap = restResponse.jsonPath().get(".");
-        String hrefShop = (String) roomPriceCheckMap.get("links").get("book").get("href");
-        Assert.assertTrue("href is not found", hrefShop != null);
     }
 
     private static void validateOccupancy(final Response restResponse, final List<String> expectedValues)
@@ -196,7 +179,6 @@ public class ResponseValidationUtil
 
         }
     }
-
 
     public static void validateResponseBodyForNode(String node, Map<String, String> paramMap, Response response) throws ParseException
     {
@@ -417,40 +399,6 @@ public class ResponseValidationUtil
         }
     }
 
-    private static void validateDepositPolicies(Response response)
-    {
-        ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
-        for (LinkedHashMap<String, Object> responseMap : responseAsList)
-        {
-
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-            for (LinkedHashMap<String, Object> room : roomsArr)
-            {
-
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                String roomId = (String) room.get("id");
-                for (LinkedHashMap<String, Object> rate : rateList)
-                {
-
-                    Boolean depositRequired = (Boolean) rate.get("deposit_required");
-                    if (depositRequired)
-                    {
-
-                        LinkedHashMap<String, LinkedHashMap> linksMap = (LinkedHashMap) rate.get("links");
-                        LinkedHashMap<String, String> depositPolicies = linksMap.get("deposit_policies");
-                        if (depositPolicies != null && StringUtils.isEmpty(depositPolicies.get("href")))
-                        {
-
-                            Assert.fail("link should be present for deposit policies when deposit_required is " +
-                                    "true for room_id: " + roomId);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
     private static void validateFencedDeal(Response response, String expectedValue)
     {
         ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
@@ -568,34 +516,6 @@ public class ResponseValidationUtil
                     if (!values.contains(value))
                     {
                         Assert.fail(" merchant record field does not match any of the expected values for roomId: " + roomId);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void validateAvailableRooms(final RequestType requestType, final TestContext context, String maxValue)
-    {
-        if (requestType == RequestType.SHOPPING)
-        {
-            List<Property> properties = context.getShoppingResponse().getProperties();
-            for (Property property : properties)
-            {
-                if (property.getRooms() != null)
-                {
-                    for (Room room : property.getRooms())
-                    {
-                        if (room.getRates() != null)
-                        {
-                            for (Rate rate : room.getRates())
-                            {
-                                int numAvailableRooms = rate.getAvailableRooms();
-                                if (numAvailableRooms <= 0 || numAvailableRooms > Integer.parseInt(maxValue))
-                                {
-                                    Assert.fail("Number of available rooms in the response is invalid for room_id: " + room.getId());
-                                }
-                            }
-                        }
                     }
                 }
             }

@@ -1,8 +1,9 @@
-package com.hopper.tests.model;
+package com.hopper.tests.model.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
+import com.hopper.tests.model.response.shopping.CancelPolicies;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ public class Rate
 
     @JsonProperty("bed_groups")
     private List<BedGroups> bedGroups;
+
+    @JsonProperty("cancel_penalties")
+    private List<CancelPolicies> cancelPolicies;
 
     public Rate(){}
 
@@ -82,5 +86,10 @@ public class Rate
     public List<BedGroups> getBedGroups()
     {
         return bedGroups != null ? bedGroups : ImmutableList.of();
+    }
+
+    public List<CancelPolicies> getCancelPolicies()
+    {
+        return cancelPolicies != null ? cancelPolicies : cancelPolicies;
     }
 }

@@ -1,4 +1,4 @@
-package com.hopper.tests.model;
+package com.hopper.tests.model.request;
 
 import com.google.common.collect.ImmutableList;
 
@@ -62,7 +62,6 @@ public class RequestParams
         {
             builder.addAll(m_paramsWithMultipleValues.get(paramKey));
         }
-
         return builder.build();
     }
 }

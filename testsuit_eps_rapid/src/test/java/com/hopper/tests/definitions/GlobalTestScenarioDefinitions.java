@@ -11,10 +11,11 @@ import com.hopper.tests.authorization.Authorization;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
-import com.hopper.tests.model.Link;
-import com.hopper.tests.model.ShoppingResponse;
+import com.hopper.tests.model.response.Link;
+import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
+import com.hopper.tests.util.parser.PaymentOptionResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
 import com.hopper.tests.util.validations.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
@@ -193,8 +194,8 @@ public class GlobalTestScenarioDefinitions
                 RequestType.PAYMENT_OPTIONS
         ).get();
 
-        System.out.println(response);
         m_testContext.setResponse(RequestType.PAYMENT_OPTIONS, response);
+        m_testContext.setPaymentOptionResponse(PaymentOptionResponseParser.parse(response));
     }
 
     @Then("^the response code for \"(.*?)\" should be (\\d+)$")
@@ -264,7 +265,11 @@ public class GlobalTestScenarioDefinitions
     @Then("^the element \"(.*?)\"  for \"(.*?)\" should not be \"(.*?)\"$")
     public void the_element_for_should_not_be(String field, String requestType, String value) throws Throwable
     {
-        ResponseValidationUtil.validateFieldValueNotEqualTo(m_testContext, RequestType.valueOf(requestType), m_testContext.getResponse(RequestType.valueOf(requestType)), field, value);
+        ResponseValidationUtil.validateFieldValueNotEqualTo(
+                m_testContext,
+                RequestType.valueOf(requestType),
+                field,
+                value);
     }
 
     @Then("^the \"(.*?)\" for \"(.*?)\" should be equal to \"(.*?)\"$")

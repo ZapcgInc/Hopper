@@ -2,12 +2,15 @@ package com.hopper.tests.model;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
+import com.hopper.tests.model.request.RequestParams;
+import com.hopper.tests.model.response.payment.PaymentOptionResponse;
+import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.util.APIEndPointGenerator;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +33,15 @@ public class TestContext
     private String m_version;
     private Map<String, String> m_headers = new HashMap<>();
     private SimpleDateFormat m_requestDateFormat;
+    private String m_checkInDate;
+    private String m_checkOutDate;
 
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
     private EnumMap<RequestType, Response> m_requestTypeToResponse = new EnumMap<RequestType, Response>(RequestType.class);
 
     private ShoppingResponse m_shoppingResponse;
+    private PaymentOptionResponse m_paymentOptionResponse;
 
     public TestContext(final SupportedPartners partner)
     {
@@ -140,11 +146,13 @@ public class TestContext
     public void addCheckInDate(Calendar date, RequestType requestType)
     {
         addParam(CHECKIN_DATE_KEY, _convertToDate(date), requestType);
+        m_checkInDate = _convertToDate(date);
     }
 
     public void addCheckOutDate(Calendar date, RequestType requestType)
     {
         addParam(CHECKOUT_DATE_KEY, _convertToDate(date), requestType);
+        m_checkOutDate = _convertToDate(date);
     }
 
     public void setParams(Map<String, String> params, RequestType requestType)
@@ -205,6 +213,27 @@ public class TestContext
             m_requestTypeToQueryParams.put(requestType, new RequestParams());
         }
     }
+
+    public String getCheckInDate()
+    {
+        return m_checkInDate;
+    }
+
+    public String getCheckOutDate()
+    {
+        return m_checkOutDate;
+    }
+
+    public PaymentOptionResponse getPaymentOptionResponse()
+    {
+        return m_paymentOptionResponse;
+    }
+
+    public void setPaymentOptionResponse(PaymentOptionResponse paymentOptionResponse)
+    {
+        m_paymentOptionResponse = paymentOptionResponse;
+    }
+
     /* END - Request Query Params */
 
     private String _convertToDate(final Calendar dateTime)
@@ -212,7 +241,7 @@ public class TestContext
         return m_requestDateFormat.format(dateTime.getTime());
     }
 
-    public String printTextContext()
+    public String toString()
     {
         final StringBuilder sb = new StringBuilder();
 

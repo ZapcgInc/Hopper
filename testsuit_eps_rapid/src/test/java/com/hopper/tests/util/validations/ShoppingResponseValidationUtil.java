@@ -1,47 +1,81 @@
 package com.hopper.tests.util.validations;
 
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.model.BedGroups;
-import com.hopper.tests.model.Property;
-import com.hopper.tests.model.Rate;
-import com.hopper.tests.model.Room;
+import com.hopper.tests.model.response.BedGroups;
+import com.hopper.tests.model.response.Property;
+import com.hopper.tests.model.response.Rate;
+import com.hopper.tests.model.response.Room;
 import com.hopper.tests.model.TestContext;
+import com.hopper.tests.model.response.shopping.CancelPolicies;
 import io.restassured.response.Response;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Util class for Shopping Response Validations
  */
 public class ShoppingResponseValidationUtil
 {
-    enum LinkValidatorField
+    enum ValidatorField
     {
-        PRICE_CHECK,
-        PAYMENT_OPTIONS,
-        DEPOSIT_POLICIES,
+        PRICE_CHECK_LINK,
+        PAYMENT_OPTIONS_LINK,
+        DEPOSIT_POLICIES_LINK,
+        CANCEL_PENALTIES,
+        AVAILABLE_ROOMS,
         ;
     }
 
-    public static void validateFieldValueNotEqualTo(final TestContext context, String validateField, String value)
+    public static void validateAvailableRooms(final RequestType requestType, final TestContext context, String maxValue)
+    {
+        if (requestType == RequestType.SHOPPING)
+        {
+            List<Property> properties = context.getShoppingResponse().getProperties();
+            for (Property property : properties)
+            {
+                if (property.getRooms() != null)
+                {
+                    for (Room room : property.getRooms())
+                    {
+                        if (room.getRates() != null)
+                        {
+                            for (Rate rate : room.getRates())
+                            {
+                                int numAvailableRooms = rate.getAvailableRooms();
+                                if (numAvailableRooms <= 0 || numAvailableRooms > Integer.parseInt(maxValue))
+                                {
+                                    Assert.fail("Number of available rooms in the response is invalid for room_id: " + room.getId());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static void validateFieldValueNotEqualTo(final TestContext context, String validateField, String maxValue)
     {
         switch (validateField)
         {
             case "price_check_href":
             {
-                _validateLink(context, LinkValidatorField.PRICE_CHECK);
+                _validateRateFields(context, ValidatorField.PRICE_CHECK_LINK, maxValue);
                 break;
             }
             case "payment_option_href":
             {
-                _validateLink(context, LinkValidatorField.PAYMENT_OPTIONS);
+                _validateRateFields(context, ValidatorField.PAYMENT_OPTIONS_LINK, maxValue);
                 break;
             }
             case "links.deposit_policies":
             {
-                _validateLink(context, LinkValidatorField.DEPOSIT_POLICIES);
+                _validateRateFields(context, ValidatorField.DEPOSIT_POLICIES_LINK, maxValue);
                 break;
             }
             case "links.shop.href":
@@ -49,10 +83,20 @@ public class ShoppingResponseValidationUtil
                 _validateHrefInShop(context.getResponse(RequestType.SHOPPING));
                 break;
             }
+            case "cancel_penalties" :
+            {
+                _validateRateFields(context, ValidatorField.CANCEL_PENALTIES, maxValue);
+                break;
+            }
+            case "availability":
+            {
+                _validateRateFields(context, ValidatorField.AVAILABLE_ROOMS, maxValue);
+                break;
+            }
         }
     }
 
-    private static void _validateLink(final TestContext context, LinkValidatorField validatorField)
+    private static void _validateRateFields(final TestContext context, ValidatorField validatorField, String maxValue)
     {
         for (Property property : context.getShoppingResponse().getProperties())
         {
@@ -62,19 +106,29 @@ public class ShoppingResponseValidationUtil
                 {
                     switch (validatorField)
                     {
-                        case PRICE_CHECK:
+                        case PRICE_CHECK_LINK:
                         {
                             _priceCheckLinkValidator(rate, room.getId());
                             break;
                         }
-                        case PAYMENT_OPTIONS:
+                        case PAYMENT_OPTIONS_LINK:
                         {
                             _paymentOptionsLinkValidator(rate, room.getId());
                             break;
                         }
-                        case DEPOSIT_POLICIES:
+                        case DEPOSIT_POLICIES_LINK:
                         {
                             _depositPoliciesLinkValidator(rate, room.getId());
+                            break;
+                        }
+                        case CANCEL_PENALTIES:
+                        {
+                            _cancelPenaltiesValidator(rate, room.getId(), context);
+                            break;
+                        }
+                        case AVAILABLE_ROOMS:
+                        {
+                            _availableRoomsValidator(rate, room.getId(), maxValue);
                             break;
                         }
                         default:
@@ -85,6 +139,60 @@ public class ShoppingResponseValidationUtil
                 }
             }
         }
+    }
+
+    private static void _availableRoomsValidator(Rate rate, String roomID, String maxValue)
+    {
+        final int numAvailableRooms = rate.getAvailableRooms();
+        if (numAvailableRooms <= 0 || numAvailableRooms > Integer.parseInt(maxValue))
+        {
+            Assert.fail("Number of available rooms in the response is invalid for room_id: [" + roomID + "]");
+        }
+    }
+
+    private static void _cancelPenaltiesValidator(Rate rate, String roomID, TestContext context)
+    {
+        final String checkInDate = context.getCheckInDate();
+        final String checkOutDate = context.getCheckOutDate();
+
+        if (rate.isRefundable())
+        {
+            Assert.assertFalse("Cancel Penalties missing for Room : [" + roomID + "]",
+                    rate.getCancelPolicies().isEmpty());
+
+            for (CancelPolicies cancelPolicies : rate.getCancelPolicies())
+            {
+                String startDate = cancelPolicies.getStart();
+                String endDate = cancelPolicies.getEnd();
+
+                if (!validateStartEndDate(checkInDate, checkOutDate, startDate, endDate))
+                {
+                    Assert.fail("cancel policy start and end date are not within check in and check " +
+                            "out dates for roomId :[" + roomID + "]");
+                }
+
+            }
+        }
+
+    }
+
+    // TODO: clean up this code.
+    private static boolean validateStartEndDate(String checkin, String checkout, String startDate, String endDate)
+    {
+        boolean flag = false;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try
+        {
+            if (sdf.parse(startDate).before(sdf.parse(checkin)) && sdf.parse(endDate).before(sdf.parse(checkout)))
+            {
+                flag = true;
+            }
+        }
+        catch (ParseException e)
+        {
+            Assert.fail("Unable to Parse dates");
+        }
+        return flag;
     }
 
     private static void _priceCheckLinkValidator(final Rate rate, final String roomId)

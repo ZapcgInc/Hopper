@@ -1,7 +1,9 @@
-package com.hopper.tests.model;
+package com.hopper.tests.model.response.shopping;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.ImmutableList;
+import com.hopper.tests.model.response.ErrorResponse;
+import com.hopper.tests.model.response.Property;
 
 import java.util.Arrays;
 import java.util.List;
