@@ -180,15 +180,15 @@ public class ResponseValidationUtil
         }
     }
 
-    public static void validateResponseBodyForNode(String node, Map<String, String> paramMap, Response response) throws ParseException
+    public static void validateResponseBodyForNode(String node, Map<String, String> paramMap, Response response, TestContext context) throws ParseException
     {
         switch (node)
         {
             case "cancel_policies":
-                validateCancelPoliciesForRefundableRates(paramMap, response);
+                ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, "cancel_penalties", null);
                 break;
             case "amenities":
-                validateAmenities(response);
+                ShoppingResponseValidationUtil.validateFieldValueNotEqualTo(context, "amenities", null);
                 break;
             default:
                 System.out.println("Request Not Present");
@@ -420,84 +420,6 @@ public class ResponseValidationUtil
             }
         }
     }
-
-    private static void validateAmenities(Response response)
-    {
-        ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
-        for (LinkedHashMap<String, Object> responseMap : responseAsList)
-        {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-            for (LinkedHashMap<String, Object> room : roomsArr)
-            {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                String roomId = (String) room.get("id");
-                for (LinkedHashMap<String, Object> rate : rateList)
-                {
-                    ArrayList<LinkedHashMap> amenities = (ArrayList<LinkedHashMap>) rate.get("amenities");
-                    if (!CollectionUtils.isEmpty(amenities))
-                    {
-                        for (LinkedHashMap<String, Object> amenity : amenities)
-                        {
-                            Integer id = (Integer) amenity.get("id");
-                            String name = (String) amenity.get("name");
-                            //TODO: Make it better
-                            if ((id != null && StringUtils.isEmpty(name)) || (id == null && StringUtils.isNotEmpty(name)))
-                            {
-                                Assert.fail("amenity ID and description both should be present or both should be absent for a valid response.");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static void validateCancelPoliciesForRefundableRates(Map<String, String> paramsMap, Response response) throws ParseException
-    {
-        ArrayList<LinkedHashMap> responseAsList = response.as(ArrayList.class);
-        for (LinkedHashMap<String, Object> responseMap : responseAsList)
-        {
-            ArrayList<LinkedHashMap> roomsArr = (ArrayList<LinkedHashMap>) responseMap.get("rooms");
-            for (LinkedHashMap<String, Object> room : roomsArr)
-            {
-                ArrayList<LinkedHashMap> rateList = (ArrayList<LinkedHashMap>) room.get("rates");
-                String roomId = (String) room.get("id");
-                for (LinkedHashMap<String, Object> rate : rateList)
-                {
-                    boolean value = (boolean) rate.get("refundable");
-                    if (value)
-                    {
-                        String checkin = paramsMap.get("checkin");
-                        String checkout = paramsMap.get("checkout");
-                        ArrayList<LinkedHashMap> cancelPanaltyList = (ArrayList) rate.get("cancel_penalties");
-                        for (LinkedHashMap<String, String> t : cancelPanaltyList)
-                        {
-                            String startDate = t.get("start");
-                            String endDate = t.get("end");
-                            if (!validateStartEndDate(checkin, checkout, startDate, endDate))
-                            {
-                                Assert.fail("cancel policy start and end date are not within check in and check " +
-                                        "out dates for roomId: " + roomId);
-                            }
-
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean validateStartEndDate(String checkin, String checkout, String startDate, String endDate) throws ParseException
-    {
-        boolean flag = false;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        if (sdf.parse(startDate).before(sdf.parse(checkin)) && sdf.parse(endDate).before(sdf.parse(checkout)))
-        {
-            flag = true;
-        }
-        return flag;
-    }
-
 
     private static void validateMerchantOfRecord(Response response, List<String> values)
     {

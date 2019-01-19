@@ -17,7 +17,7 @@ import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
 import com.hopper.tests.util.parser.PaymentOptionResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
-import com.hopper.tests.util.validations.CheckAPIAvailability;
+import com.hopper.tests.util.api.CheckAPIAvailability;
 import com.hopper.tests.util.validations.ResponseValidationUtil;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
@@ -281,13 +281,13 @@ public class GlobalTestScenarioDefinitions
     @Then("^the element \"(.*?)\" start and end date \\(under cancel_penalties\\) for \"(.*?)\" are within check in and check out dates$")
     public void validateShoppingCancelPenalties(String field, String requestType) throws Throwable
     {
-        ResponseValidationUtil.validateResponseBodyForNode(field, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)));
+        ResponseValidationUtil.validateResponseBodyForNode(field, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)), m_testContext);
     }
 
     @Then("^the element \"(.*?)\" for \"(.*?)\" either have both amenityId and description or have no amenity ID and description \\(mutually inclusive\\)$")
     public void the_element_for_either_have_both_amenity_ID_and_description_or_have_no_amenity_ID_and_description_mutually_inclusive(String field, String requestType) throws Throwable
     {
-        ResponseValidationUtil.validateResponseBodyForNode(field + "_" + requestType, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)));
+        ResponseValidationUtil.validateResponseBodyForNode(field + "_" + requestType, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)), m_testContext);
     }
 
     @Then("^validate that \"(.*?)\" for \"(.*?)\" is the sum of individual room stay values with taxes and fees$")

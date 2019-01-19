@@ -1,4 +1,4 @@
-package com.hopper.tests.util.validations;
+package com.hopper.tests.util.api;
 
 import com.hopper.tests.model.TestContext;
 import io.restassured.RestAssured;

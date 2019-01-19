@@ -5,12 +5,11 @@ import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.request.RequestParams;
 import com.hopper.tests.model.response.payment.PaymentOptionResponse;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
-import com.hopper.tests.util.APIEndPointGenerator;
+import com.hopper.tests.util.api.APIEndPointGenerator;
 import io.restassured.response.Response;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;

@@ -7,6 +7,9 @@ import org.junit.Assert;
 
 import java.util.Optional;
 
+/**
+ * Util class for Payment Options Response Validations
+ */
 public class PaymentOptionsResponseValidationUtil
 {
     enum ValidatorField

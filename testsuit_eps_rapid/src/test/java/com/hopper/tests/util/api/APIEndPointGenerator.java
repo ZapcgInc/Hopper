@@ -1,4 +1,4 @@
-package com.hopper.tests.util;
+package com.hopper.tests.util.api;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;

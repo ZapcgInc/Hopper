@@ -45,6 +45,8 @@ public class Rate
     @JsonProperty("amenities")
     private List<Amenities> amenities;
 
+    @JsonProperty("occupancies")
+    private Map<String, RoomPrice> roomPriceByOccupany;
     public Rate(){}
 
     public String getId()
