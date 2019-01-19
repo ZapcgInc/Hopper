@@ -3,6 +3,7 @@ package com.hopper.tests.model.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
+import com.hopper.tests.model.response.shopping.Amenities;
 import com.hopper.tests.model.response.shopping.CancelPolicies;
 
 import java.util.List;
@@ -40,6 +41,9 @@ public class Rate
 
     @JsonProperty("cancel_penalties")
     private List<CancelPolicies> cancelPolicies;
+
+    @JsonProperty("amenities")
+    private List<Amenities> amenities;
 
     public Rate(){}
 
@@ -91,5 +95,10 @@ public class Rate
     public List<CancelPolicies> getCancelPolicies()
     {
         return cancelPolicies != null ? cancelPolicies : cancelPolicies;
+    }
+
+    public List<Amenities> getAmenities()
+    {
+        return amenities != null ? amenities : ImmutableList.of();
     }
 }

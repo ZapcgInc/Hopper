@@ -28,47 +28,21 @@ public class ShoppingResponseValidationUtil
         DEPOSIT_POLICIES_LINK,
         CANCEL_PENALTIES,
         AVAILABLE_ROOMS,
+        AMENITIES,
         ;
     }
 
-    public static void validateAvailableRooms(final RequestType requestType, final TestContext context, String maxValue)
-    {
-        if (requestType == RequestType.SHOPPING)
-        {
-            List<Property> properties = context.getShoppingResponse().getProperties();
-            for (Property property : properties)
-            {
-                if (property.getRooms() != null)
-                {
-                    for (Room room : property.getRooms())
-                    {
-                        if (room.getRates() != null)
-                        {
-                            for (Rate rate : room.getRates())
-                            {
-                                int numAvailableRooms = rate.getAvailableRooms();
-                                if (numAvailableRooms <= 0 || numAvailableRooms > Integer.parseInt(maxValue))
-                                {
-                                    Assert.fail("Number of available rooms in the response is invalid for room_id: " + room.getId());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     public static void validateFieldValueNotEqualTo(final TestContext context, String validateField, String maxValue)
     {
         switch (validateField)
         {
-            case "price_check_href":
+            case "price_check.href":
             {
                 _validateRateFields(context, ValidatorField.PRICE_CHECK_LINK, maxValue);
                 break;
             }
-            case "payment_option_href":
+            case "payment_option.href":
             {
                 _validateRateFields(context, ValidatorField.PAYMENT_OPTIONS_LINK, maxValue);
                 break;
@@ -88,10 +62,19 @@ public class ShoppingResponseValidationUtil
                 _validateRateFields(context, ValidatorField.CANCEL_PENALTIES, maxValue);
                 break;
             }
-            case "availability":
+            case "available_rooms":
             {
                 _validateRateFields(context, ValidatorField.AVAILABLE_ROOMS, maxValue);
                 break;
+            }
+            case "amenities":
+            {
+                _validateRateFields(context, ValidatorField.AMENITIES, maxValue);
+                break;
+            }
+            default:
+            {
+                throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
             }
         }
     }
@@ -131,6 +114,11 @@ public class ShoppingResponseValidationUtil
                             _availableRoomsValidator(rate, room.getId(), maxValue);
                             break;
                         }
+                        case AMENITIES:
+                        {
+                            _amenitiesValidator(rate, room.getId());
+                            break;
+                        }
                         default:
                         {
                             throw new UnsupportedOperationException(validatorField.name() + ", currently not supported.");
@@ -139,6 +127,23 @@ public class ShoppingResponseValidationUtil
                 }
             }
         }
+    }
+
+    private static void _amenitiesValidator(Rate rate, String roomID)
+    {
+        if (rate.getAmenities().isEmpty())
+        {
+            return;
+        }
+
+        rate.getAmenities()
+                .forEach(amenity -> {
+                    if ((StringUtils.isNotEmpty(amenity.getId()) && StringUtils.isEmpty(amenity.getName()))
+                            || (StringUtils.isEmpty(amenity.getId()) && StringUtils.isNotEmpty(amenity.getName())))
+                    {
+                        Assert.fail("amenity ID and description both should be present or both should be absent for a valid response, for room ID : [" + roomID + "]");
+                    }
+                });
     }
 
     private static void _availableRoomsValidator(Rate rate, String roomID, String maxValue)

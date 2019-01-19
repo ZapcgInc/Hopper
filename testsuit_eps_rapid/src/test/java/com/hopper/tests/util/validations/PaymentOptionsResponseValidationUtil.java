@@ -11,7 +11,7 @@ public class PaymentOptionsResponseValidationUtil
 {
     enum ValidatorField
     {
-        CARD_TYPE
+        CARD_TYPE,
         ;
     }
 
@@ -42,7 +42,8 @@ public class PaymentOptionsResponseValidationUtil
                 creditCard.get().getCardOptions().isEmpty());
 
         creditCard.get().getCardOptions()
-                .forEach(cardOption -> {
+                .forEach(cardOption ->
+                {
                     Assert.assertTrue("Card name is missing", StringUtils.isNotEmpty(cardOption.getName()));
                     Assert.assertTrue("Card Type is missing", StringUtils.isNotEmpty(cardOption.getCardType()));
                 });

@@ -279,7 +279,7 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^the element \"(.*?)\" start and end date \\(under cancel_penalties\\) for \"(.*?)\" are within check in and check out dates$")
-    public void the_element_start_and_end_date_under_cancel_penalties_for_are_within_check_in_and_check_out_dates(String field, String requestType) throws Throwable
+    public void validateShoppingCancelPenalties(String field, String requestType) throws Throwable
     {
         ResponseValidationUtil.validateResponseBodyForNode(field, m_testContext.getParams(RequestType.valueOf(requestType)), m_testContext.getResponse(RequestType.valueOf(requestType)));
     }
