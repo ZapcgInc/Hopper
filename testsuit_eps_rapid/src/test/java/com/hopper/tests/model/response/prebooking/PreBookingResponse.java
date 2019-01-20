@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.model.response.Link;
 import com.hopper.tests.model.response.RoomPrice;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class PreBookingResponse
 
     public String getStatus()
     {
-        return status;
+        return status != null ? status : StringUtils.EMPTY;
     }
 
     public Map<String, Link> getLinks()

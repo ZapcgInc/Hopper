@@ -329,5 +329,6 @@ public class GlobalTestScenarioDefinitions
     @And("^run shopping and preBooking for Booking$")
     public void runShoppingAndPreBookingForBooking()
     {
+        BookingTestHelper.runShoppingAndPreBookingForBooking(m_testContext);
     }
 }
