@@ -9,5 +9,6 @@ public enum RequestType
     PRE_BOOKING,
     PAYMENT_OPTIONS,
     BOOKING,
+    RETRIEVE_BOOKING,
     ;
 }

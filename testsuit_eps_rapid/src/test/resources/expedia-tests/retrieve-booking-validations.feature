@@ -26,3 +26,4 @@ Feature: Validations for PreBooking API.
     And run booking
     Then the response code for "BOOKING" should be 201
     And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+    And retrieve booking

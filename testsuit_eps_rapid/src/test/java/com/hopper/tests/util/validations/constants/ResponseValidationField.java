@@ -23,6 +23,7 @@ public enum ResponseValidationField
     NIGHTLY_PRICE_COUNT,
     CURRENCY_CODE,
     TOTAL_PRICE,
-    BILLABLE_CURRENCY
+    BILLABLE_CURRENCY,
+    RETRIEVE_BOOKING_LINK,
     ;
 }

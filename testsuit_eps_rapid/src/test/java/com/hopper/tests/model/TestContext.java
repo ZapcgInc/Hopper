@@ -37,6 +37,7 @@ public class TestContext
     private SimpleDateFormat m_requestDateFormat;
     private String m_checkInDate;
     private String m_checkOutDate;
+    private String m_bookingAffiliateId;
 
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
@@ -253,6 +254,16 @@ public class TestContext
     public void setBookingResponse(BookingResponse bookingResponse)
     {
         m_bookingResponse = bookingResponse;
+    }
+
+    public String getBookingAffiliateId()
+    {
+        return m_bookingAffiliateId;
+    }
+
+    public void setBookingAffiliateId(String bookingAffiliateId)
+    {
+        m_bookingAffiliateId = bookingAffiliateId;
     }
 
     /* END - Request Query Params */

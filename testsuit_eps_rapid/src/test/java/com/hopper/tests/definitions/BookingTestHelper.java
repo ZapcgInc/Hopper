@@ -14,6 +14,7 @@ import com.hopper.tests.model.response.shopping.Rate;
 import com.hopper.tests.model.response.shopping.Room;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
+import com.hopper.tests.util.logging.LoggingUtil;
 import com.hopper.tests.util.parser.BookingResponseParser;
 import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
@@ -30,7 +31,11 @@ public class BookingTestHelper
 {
     public static void runShoppingAndPreBookingForBooking(final TestContext context)
     {
-        final Response shopResponse = ResponseSupplierFactory.create(context, GlobalConstants.GET, RequestType.SHOPPING).get();
+        final Response shopResponse = ResponseSupplierFactory.create(
+                context,
+                GlobalConstants.GET,
+                RequestType.SHOPPING).get();
+
         context.setResponse(RequestType.SHOPPING, shopResponse);
 
         final ShoppingResponse shoppingResponse = ShoppingResponseParser.parse(context.getResponse(RequestType.SHOPPING));
@@ -54,7 +59,10 @@ public class BookingTestHelper
                         final Link priceCheckLink = bedGroup.getLinks().get("price_check");
                         context.setApiPath(RequestType.PRE_BOOKING, priceCheckLink.getHref());
 
-                        final Response response = ResponseSupplierFactory.create(context, priceCheckLink.getMethod(), RequestType.PRE_BOOKING).get();
+                        final Response response = ResponseSupplierFactory.create(
+                                context,
+                                priceCheckLink.getMethod(),
+                                RequestType.PRE_BOOKING).get();
 
                         if (response.getStatusCode() == 200)
                         {
@@ -81,15 +89,27 @@ public class BookingTestHelper
     {
         final Link bookingLink = context.getPreBookingResponse().getLinks().get("book");
         context.setApiPath(RequestType.BOOKING, bookingLink.getHref());
-        context.setPostBody(_getBookingBodyAsMap(), RequestType.BOOKING);
 
-        final Response response = ResponseSupplierFactory.create(context, bookingLink.getMethod(), RequestType.BOOKING).get();
+        final String affiliateId = RandomStringUtils.randomAlphanumeric(28);
+
+        context.setPostBody(_getBookingBodyAsMap(affiliateId), RequestType.BOOKING);
+
+        final Response response = ResponseSupplierFactory.create(
+                context,
+                bookingLink.getMethod(),
+                RequestType.BOOKING).get();
+
+        LoggingUtil.log("Affiliate ID used for booking : [" + affiliateId + "]");
+        if (response.getStatusCode() == 200)
+        {
+            context.setBookingAffiliateId(affiliateId);
+        }
 
         context.setResponse(RequestType.BOOKING, response);
         context.setBookingResponse(BookingResponseParser.parse(response));
     }
 
-    private static Map<String, Object> _getBookingBodyAsMap()
+    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId)
     {
         final Object[] customers = new Object[] {
                 Customer.createDummy()
@@ -100,11 +120,26 @@ public class BookingTestHelper
         };
 
         final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
-        body.put("affiliate_reference_id", RandomStringUtils.randomAlphanumeric(28));
+        body.put("affiliate_reference_id", affiliateId);
         body.put("hold", true);
         body.put("rooms", customers);
         body.put("payments", payments);
 
         return body.build();
+    }
+
+    public static void retrieveBooking(final TestContext context)
+    {
+        final Link bookingRetrieveLink = context.getBookingResponse().getLinks().get("retrieve");
+        context.addHeader("affiliate_reference_id", context.getBookingAffiliateId());
+        context.addHeader("email", "john@example.com");
+        context.setApiPath(RequestType.RETRIEVE_BOOKING, bookingRetrieveLink.getHref());
+
+        final Response response = ResponseSupplierFactory.create(
+                context,
+                bookingRetrieveLink.getMethod(),
+                RequestType.RETRIEVE_BOOKING).get();
+
+        context.setResponse(RequestType.RETRIEVE_BOOKING, response);
     }
 }

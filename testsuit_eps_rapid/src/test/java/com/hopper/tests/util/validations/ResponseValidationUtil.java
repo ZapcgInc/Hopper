@@ -2,6 +2,7 @@ package com.hopper.tests.util.validations;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
+import com.hopper.tests.util.validations.booking.BookingValidationUtil;
 import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import com.hopper.tests.util.validations.model.Range;
 import com.hopper.tests.util.validations.paymentoptions.PaymentOptionsResponseValidationUtil;
@@ -59,6 +60,11 @@ public class ResponseValidationUtil
                 PreBookingValidationUtil.validate(context, validationField, count);
                 break;
             }
+            case BOOKING:
+            {
+                BookingValidationUtil.validate(context, validationField, count);
+                break;
+            }
             default:
             {
                 throw new UnsupportedOperationException("Request Type : [" + requestType + "], Unsupported for Count Validation");
@@ -83,6 +89,11 @@ public class ResponseValidationUtil
             case PRE_BOOKING:
             {
                 PreBookingValidationUtil.validate(context, validationField, expectedRange);
+                break;
+            }
+            case BOOKING:
+            {
+                BookingValidationUtil.validate(context, validationField, expectedRange);
                 break;
             }
             default:
@@ -112,6 +123,11 @@ public class ResponseValidationUtil
                 PreBookingValidationUtil.validate(context, validationField, expectedValues);
                 break;
             }
+            case BOOKING:
+            {
+                BookingValidationUtil.validate(context, validationField, expectedValues);
+                break;
+            }
             default:
             {
                 throw new UnsupportedOperationException("Request Type : [" + requestType + "], Unsupported for Expected Values Validation");
@@ -136,6 +152,11 @@ public class ResponseValidationUtil
             case PRE_BOOKING:
             {
                 PreBookingValidationUtil.validate(context, validationField);
+                break;
+            }
+            case BOOKING:
+            {
+                BookingValidationUtil.validate(context, validationField);
                 break;
             }
             default:

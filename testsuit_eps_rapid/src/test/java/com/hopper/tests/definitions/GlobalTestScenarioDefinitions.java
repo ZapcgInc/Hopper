@@ -15,7 +15,6 @@ import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.config.ConfigurationFileParser;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
-import com.hopper.tests.util.logging.LoggingUtil;
 import com.hopper.tests.util.parser.PaymentOptionResponseParser;
 import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
@@ -335,5 +334,11 @@ public class GlobalTestScenarioDefinitions
     public void runBooking()
     {
         BookingTestHelper.runBooking(m_testContext);
+    }
+
+    @And("^retrieve booking$")
+    public void retrieveBooking()
+    {
+        BookingTestHelper.retrieveBooking(m_testContext);
     }
 }
