@@ -136,8 +136,10 @@ public class BookingTestHelper
     public static void retrieveBooking(final TestContext context)
     {
         final Link bookingRetrieveLink = context.getBookingResponse().getLinks().get("retrieve");
+        final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
+
         context.addHeader("affiliate_reference_id", context.getBookingAffiliateId());
-        context.addHeader("email", "john@example.com");
+        context.addHeader("email", customer.getEmail());
         context.setApiPath(RequestType.RETRIEVE_BOOKING, bookingRetrieveLink.getHref());
 
         final Response response = ResponseSupplierFactory.create(
