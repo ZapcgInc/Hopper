@@ -1,12 +1,12 @@
 package com.hopper.tests.validations.shopping;
 
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.model.response.shopping.BedGroups;
-import com.hopper.tests.model.response.shopping.Property;
-import com.hopper.tests.model.response.shopping.Rate;
-import com.hopper.tests.model.response.shopping.Room;
-import com.hopper.tests.model.TestContext;
-import com.hopper.tests.model.response.CancelPolicies;
+import com.hopper.tests.data.model.response.shopping.BedGroups;
+import com.hopper.tests.data.model.response.shopping.Property;
+import com.hopper.tests.data.model.response.shopping.Rate;
+import com.hopper.tests.data.model.response.shopping.Room;
+import com.hopper.tests.definitions.model.TestContext;
+import com.hopper.tests.data.model.response.CancelPolicies;
 import com.hopper.tests.validations.CommonValidationUtil;
 import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;

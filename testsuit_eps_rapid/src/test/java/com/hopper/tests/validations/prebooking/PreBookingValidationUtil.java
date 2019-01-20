@@ -1,8 +1,8 @@
 package com.hopper.tests.validations.prebooking;
 
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.model.TestContext;
-import com.hopper.tests.model.response.prebooking.PreBookingResponse;
+import com.hopper.tests.definitions.model.TestContext;
+import com.hopper.tests.data.model.response.prebooking.PreBookingResponse;
 import com.hopper.tests.validations.CommonValidationUtil;
 import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;

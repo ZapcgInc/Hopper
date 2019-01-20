@@ -1,10 +1,10 @@
 package com.hopper.tests.validations;
 
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.model.response.Link;
-import com.hopper.tests.model.response.Price;
-import com.hopper.tests.model.response.RoomPrice;
-import com.hopper.tests.model.response.TotalPrice;
+import com.hopper.tests.data.model.response.Link;
+import com.hopper.tests.data.model.response.Price;
+import com.hopper.tests.data.model.response.RoomPrice;
+import com.hopper.tests.data.model.response.TotalPrice;
 import com.hopper.tests.util.math.FuzzyCompareDouble;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;

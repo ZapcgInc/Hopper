@@ -2,7 +2,7 @@ package com.hopper.tests.data;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
-import com.hopper.tests.model.TestContext;
+import com.hopper.tests.definitions.model.TestContext;
 import io.restassured.response.Response;
 
 import java.util.function.Supplier;

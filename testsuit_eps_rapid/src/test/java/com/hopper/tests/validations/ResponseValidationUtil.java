@@ -1,7 +1,7 @@
 package com.hopper.tests.validations;
 
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.model.TestContext;
+import com.hopper.tests.definitions.model.TestContext;
 import com.hopper.tests.validations.booking.BookingValidationUtil;
 import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;

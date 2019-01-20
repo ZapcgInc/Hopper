@@ -1,7 +1,7 @@
 package com.hopper.tests.validations.paymentoptions;
 
-import com.hopper.tests.model.TestContext;
-import com.hopper.tests.model.response.payment.PaymentOptionResponse;
+import com.hopper.tests.definitions.model.TestContext;
+import com.hopper.tests.data.model.response.payment.PaymentOptionResponse;
 import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;
 import org.apache.commons.lang.StringUtils;

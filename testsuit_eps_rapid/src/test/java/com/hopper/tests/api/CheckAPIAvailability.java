@@ -1,6 +1,6 @@
 package com.hopper.tests.api;
 
-import com.hopper.tests.model.TestContext;
+import com.hopper.tests.definitions.model.TestContext;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.Assert;

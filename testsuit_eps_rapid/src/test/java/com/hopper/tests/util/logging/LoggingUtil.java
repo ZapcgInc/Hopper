@@ -1,6 +1,6 @@
 package com.hopper.tests.util.logging;
 
-import com.hopper.tests.model.TestContext;
+import com.hopper.tests.definitions.model.TestContext;
 import cucumber.api.Scenario;
 
 /**
