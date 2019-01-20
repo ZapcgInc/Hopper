@@ -4,12 +4,14 @@ import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.api.APIEndPointGenerator;
+import com.hopper.tests.util.logging.LoggingUtil;
 import io.restassured.RestAssured;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 
 import java.util.function.Supplier;
@@ -40,7 +42,7 @@ public class EPSResponseSupplier implements Supplier<Response>
                                      final RequestType requestType)
     {
         //final RequestSpecification requestSpecifications = RestAssured.with().headers(context.getHeaders());
-    	final RequestSpecification requestSpecifications = onrequest().with().headers(context.getHeaders());
+        final RequestSpecification requestSpecifications = onrequest().with().headers(context.getHeaders());
         if (context.getParams(requestType) != null)
         {
             requestSpecifications.queryParams(context.getParams(requestType));
@@ -50,7 +52,8 @@ public class EPSResponseSupplier implements Supplier<Response>
         {
             context.getParamsWithMultipleValues(requestType).forEach(requestSpecifications::queryParam);
         }
-        if (context.LOGGING_ENABLED)
+
+        if (TestContext.LOGGING_ENABLED)
         {
             System.out.println(requestSpecifications.log().all());
         }
@@ -64,7 +67,23 @@ public class EPSResponseSupplier implements Supplier<Response>
                     final String apiEndPoint = APIEndPointGenerator.create(context, requestType);
                     final Response response = requestSpecifications.get(apiEndPoint);
 
-                    if (context.LOGGING_ENABLED)
+                    if (TestContext.LOGGING_ENABLED)
+                    {
+                        System.out.println(response.asString());
+                    }
+                    return response;
+                }
+                case "POST":
+                {
+
+                    final String apiEndPoint = APIEndPointGenerator.create(context, requestType);
+                    final Response response = RestAssured.given()
+                            .headers(context.getHeaders())
+                            .contentType("application/json")
+                            .body(context.getPostBody(requestType))
+                            .post(apiEndPoint);
+
+                    if (TestContext.LOGGING_ENABLED)
                     {
                         System.out.println(response.asString());
                     }
@@ -99,16 +118,16 @@ public class EPSResponseSupplier implements Supplier<Response>
     {
         return m_response;
     }
-    
+
     /**
      * initialize a RequestSpecification default timeout
-     *
      */
-    private RequestSpecification onrequest() {
-    	HttpClientConfig httpConfig = HttpClientConfig.httpClientConfig();
-    	httpConfig.setParam("http.socket.timeout",GlobalConstants.SOCKET_TIMEOUT);
- 	
+    private RequestSpecification onrequest()
+    {
+        HttpClientConfig httpConfig = HttpClientConfig.httpClientConfig();
+        httpConfig.setParam("http.socket.timeout", GlobalConstants.SOCKET_TIMEOUT);
+
         return RestAssured.given()
-                      .config(RestAssuredConfig.config().httpClient(httpConfig));
+                .config(RestAssuredConfig.config().httpClient(httpConfig));
     }
 }

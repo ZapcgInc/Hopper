@@ -14,7 +14,7 @@ public class PreBookingResponseParser
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     public static PreBookingResponse parse(final Response apiResponse)
     {
-        Assert.assertNotNull("Shopping API response is null", apiResponse);
+        Assert.assertNotNull("PreBooking API response is null", apiResponse);
 
         try
         {
@@ -23,7 +23,7 @@ public class PreBookingResponseParser
         catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("Failed to parse Shopping Response");
+            System.out.println("Failed to parse PreBooking Response");
         }
 
         return null;

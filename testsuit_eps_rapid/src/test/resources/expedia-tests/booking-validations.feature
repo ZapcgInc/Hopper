@@ -1,4 +1,4 @@
-@preBook
+@Booking
 Feature: Validations for PreBooking API.
 
   Background:
@@ -22,5 +22,6 @@ Feature: Validations for PreBooking API.
   Scenario: Run booking and validate Status
     Given set checkin "5" from today with lengthOfStay "3"
     And run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking
-    Then the response code for "BOOKING" should be 200
+    Then the response code for "BOOKING" should be 201

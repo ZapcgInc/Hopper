@@ -24,7 +24,6 @@ import com.hopper.tests.util.validations.ResponseValidationUtil;
 import com.hopper.tests.util.validations.constants.ResponseValidationField;
 import com.hopper.tests.util.validations.model.Range;
 import cucumber.api.DataTable;
-import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -47,13 +46,13 @@ public class GlobalTestScenarioDefinitions
     @Before
     public void before(Scenario scenario)
     {
-        LoggingUtil.printTestDetails(scenario);
+        //LoggingUtil.printTestDetails(scenario);
     }
 
     @After
     public void after(Scenario scenario)
     {
-        LoggingUtil.printTestStatus(scenario, m_testContext);
+        //LoggingUtil.printTestStatus(scenario, m_testContext);
     }
 
     @Given("^setup for partner with config at \"([^\"]*)\"$")
@@ -330,5 +329,11 @@ public class GlobalTestScenarioDefinitions
     public void runShoppingAndPreBookingForBooking()
     {
         BookingTestHelper.runShoppingAndPreBookingForBooking(m_testContext);
+    }
+
+    @And("^run booking$")
+    public void runBooking()
+    {
+        BookingTestHelper.runBooking(m_testContext);
     }
 }

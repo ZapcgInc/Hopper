@@ -1,0 +1,41 @@
+{
+  "affiliate_reference_id": 4480,
+  "hold": false,
+  "rooms": [
+    {
+      "title": "Mr",
+      "given_name": "John",
+      "family_name": "Smith",
+      "email": "john@example.com",
+      "phone": "4875550077",
+      "smoking": false,
+      "special_request": "Top floor or away from street please"
+    }
+  ],
+  "payments": [
+    {
+      "type": "customer_card",
+      "card_type": "VI",
+      "number": "4111111111111111",
+      "security_code": "123",
+      "expiration_month": "12",
+      "expiration_year": "2025",
+      "billing_contact": {
+        "given_name": "John",
+        "family_name": "Smith",
+        "email": "smith@example.com",
+        "phone": "4875550077",
+        "address": {
+          "line_1": "555 1st St",
+          "line_2": "10th Floor",
+          "line_3": "Unit 12",
+          "city": "Seattle",
+          "state_province_code": "WA",
+          "postal_code": "98121",
+          "country_code": "US"
+        }
+      }
+    }
+  ],
+  "affiliate_metadata": "data_point_1:123|data_point2:This is data."
+}

@@ -2,6 +2,7 @@ package com.hopper.tests.util.logging;
 
 import com.hopper.tests.model.TestContext;
 import cucumber.api.Scenario;
+import io.restassured.specification.RequestSpecification;
 
 /**
  * Simple Util class for logging.
@@ -33,5 +34,4 @@ public class LoggingUtil
     {
         System.out.println(line);
     }
-
 }

@@ -15,7 +15,7 @@ public class PaymentOptionResponseParser
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     public static PaymentOptionResponse parse(final Response apiResponse)
     {
-        Assert.assertNotNull("Shopping API response is null", apiResponse);
+        Assert.assertNotNull("Payment Options API response is null", apiResponse);
 
         try
         {
@@ -24,7 +24,7 @@ public class PaymentOptionResponseParser
         catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("Failed to parse Shopping Response");
+            System.out.println("Failed to parse Payment Options Response");
         }
 
         return null;

@@ -1,8 +1,11 @@
 package com.hopper.tests.definitions;
 
+import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
+import com.hopper.tests.model.request.booking.CreditCard;
+import com.hopper.tests.model.request.booking.Customer;
 import com.hopper.tests.model.response.Link;
 import com.hopper.tests.model.response.prebooking.PreBookingResponse;
 import com.hopper.tests.model.response.shopping.BedGroups;
@@ -11,11 +14,18 @@ import com.hopper.tests.model.response.shopping.Rate;
 import com.hopper.tests.model.response.shopping.Room;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
+import com.hopper.tests.util.parser.BookingResponseParser;
 import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
 import io.restassured.response.Response;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 
+import java.util.Map;
+
+/**
+ * Helper class for Booking Test scenarios
+ */
 public class BookingTestHelper
 {
     public static void runShoppingAndPreBookingForBooking(final TestContext context)
@@ -31,6 +41,7 @@ public class BookingTestHelper
             Assert.fail("No available properties returned in Shopping");
         }
 
+        // Run pre-booking until we find matched response.
         boolean foundPropertyWithAvailability = false;
         for (Property property : shoppingResponse.getProperties())
         {
@@ -64,5 +75,36 @@ public class BookingTestHelper
         }
 
         Assert.assertTrue("Prebooking failed for all properties / rooms", foundPropertyWithAvailability);
+    }
+
+    public static void runBooking(final TestContext context)
+    {
+        final Link bookingLink = context.getPreBookingResponse().getLinks().get("book");
+        context.setApiPath(RequestType.BOOKING, bookingLink.getHref());
+        context.setPostBody(_getBookingBodyAsMap(), RequestType.BOOKING);
+
+        final Response response = ResponseSupplierFactory.create(context, bookingLink.getMethod(), RequestType.BOOKING).get();
+
+        context.setResponse(RequestType.BOOKING, response);
+        context.setBookingResponse(BookingResponseParser.parse(response));
+    }
+
+    private static Map<String, Object> _getBookingBodyAsMap()
+    {
+        final Object[] customers = new Object[] {
+                Customer.createDummy()
+        };
+
+        final Object[] payments = new Object[] {
+                CreditCard.createDummy()
+        };
+
+        final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
+        body.put("affiliate_reference_id", RandomStringUtils.randomAlphanumeric(28));
+        body.put("hold", true);
+        body.put("rooms", customers);
+        body.put("payments", payments);
+
+        return body.build();
     }
 }

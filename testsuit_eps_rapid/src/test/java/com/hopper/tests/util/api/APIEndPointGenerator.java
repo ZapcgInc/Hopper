@@ -24,11 +24,28 @@ public class APIEndPointGenerator
             {
                 return _getPaymentOptionsEndPoint(criteria);
             }
+            case BOOKING:
+            {
+                return _getBookingEndPoint(criteria);
+            }
             default:
             {
                 throw new UnsupportedOperationException("Request type :" + requestType.name() + "is currently unsupported");
             }
         }
+    }
+
+    private static String _getBookingEndPoint(TestContext criteria)
+    {
+        final StringBuilder endPoint = new StringBuilder(criteria.getHost());
+
+        final String apiPath = criteria.getApiPath(RequestType.BOOKING);
+        if (apiPath != null)
+        {
+            endPoint.append(apiPath);
+        }
+
+        return endPoint.toString();
     }
 
     private static String _getPaymentOptionsEndPoint(TestContext criteria)
