@@ -4,14 +4,12 @@ import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.api.APIEndPointGenerator;
-import com.hopper.tests.util.logging.LoggingUtil;
 import io.restassured.RestAssured;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 
 import java.util.function.Supplier;
@@ -97,6 +95,21 @@ public class EPSResponseSupplier implements Supplier<Response>
                             .headers(context.getHeaders())
                             .contentType("application/json")
                             .delete(apiEndPoint);
+
+                    if (TestContext.LOGGING_ENABLED)
+                    {
+                        System.out.println(response.asString());
+                    }
+
+                    return response;
+                }
+                case "PUT":
+                {
+                    final String apiEndPoint = APIEndPointGenerator.create(context, requestType);
+                    final Response response = RestAssured.given()
+                            .headers(context.getHeaders())
+                            .contentType("application/json")
+                            .put(apiEndPoint);
 
                     if (TestContext.LOGGING_ENABLED)
                     {

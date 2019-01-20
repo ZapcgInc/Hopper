@@ -350,8 +350,14 @@ public class GlobalTestScenarioDefinitions
     }
 
     @And("^cancel room booking$")
-    public void cancelRoomBooking() throws Throwable
+    public void cancelRoomBooking()
     {
         BookingTestHelper.cancelRoomBooking(m_testContext);
+    }
+
+    @And("^run resume booking$")
+    public void runResumeBooking()
+    {
+        BookingTestHelper.resumeBooking(m_testContext);
     }
 }

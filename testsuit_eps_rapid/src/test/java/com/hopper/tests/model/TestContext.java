@@ -302,7 +302,7 @@ public class TestContext
         for (RequestType reqType : RequestType.values())
         {
             final String apiPath = getApiPath(reqType);
-            if (apiPath != null)
+            if (apiPath != null && getResponse(reqType) != null)
             {
 
                 sb.append("\t").append("Request Type").append(" : ").append(reqType).append("\n");

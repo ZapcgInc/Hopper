@@ -25,5 +25,6 @@ public enum ResponseValidationField
     TOTAL_PRICE,
     BILLABLE_CURRENCY,
     RETRIEVE_BOOKING_LINK,
+    RESUME_BOOKING_LINK,
     ;
 }

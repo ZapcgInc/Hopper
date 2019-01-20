@@ -11,5 +11,6 @@ public enum RequestType
     BOOKING,
     RETRIEVE_BOOKING,
     CANCEL_BOOKING,
+    RESUME_BOOKING,
     ;
 }

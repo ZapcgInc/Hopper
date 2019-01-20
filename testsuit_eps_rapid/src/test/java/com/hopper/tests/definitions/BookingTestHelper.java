@@ -191,4 +191,17 @@ public class BookingTestHelper
 
         context.setResponse(RequestType.CANCEL_BOOKING, response);
     }
+
+    public static void resumeBooking(TestContext context)
+    {
+        final Link resumeBookingLink = context.getBookingResponse().getLinks().get("resume");
+        context.setApiPath(RequestType.RETRIEVE_BOOKING, resumeBookingLink.getHref());
+
+        final Response response = ResponseSupplierFactory.create(
+                context,
+                resumeBookingLink.getMethod(),
+                RequestType.RETRIEVE_BOOKING).get();
+
+        context.setResponse(RequestType.RESUME_BOOKING, response);
+    }
 }

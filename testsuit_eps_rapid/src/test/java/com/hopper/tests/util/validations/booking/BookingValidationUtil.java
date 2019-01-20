@@ -28,6 +28,11 @@ public class BookingValidationUtil
                 _validateRetrieveBookingLink(response);
                 break;
             }
+            case RESUME_BOOKING_LINK:
+            {
+                _validateResumeBookingLink(response);
+                break;
+            }
             default:
             {
                 throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
@@ -95,4 +100,11 @@ public class BookingValidationUtil
         );
     }
 
+    private static void _validateResumeBookingLink(BookingResponse response)
+    {
+        Assert.assertTrue(
+                "No Retrieve Booking link",
+                response.getLinks().containsKey("resume")
+        );
+    }
 }
