@@ -10,5 +10,6 @@ public enum RequestType
     PAYMENT_OPTIONS,
     BOOKING,
     RETRIEVE_BOOKING,
+    CANCEL_BOOKING,
     ;
 }

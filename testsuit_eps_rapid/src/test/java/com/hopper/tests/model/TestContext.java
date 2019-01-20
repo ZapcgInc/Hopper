@@ -5,6 +5,7 @@ import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.model.request.RequestParams;
 import com.hopper.tests.model.response.booking.BookingResponse;
+import com.hopper.tests.model.response.booking.BookingRetrieveResponse;
 import com.hopper.tests.model.response.payment.PaymentOptionResponse;
 import com.hopper.tests.model.response.prebooking.PreBookingResponse;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
@@ -47,6 +48,7 @@ public class TestContext
     private PaymentOptionResponse m_paymentOptionResponse;
     private PreBookingResponse m_preBookingResponse;
     private BookingResponse m_bookingResponse;
+    private BookingRetrieveResponse m_bookingRetrieveResponse;
 
     private EnumMap<RequestType, Map<String, Object>> m_requestTypeToPostBody = new EnumMap<RequestType, Map<String, Object>>(RequestType.class);
 
@@ -133,6 +135,76 @@ public class TestContext
         m_shoppingResponse = shoppingResponse;
     }
 
+    public String getCheckInDate()
+    {
+        return m_checkInDate;
+    }
+
+    public String getCheckOutDate()
+    {
+        return m_checkOutDate;
+    }
+
+    public PaymentOptionResponse getPaymentOptionResponse()
+    {
+        return m_paymentOptionResponse;
+    }
+
+    public void setPaymentOptionResponse(PaymentOptionResponse paymentOptionResponse)
+    {
+        m_paymentOptionResponse = paymentOptionResponse;
+    }
+
+    public PreBookingResponse getPreBookingResponse()
+    {
+        return m_preBookingResponse;
+    }
+
+    public void setPreBookingResponse(PreBookingResponse m_preBookingResponse)
+    {
+        this.m_preBookingResponse = m_preBookingResponse;
+    }
+
+    public void setPostBody(final Map<String, Object> postMessage, final RequestType requestType)
+    {
+        m_requestTypeToPostBody.put(requestType, postMessage);
+    }
+
+    public Map<String, Object> getPostBody(final RequestType requestType)
+    {
+        return m_requestTypeToPostBody.get(requestType);
+    }
+
+    public BookingResponse getBookingResponse()
+    {
+        return m_bookingResponse;
+    }
+
+    public void setBookingResponse(BookingResponse bookingResponse)
+    {
+        m_bookingResponse = bookingResponse;
+    }
+
+    public String getBookingAffiliateId()
+    {
+        return m_bookingAffiliateId;
+    }
+
+    public void setBookingAffiliateId(String bookingAffiliateId)
+    {
+        m_bookingAffiliateId = bookingAffiliateId;
+    }
+
+    public BookingRetrieveResponse getBookingRetrieveResponse()
+    {
+        return m_bookingRetrieveResponse;
+    }
+
+    public void setBookingRetrieveResponse(BookingRetrieveResponse bookingRetrieveResponse)
+    {
+        m_bookingRetrieveResponse = bookingRetrieveResponse;
+    }
+
     /* START - Request Query Params */
 
     public void addCheckInDate(Calendar date, RequestType requestType)
@@ -204,66 +276,6 @@ public class TestContext
         {
             m_requestTypeToQueryParams.put(requestType, new RequestParams());
         }
-    }
-
-    public String getCheckInDate()
-    {
-        return m_checkInDate;
-    }
-
-    public String getCheckOutDate()
-    {
-        return m_checkOutDate;
-    }
-
-    public PaymentOptionResponse getPaymentOptionResponse()
-    {
-        return m_paymentOptionResponse;
-    }
-
-    public void setPaymentOptionResponse(PaymentOptionResponse paymentOptionResponse)
-    {
-        m_paymentOptionResponse = paymentOptionResponse;
-    }
-
-    public PreBookingResponse getPreBookingResponse()
-    {
-        return m_preBookingResponse;
-    }
-
-    public void setPreBookingResponse(PreBookingResponse m_preBookingResponse)
-    {
-        this.m_preBookingResponse = m_preBookingResponse;
-    }
-
-    public void setPostBody(final Map<String, Object> postMessage, final RequestType requestType)
-    {
-        m_requestTypeToPostBody.put(requestType, postMessage);
-    }
-
-    public Map<String, Object> getPostBody(final RequestType requestType)
-    {
-        return m_requestTypeToPostBody.get(requestType);
-    }
-
-    public BookingResponse getBookingResponse()
-    {
-        return m_bookingResponse;
-    }
-
-    public void setBookingResponse(BookingResponse bookingResponse)
-    {
-        m_bookingResponse = bookingResponse;
-    }
-
-    public String getBookingAffiliateId()
-    {
-        return m_bookingAffiliateId;
-    }
-
-    public void setBookingAffiliateId(String bookingAffiliateId)
-    {
-        m_bookingAffiliateId = bookingAffiliateId;
     }
 
     /* END - Request Query Params */

@@ -90,6 +90,21 @@ public class EPSResponseSupplier implements Supplier<Response>
 
                     return response;
                 }
+                case "DELETE":
+                {
+                    final String apiEndPoint = APIEndPointGenerator.create(context, requestType);
+                    final Response response = RestAssured.given()
+                            .headers(context.getHeaders())
+                            .contentType("application/json")
+                            .delete(apiEndPoint);
+
+                    if (TestContext.LOGGING_ENABLED)
+                    {
+                        System.out.println(response.asString());
+                    }
+
+                    return response;
+                }
                 default:
                 {
                     Assert.fail("This type of method is not supported yet.");

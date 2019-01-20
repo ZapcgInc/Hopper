@@ -7,6 +7,7 @@ import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.request.booking.CreditCard;
 import com.hopper.tests.model.request.booking.Customer;
 import com.hopper.tests.model.response.Link;
+import com.hopper.tests.model.response.booking.BookingRetrieveResponse;
 import com.hopper.tests.model.response.prebooking.PreBookingResponse;
 import com.hopper.tests.model.response.shopping.BedGroups;
 import com.hopper.tests.model.response.shopping.Property;
@@ -16,6 +17,7 @@ import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
 import com.hopper.tests.util.logging.LoggingUtil;
 import com.hopper.tests.util.parser.BookingResponseParser;
+import com.hopper.tests.util.parser.BookingRetrieveResponseParser;
 import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
 import io.restassured.response.Response;
@@ -141,5 +143,19 @@ public class BookingTestHelper
                 RequestType.RETRIEVE_BOOKING).get();
 
         context.setResponse(RequestType.RETRIEVE_BOOKING, response);
+        context.setBookingRetrieveResponse(BookingRetrieveResponseParser.parse(response));
+    }
+
+    public static void cancelBooking(final TestContext context)
+    {
+        final Link cancelLink = context.getBookingResponse().getLinks().get("cancel");
+        context.setApiPath(RequestType.CANCEL_BOOKING, cancelLink.getHref());
+
+        final Response response = ResponseSupplierFactory.create(
+                context,
+                cancelLink.getMethod(),
+                RequestType.CANCEL_BOOKING).get();
+
+        context.setResponse(RequestType.CANCEL_BOOKING, response);
     }
 }

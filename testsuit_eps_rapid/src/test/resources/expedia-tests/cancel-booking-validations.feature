@@ -28,3 +28,5 @@ Feature: Validations for PreBooking API.
     And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
     And retrieve booking
     Then the response code for "RETRIEVE_BOOKING" should be 200
+    And cancel booking
+    And the response code for "CANCEL_BOOKING" should be 204

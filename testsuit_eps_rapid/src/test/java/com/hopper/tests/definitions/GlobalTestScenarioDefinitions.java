@@ -341,4 +341,10 @@ public class GlobalTestScenarioDefinitions
     {
         BookingTestHelper.retrieveBooking(m_testContext);
     }
+
+    @And("^cancel booking$")
+    public void cancelBooking()
+    {
+        BookingTestHelper.cancelBooking(m_testContext);
+    }
 }
