@@ -330,10 +330,10 @@ public class GlobalTestScenarioDefinitions
         BookingTestHelper.runShoppingAndPreBookingForBooking(m_testContext);
     }
 
-    @And("^run booking$")
-    public void runBooking()
+    @And("^run booking with hold \"([^\"]*)\"$")
+    public void runBookingWithHold(String holdBooking)
     {
-        BookingTestHelper.runBooking(m_testContext);
+        BookingTestHelper.runBooking(m_testContext, Boolean.valueOf(holdBooking));
     }
 
     @And("^retrieve booking$")
@@ -346,5 +346,11 @@ public class GlobalTestScenarioDefinitions
     public void cancelBooking()
     {
         BookingTestHelper.cancelBooking(m_testContext);
+    }
+
+    @And("^cancel room booking$")
+    public void cancelRoomBooking() throws Throwable
+    {
+        BookingTestHelper.cancelRoomBooking(m_testContext);
     }
 }

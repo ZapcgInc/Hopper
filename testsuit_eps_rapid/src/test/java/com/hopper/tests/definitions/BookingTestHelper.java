@@ -7,7 +7,6 @@ import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.request.booking.CreditCard;
 import com.hopper.tests.model.request.booking.Customer;
 import com.hopper.tests.model.response.Link;
-import com.hopper.tests.model.response.booking.BookingRetrieveResponse;
 import com.hopper.tests.model.response.prebooking.PreBookingResponse;
 import com.hopper.tests.model.response.shopping.BedGroups;
 import com.hopper.tests.model.response.shopping.Property;
@@ -87,14 +86,17 @@ public class BookingTestHelper
         Assert.assertTrue("Prebooking failed for all properties / rooms", foundPropertyWithAvailability);
     }
 
-    public static void runBooking(final TestContext context)
+    public static void runBooking(final TestContext context, final boolean holdBooking)
     {
         final Link bookingLink = context.getPreBookingResponse().getLinks().get("book");
         context.setApiPath(RequestType.BOOKING, bookingLink.getHref());
 
         final String affiliateId = RandomStringUtils.randomAlphanumeric(28);
 
-        context.setPostBody(_getBookingBodyAsMap(affiliateId), RequestType.BOOKING);
+        context.setPostBody(
+                _getBookingBodyAsMap(affiliateId, holdBooking),
+                RequestType.BOOKING
+        );
 
         final Response response = ResponseSupplierFactory.create(
                 context,
@@ -111,7 +113,7 @@ public class BookingTestHelper
         context.setBookingResponse(BookingResponseParser.parse(response));
     }
 
-    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId)
+    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking)
     {
         final Object[] customers = new Object[] {
                 Customer.createDummy()
@@ -123,7 +125,7 @@ public class BookingTestHelper
 
         final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
         body.put("affiliate_reference_id", affiliateId);
-        body.put("hold", true);
+        body.put("hold", holdBooking);
         body.put("rooms", customers);
         body.put("payments", payments);
 
@@ -148,7 +150,37 @@ public class BookingTestHelper
 
     public static void cancelBooking(final TestContext context)
     {
-        final Link cancelLink = context.getBookingResponse().getLinks().get("cancel");
+        final Link cancelLink = context.getBookingRetrieveResponse()
+                .getLinks()
+                .get("cancel");
+
+        context.setApiPath(RequestType.CANCEL_BOOKING, cancelLink.getHref());
+
+        final Response response = ResponseSupplierFactory.create(
+                context,
+                cancelLink.getMethod(),
+                RequestType.CANCEL_BOOKING).get();
+
+        context.setResponse(RequestType.CANCEL_BOOKING, response);
+    }
+
+    public static void cancelRoomBooking(TestContext context)
+    {
+        if (context.getBookingRetrieveResponse() == null)
+        {
+            System.out.println("Error 1");
+        }
+        if (context.getBookingRetrieveResponse().getRooms() == null)
+        {
+            System.out.println("Error 2");
+        }
+
+        final Link cancelLink = context.getBookingRetrieveResponse()
+                .getRooms()
+                .get(0)
+                .getLinks()
+                .get("cancel");
+
         context.setApiPath(RequestType.CANCEL_BOOKING, cancelLink.getHref());
 
         final Response response = ResponseSupplierFactory.create(

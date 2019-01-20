@@ -16,6 +16,7 @@ Feature: Validations for PreBooking API.
       | rate_option       | closed_user_group |
     And with request DateFormat "yyyy-MM-dd"
     And set checkin "90" from today with lengthOfStay "5"
+    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
 
   #######################   Rapid Test Scenarios
   @business_test
@@ -23,7 +24,7 @@ Feature: Validations for PreBooking API.
     Given set checkin "5" from today with lengthOfStay "3"
     And run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
-    And run booking
+    And run booking with hold "true"
     Then the response code for "BOOKING" should be 201
     And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
     And retrieve booking

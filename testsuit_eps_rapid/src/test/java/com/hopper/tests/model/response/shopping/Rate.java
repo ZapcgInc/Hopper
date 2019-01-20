@@ -6,9 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.model.response.Link;
 import com.hopper.tests.model.response.RoomPrice;
-import com.hopper.tests.model.response.shopping.Amenities;
-import com.hopper.tests.model.response.shopping.BedGroups;
-import com.hopper.tests.model.response.shopping.CancelPolicies;
+import com.hopper.tests.model.response.CancelPolicies;
 
 import java.util.List;
 import java.util.Map;

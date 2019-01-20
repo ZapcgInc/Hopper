@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hopper.tests.model.response.Link;
 
+import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,6 +18,9 @@ public class BookingRetrieveResponse
 
     @JsonProperty("links")
     private Map<String, Link> links;
+
+    @JsonProperty("rooms")
+    private List<Room> rooms;
 
     public BookingRetrieveResponse(){}
 
@@ -33,5 +37,10 @@ public class BookingRetrieveResponse
     public Map<String, Link> getLinks()
     {
         return links;
+    }
+
+    public List<Room> getRooms()
+    {
+        return rooms;
     }
 }

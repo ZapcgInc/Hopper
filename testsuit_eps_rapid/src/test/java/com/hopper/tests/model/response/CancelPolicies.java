@@ -1,4 +1,4 @@
-package com.hopper.tests.model.response.shopping;
+package com.hopper.tests.model.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
