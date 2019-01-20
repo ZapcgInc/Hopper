@@ -1,5 +1,5 @@
-@Booking
-Feature: Validations for PreBooking API.
+@HeldBooking
+Feature: Validations for Hold Booking API.
 
   Background:
     Given setup for partner with config at "expedia-config.yml"

@@ -1,5 +1,5 @@
-@Booking
-Feature: Validations for PreBooking API.
+@CancelRoomBooking
+Feature: Validations for Room Cancellation API.
 
   Background:
     Given setup for partner with config at "expedia-config.yml"
