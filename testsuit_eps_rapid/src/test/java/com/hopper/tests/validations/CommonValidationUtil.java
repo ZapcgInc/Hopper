@@ -1,4 +1,4 @@
-package com.hopper.tests.util.validations;
+package com.hopper.tests.validations;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.response.Link;

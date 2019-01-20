@@ -9,7 +9,7 @@ import com.hopper.tests.model.response.booking.BookingRetrieveResponse;
 import com.hopper.tests.model.response.payment.PaymentOptionResponse;
 import com.hopper.tests.model.response.prebooking.PreBookingResponse;
 import com.hopper.tests.model.response.shopping.ShoppingResponse;
-import com.hopper.tests.util.api.APIEndPointGenerator;
+import com.hopper.tests.api.APIEndPointGenerator;
 import io.restassured.response.Response;
 
 import java.text.SimpleDateFormat;

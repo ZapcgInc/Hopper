@@ -1,11 +1,11 @@
-package com.hopper.tests.util.validations.prebooking;
+package com.hopper.tests.validations.prebooking;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.prebooking.PreBookingResponse;
-import com.hopper.tests.util.validations.CommonValidationUtil;
-import com.hopper.tests.util.validations.constants.ResponseValidationField;
-import com.hopper.tests.util.validations.model.Range;
+import com.hopper.tests.validations.CommonValidationUtil;
+import com.hopper.tests.validations.constants.ResponseValidationField;
+import com.hopper.tests.validations.model.Range;
 import org.junit.Assert;
 
 import java.util.List;

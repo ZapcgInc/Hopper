@@ -1,4 +1,4 @@
-package com.hopper.tests.util.config;
+package com.hopper.tests.config;
 
 import java.io.File;
 import java.io.IOException;

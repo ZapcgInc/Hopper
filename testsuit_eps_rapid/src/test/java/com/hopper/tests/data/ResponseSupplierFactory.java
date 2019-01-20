@@ -1,4 +1,4 @@
-package com.hopper.tests.util.data;
+package com.hopper.tests.data;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;

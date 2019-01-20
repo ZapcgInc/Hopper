@@ -1,4 +1,4 @@
-package com.hopper.tests.util.validations.constants;
+package com.hopper.tests.validations.constants;
 
 public enum ResponseValidationField
 {

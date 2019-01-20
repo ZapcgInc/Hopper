@@ -1,4 +1,4 @@
-package com.hopper.tests.util.validations.shopping;
+package com.hopper.tests.validations.shopping;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.response.shopping.BedGroups;
@@ -7,9 +7,9 @@ import com.hopper.tests.model.response.shopping.Rate;
 import com.hopper.tests.model.response.shopping.Room;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.CancelPolicies;
-import com.hopper.tests.util.validations.CommonValidationUtil;
-import com.hopper.tests.util.validations.constants.ResponseValidationField;
-import com.hopper.tests.util.validations.model.Range;
+import com.hopper.tests.validations.CommonValidationUtil;
+import com.hopper.tests.validations.constants.ResponseValidationField;
+import com.hopper.tests.validations.model.Range;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 

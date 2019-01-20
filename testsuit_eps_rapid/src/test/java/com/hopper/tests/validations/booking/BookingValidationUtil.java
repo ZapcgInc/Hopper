@@ -1,9 +1,9 @@
-package com.hopper.tests.util.validations.booking;
+package com.hopper.tests.validations.booking;
 
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.response.booking.BookingResponse;
-import com.hopper.tests.util.validations.constants.ResponseValidationField;
-import com.hopper.tests.util.validations.model.Range;
+import com.hopper.tests.validations.constants.ResponseValidationField;
+import com.hopper.tests.validations.model.Range;
 import org.junit.Assert;
 
 import java.util.List;

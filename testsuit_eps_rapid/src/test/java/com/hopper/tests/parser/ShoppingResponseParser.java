@@ -1,4 +1,4 @@
-package com.hopper.tests.util.parser;
+package com.hopper.tests.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hopper.tests.model.response.shopping.Property;

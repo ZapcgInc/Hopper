@@ -1,4 +1,4 @@
-package com.hopper.tests.util.validations.model;
+package com.hopper.tests.validations.model;
 
 /**
  *

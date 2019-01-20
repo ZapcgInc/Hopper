@@ -1,9 +1,9 @@
-package com.hopper.tests.util.data;
+package com.hopper.tests.data;
 
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
-import com.hopper.tests.util.api.APIEndPointGenerator;
+import com.hopper.tests.api.APIEndPointGenerator;
 import io.restassured.RestAssured;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;

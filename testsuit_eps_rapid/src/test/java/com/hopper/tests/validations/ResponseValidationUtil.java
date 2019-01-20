@@ -1,13 +1,13 @@
-package com.hopper.tests.util.validations;
+package com.hopper.tests.validations;
 
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.model.TestContext;
-import com.hopper.tests.util.validations.booking.BookingValidationUtil;
-import com.hopper.tests.util.validations.constants.ResponseValidationField;
-import com.hopper.tests.util.validations.model.Range;
-import com.hopper.tests.util.validations.paymentoptions.PaymentOptionsResponseValidationUtil;
-import com.hopper.tests.util.validations.prebooking.PreBookingValidationUtil;
-import com.hopper.tests.util.validations.shopping.ShoppingResponseValidationUtil;
+import com.hopper.tests.validations.booking.BookingValidationUtil;
+import com.hopper.tests.validations.constants.ResponseValidationField;
+import com.hopper.tests.validations.model.Range;
+import com.hopper.tests.validations.paymentoptions.PaymentOptionsResponseValidationUtil;
+import com.hopper.tests.validations.prebooking.PreBookingValidationUtil;
+import com.hopper.tests.validations.shopping.ShoppingResponseValidationUtil;
 import io.restassured.response.Response;
 import org.junit.Assert;
 
