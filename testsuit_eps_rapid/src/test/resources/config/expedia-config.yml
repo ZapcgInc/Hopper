@@ -11,3 +11,5 @@ auth_params:
       apikey: mq7ijoev87orvkq4mqo8dr2tf
       secret: 587btntj2ihg5
 shopping_end_point : "properties/availability"
+customer-info-path: "expedia-dummy-data/dummy-customer-1.yml"
+credit-card-info-path: "expedia-dummy-data/dummy-credit-card.yml"

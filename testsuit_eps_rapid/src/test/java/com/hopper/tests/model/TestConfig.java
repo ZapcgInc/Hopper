@@ -32,6 +32,12 @@ public class TestConfig
     @JsonProperty("shopping_end_point")
     private String shoppingEndPoint;
 
+    @JsonProperty("customer-info-path")
+    private String customerInfoPath;
+
+    @JsonProperty("credit-card-info-path")
+    private String creditCardInfoPath;
+
     public TestConfig(){}
 
     public SupportedPartners getPartner()
@@ -62,5 +68,15 @@ public class TestConfig
     public String getShoppingEndPoint()
     {
         return shoppingEndPoint;
+    }
+
+    public String getCustomerInfoPath()
+    {
+        return customerInfoPath;
+    }
+
+    public String getCreditCardInfoPath()
+    {
+        return creditCardInfoPath;
     }
 }

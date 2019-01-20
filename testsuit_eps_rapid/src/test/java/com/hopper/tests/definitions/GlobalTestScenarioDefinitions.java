@@ -15,6 +15,7 @@ import com.hopper.tests.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.util.config.ConfigurationFileParser;
 import com.hopper.tests.util.data.ResponseSupplierFactory;
+import com.hopper.tests.util.logging.LoggingUtil;
 import com.hopper.tests.util.parser.PaymentOptionResponseParser;
 import com.hopper.tests.util.parser.PreBookingResponseParser;
 import com.hopper.tests.util.parser.ShoppingResponseParser;
@@ -45,13 +46,13 @@ public class GlobalTestScenarioDefinitions
     @Before
     public void before(Scenario scenario)
     {
-        //LoggingUtil.printTestDetails(scenario);
+        LoggingUtil.printTestDetails(scenario);
     }
 
     @After
     public void after(Scenario scenario)
     {
-        //LoggingUtil.printTestStatus(scenario, m_testContext);
+        LoggingUtil.printTestStatus(scenario, m_testContext);
     }
 
     @Given("^setup for partner with config at \"([^\"]*)\"$")

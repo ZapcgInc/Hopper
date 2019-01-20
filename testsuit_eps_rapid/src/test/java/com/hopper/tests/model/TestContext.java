@@ -31,6 +31,7 @@ public class TestContext
     private static final String CHECKOUT_DATE_KEY = "checkout";
 
     private final SupportedPartners m_partner;
+    private final TestConfig m_testConfig;
 
     private String m_host;
     private String m_version;
@@ -54,6 +55,7 @@ public class TestContext
 
     public TestContext(final TestConfig config)
     {
+        m_testConfig = config;
         m_partner = config.getPartner();
         m_host = config.getAPI();
         m_version = config.getVersion();
@@ -203,6 +205,11 @@ public class TestContext
     public void setBookingRetrieveResponse(BookingRetrieveResponse bookingRetrieveResponse)
     {
         m_bookingRetrieveResponse = bookingRetrieveResponse;
+    }
+
+    public TestConfig getTestConfig()
+    {
+        return m_testConfig;
     }
 
     /* START - Request Query Params */

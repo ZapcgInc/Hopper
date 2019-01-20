@@ -77,25 +77,11 @@ public class Customer
         return specialRequest;
     }
 
-    public static Map<String, String> createDummy()
-    {
-        final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-
-        builder.put("title", "Mr");
-        builder.put("given_name", "John");
-        builder.put("family_name", "Smith");
-        builder.put("email", "john@example.com");
-        builder.put("phone", "4875550077");
-        builder.put("smoking", "false");
-        builder.put("special_request", "Top floor or away from street please");
-
-        return builder.build();
-    }
     public static Customer create(final String pathToData)
     {
         try
         {
-            Path resourceDirectory = Paths.get("src", "test", "resources", "expdia-dummy-data", pathToData);
+            Path resourceDirectory = Paths.get("src", "test", "resources", pathToData);
             return YAML_OBJECT_MAPPER.readValue(new File(resourceDirectory.toString()), Customer.class);
         }
         catch (IOException e)
@@ -103,5 +89,20 @@ public class Customer
             LoggingUtil.log("Unable to parse Config file at location : " + pathToData);
             throw new RuntimeException("Unable to parse Config file at location : " + pathToData, e);
         }
+    }
+
+    public Map<String, String> getAsMap()
+    {
+        final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+
+        builder.put("title", getTitle());
+        builder.put("given_name", getGivenName());
+        builder.put("family_name", getFamilyName());
+        builder.put("email", getEmail());
+        builder.put("phone", getPhone());
+        builder.put("smoking", getSmoking());
+        builder.put("special_request", getSpecialRequest());
+
+        return builder.build();
     }
 }

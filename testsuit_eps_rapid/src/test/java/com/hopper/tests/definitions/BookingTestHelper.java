@@ -3,6 +3,7 @@ package com.hopper.tests.definitions;
 import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
+import com.hopper.tests.model.TestConfig;
 import com.hopper.tests.model.TestContext;
 import com.hopper.tests.model.request.booking.CreditCard;
 import com.hopper.tests.model.request.booking.Customer;
@@ -94,7 +95,7 @@ public class BookingTestHelper
         final String affiliateId = RandomStringUtils.randomAlphanumeric(28);
 
         context.setPostBody(
-                _getBookingBodyAsMap(affiliateId, holdBooking),
+                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig()),
                 RequestType.BOOKING
         );
 
@@ -113,14 +114,14 @@ public class BookingTestHelper
         context.setBookingResponse(BookingResponseParser.parse(response));
     }
 
-    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking)
+    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking, final TestConfig config)
     {
-        final Object[] customers = new Object[] {
-                Customer.createDummy()
+        Object[] customers = new Object[] {
+                Customer.create(config.getCustomerInfoPath()).getAsMap()
         };
 
         final Object[] payments = new Object[] {
-                CreditCard.createDummy()
+                CreditCard.create(config.getCreditCardInfoPath()).getAsMap()
         };
 
         final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
