@@ -1,4 +1,4 @@
-@preBook
+@PreBook
 Feature: Validations for PreBooking API.
 
   Background:

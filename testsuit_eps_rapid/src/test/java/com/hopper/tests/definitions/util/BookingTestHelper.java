@@ -49,15 +49,24 @@ public class BookingTestHelper
         }
 
         // Run pre-booking until we find matched response.
+        int i =0;
         boolean foundPropertyWithAvailability = false;
         for (Property property : shoppingResponse.getProperties())
         {
+        	if(foundPropertyWithAvailability) break;
+        	
             for (Room room : property.getRooms())
             {
+            	if(foundPropertyWithAvailability) break;
+            	
                 for (Rate rate : room.getRates())
                 {
+                	if(foundPropertyWithAvailability) break;
+                	
                     for (BedGroups bedGroup : rate.getBedGroups())
                     {
+                    	if(foundPropertyWithAvailability) break;
+                    	
                         final Link priceCheckLink = bedGroup.getLinks().get("price_check");
                         context.setApiPath(RequestType.PRE_BOOKING, priceCheckLink.getHref());
 
@@ -66,10 +75,10 @@ public class BookingTestHelper
                                 priceCheckLink.getMethod(),
                                 RequestType.PRE_BOOKING).get();
 
-                        if (response.getStatusCode() == 200)
+                        if (response.getStatusCode() == 200 || response.getStatusCode() == 409)
                         {
                             final PreBookingResponse preBookingResponse = PreBookingResponseParser.parse(response);
-                            if (preBookingResponse != null && preBookingResponse.getStatus().equals("matched"))
+                            if (preBookingResponse != null && (preBookingResponse.getStatus().equals("matched") || preBookingResponse.getStatus().equals("price_change")))
                             {
                                 context.setPreBookingResponse(preBookingResponse);
                                 context.setResponse(RequestType.PRE_BOOKING, response);

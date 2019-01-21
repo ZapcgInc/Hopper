@@ -1,4 +1,4 @@
-@Booking
+@Retrieve_Booking
 Feature: Validations for Booking Retrieve API.
 
   Background:
@@ -15,14 +15,13 @@ Feature: Validations for Booking Retrieve API.
       | include           | all_rates         |
       | rate_option       | closed_user_group |
     And with request DateFormat "yyyy-MM-dd"
-    And set checkin "90" from today with lengthOfStay "5"
-    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
+    And set checkin "90" from today with lengthOfStay "3"
+#    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
 
   #######################   Rapid Test Scenarios
   @business_test
-  Scenario: Run booking and validate Status
-    Given set checkin "5" from today with lengthOfStay "3"
-    And run shopping and preBooking for Booking
+  Scenario: Retrieve Booking API with token successful response
+    Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
     Then the response code for "BOOKING" should be 201
