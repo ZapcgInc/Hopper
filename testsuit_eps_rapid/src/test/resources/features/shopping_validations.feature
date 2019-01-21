@@ -1,13 +1,13 @@
 @availability
 Feature: Validations for Availability API
 
-  Background:
+  Background: 
     Given setup for partner with config at "expedia-config.yml"
     And with shopping query parameters
       | currency          | USD               |
       | language          | en-US             |
       | country_code      | US                |
-      | property_id       | 20321             |
+      | property_id       |             20321 |
       | occupancy         | 2-9,4             |
       | sales_channel     | website           |
       | sales_environment | hotel_only        |
@@ -17,9 +17,8 @@ Feature: Validations for Availability API
     And with request DateFormat "yyyy-MM-dd"
     And set checkin "90" from today with lengthOfStay "5"
 
-#    And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,0|2"
-#    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
-
+  #    And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,0|2"
+  #    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
   #######################   Rapid Test Scenarios
   @rapid_test
   Scenario Outline: Availability API  Rapid test Header "<header>" with "<value>"
@@ -31,12 +30,12 @@ Feature: Validations for Availability API
       | type    | <type>    |
       | message | <message> |
 
-    Examples:
+    Examples: 
       | header | value                  | code | type                   | message                                                            |
-      | Test   | no_availability        | 404  | no_availability        | No availability was found for the properties requested.            |
-      | Test   | unknown_internal_error | 500  | unknown_internal_error | An internal server error has occurred.                             |
-      | Test   | service_unavailable    | 503  | service_unavailable    | This service is currently unavailable.                             |
-      | Test   | forbidden              | 403  | request_forbidden      | Your request could not be authorized. Ensure that you have access. |
+      | Test   | no_availability        |  404 | no_availability        | No availability was found for the properties requested.            |
+      | Test   | unknown_internal_error |  500 | unknown_internal_error | An internal server error has occurred.                             |
+      | Test   | service_unavailable    |  503 | service_unavailable    | This service is currently unavailable.                             |
+      | Test   | forbidden              |  403 | request_forbidden      | Your request could not be authorized. Ensure that you have access. |
 
   @rapid_test
   Scenario: Availability API Rapid test with invalid value like "Test=INVALID"
@@ -87,7 +86,7 @@ Feature: Validations for Availability API
       | name | <query_param> |
       | type | querystring   |
 
-    Examples:
+    Examples: 
       | query_param       | error_type                 | error_message                                                                                                              |
       | property_id       | property_id.required       | Property Id is required.                                                                                                   |
       | checkin           | checkin.required           | Checkin is required.                                                                                                       |
@@ -116,7 +115,7 @@ Feature: Validations for Availability API
     And user should see json response with paris on the filtered "errors[0].fields[0]" node
       | name  | property_id |
       | type  | querystring |
-      | value | 251         |
+      | value |         251 |
 
   @data_test
   Scenario: Availabilty API with more than 8 values for Query Param "occupancy"
@@ -134,7 +133,7 @@ Feature: Validations for Availability API
     And user should see json response with paris on the filtered "errors[0].fields[0]" node
       | name  | occupancy   |
       | type  | querystring |
-      | value | 9           |
+      | value |           9 |
 
   @data_test
   Scenario: Availability API with total length of stay <days>
@@ -188,10 +187,10 @@ Feature: Validations for Availability API
       | name | checkin     |
       | type | querystring |
 
-    Examples:
+    Examples: 
       | scenario            | days | error_type                       | error_message                  |
-      | past-dates          | -2   | checkin.invalid_date_in_the_past | Checkin cannot be in the past. |
-      | Too-Advance-Checkin | 510  | checkin.invalid_date_too_far_out | Checkin too far in the future. |
+      | past-dates          |   -2 | checkin.invalid_date_in_the_past | Checkin cannot be in the past. |
+      | Too-Advance-Checkin |  510 | checkin.invalid_date_too_far_out | Checkin too far in the future. |
 
   @data_test
   Scenario: Availability API with Query Param "checkin" date greater than Query Param "checkout" date
@@ -229,11 +228,11 @@ Feature: Validations for Availability API
       | type  | querystring |
       | value | <value>     |
 
-    Examples:
+    Examples: 
       | scenario                      | numOfAdult | ageOfChildren | error_type                               | error_message                            | value |
-     # | more than 8 people in a room  |          9 |             0 | number_of_adults.invalid_above_maximum   | Number of adults must be less than 9.    |     9 |
-      | no adult in a room            | 0          | 2,3,4,5,6,7,8 | number_of_adults.invalid_below_minimum   | Number of adults must be greater than 0. | 0     |
-      | chid age with gerater than 18 | 2          | 20            | child_age.invalid_outside_accepted_range | Child age must be between 0 and 17.      | 20    |
+      # | more than 8 people in a room  |          9 |             0 | number_of_adults.invalid_above_maximum   | Number of adults must be less than 9.    |     9 |
+      | no adult in a room            |          0 | 2,3,4,5,6,7,8 | number_of_adults.invalid_below_minimum   | Number of adults must be greater than 0. |     0 |
+      | chid age with gerater than 18 |          2 |            20 | child_age.invalid_outside_accepted_range | Child age must be between 0 and 17.      |    20 |
 
   @data_test
   Scenario Outline: Availability API with invalid  data format for Query Param "<query_param>"
@@ -251,7 +250,7 @@ Feature: Validations for Availability API
       | name | <query_param> |
       | type | querystring   |
 
-    Examples:
+    Examples: 
       | query_param       | value | error_type                | error_message                                                                                                                                                                                                                                                                                      |
       | currency          | RRR   | currency.not_supported    | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, TRY, TWD, USD, VND, ZAR]                                                                              |
       | language          | as-US | language.not_supported    | Language is not supported. Supported languages are: [ar-SA, cs-CZ, da-DK, de-DE, el-GR, en-US, es-ES, es-MX, fi-FI, fr-CA, fr-FR, hr-HR, hu-HU, id-ID, is-IS, it-IT, ja-JP, ko-KR, lt-LT, ms-MY, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sk-SK, sv-SE, th-TH, tr-TR, uk-UA, vi-VN, zh-CN, zh-TW] |
@@ -349,7 +348,8 @@ Feature: Validations for Availability API
     And run shopping
     Then the response code for "SHOPPING" should be "200"
     And validate "<field>"  for "SHOPPING"
-    Examples:
+
+    Examples: 
       | field                |
       | PRICE_CHECK_LINK     |
       | PAYMENT_OPTIONS_LINK |
@@ -413,7 +413,6 @@ Feature: Validations for Availability API
     And run shopping
     Then the response code for "SHOPPING" should be "200"
     And validate "SHOPPING" response element "CURRENCY_CODE" matches values "INR"
-
 
   @business_test
   Scenario: Availability API response validation for "BILLABLE_CURRENCY"
