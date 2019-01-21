@@ -80,12 +80,14 @@ Feature: Validations for PreBooking API.
     Then the response code for "PRE_BOOKING" should be 200
     And validate "PRE_BOOKING" response element "NIGHTLY_PRICE_COUNT" matches values "3"
 
+  @business_test
   Scenario: PreBooking API validation for Total Price is matching
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be 200
     And validate that "TOTAL_PRICE" for "PRE_BOOKING" is the sum of individual room stay values with taxes and fees
 
+  @business_test
   Scenario: PreBooking API validation with multiple Query Param "occupancy" and single Query Param "property_id"
     Given set "SHOPPING" queryParam "occupancy" value "null"
     And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,4|3"
@@ -94,12 +96,14 @@ Feature: Validations for PreBooking API.
     Then the response code for "PRE_BOOKING" should be 200
     And validate "PRE_BOOKING" response element "OCCUPANCY" matches values "2-9,4|3"
 
+  @business_test
   Scenario: PreBooking API validation for "STAY_PRICE_TYPE"
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be 200
     And validate "PRE_BOOKING" response element "STAY_PRICE_TYPE" matches values "base_rate|tax_and_service_fee|extra_person_fee|property_fee|sales_tax|adjustment"
 
+  @business_test
   Scenario Outline: PreBooking API validation for "href" in "<field>"
     Given run shopping
     When run preBooking
@@ -111,6 +115,7 @@ Feature: Validations for PreBooking API.
       | BOOKING_LINK  |
       | SHOPPING_LINK |
 
+  @business_test
   Scenario: PreBooking API validation for "status"
     Given run shopping
     When run preBooking
