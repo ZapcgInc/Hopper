@@ -26,5 +26,10 @@ public enum ResponseValidationField
     BILLABLE_CURRENCY,
     RETRIEVE_BOOKING_LINK,
     RESUME_BOOKING_LINK,
+    LINKS,
+    ITINERARY_ID,
+    RETRIEVE_METHOD,
+    RETRIEVE_HREF,
+    CANCEL_HREF
     ;
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.config.model.TestConfig;
+import com.hopper.tests.data.model.response.RoomPrice;
 import com.hopper.tests.definitions.model.TestContext;
 import com.hopper.tests.data.model.request.booking.CreditCard;
 import com.hopper.tests.data.model.request.booking.Customer;
@@ -24,6 +25,8 @@ import io.restassured.response.Response;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -99,14 +102,16 @@ public class BookingTestHelper
     public static void runBooking(final TestContext context, final boolean holdBooking)
     {
         final Link bookingLink = context.getPreBookingResponse().getLinks().get("book");
+      //  int numRooms = context.getPreBookingResponse().getRoomPriceByOccupany().keySet().size();
         context.setApiPath(RequestType.BOOKING, bookingLink.getHref());
 
         final String affiliateId = RandomStringUtils.randomAlphanumeric(28);
 
-        context.setPostBody(
-                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig()),
-                RequestType.BOOKING
-        );
+            context.setPostBody(
+                    _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig()),
+                    RequestType.BOOKING
+            );
+
 
         final Response response = ResponseSupplierFactory.create(
                 context,
@@ -125,6 +130,7 @@ public class BookingTestHelper
 
     private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking, final TestConfig config)
     {
+
         Object[] customers = new Object[] {
                 Customer.create(config.getCustomerInfoPath()).getAsMap()
         };
@@ -132,6 +138,9 @@ public class BookingTestHelper
         final Object[] payments = new Object[] {
                 CreditCard.create(config.getCreditCardInfoPath()).getAsMap()
         };
+        //    roomList.add(customers);
+        //    paymentList.add(payments);
+
 
         final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
         body.put("affiliate_reference_id", affiliateId);

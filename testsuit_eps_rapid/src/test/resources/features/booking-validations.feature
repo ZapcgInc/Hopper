@@ -62,9 +62,67 @@ Feature: Validations for Booking API.
       | Test   | invalid     |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: STANDARD, ROOMS_UNAVAILABLE, CC_DECLINED, PRICE_UNAVAILABLE, PRICE_MISMATCH, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE |
 
   @business_test
-  Scenario: Booking API successful response
+  Scenario: Booking API successful response for "HOLD" false
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
     Then the response code for "BOOKING" should be 201
     And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+
+  @business_test
+  Scenario: Booking API for validation of "ITINERARY_ID"
+    Given run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+    And run booking with hold "false"
+    Then the response code for "BOOKING" should be 201
+    And validate "ITINERARY_ID"  for "BOOKING"
+
+   @business_test
+   Scenario: Booking API for validation of "LINKS"
+     Given run shopping and preBooking for Booking
+     And validate "BOOKING_LINK"  for "PRE_BOOKING"
+     And run booking with hold "false"
+     Then the response code for "BOOKING" should be 201
+     And validate "LINKS"  for "BOOKING"
+
+   @business_test
+   Scenario: Booking API for validation of "RETRIEVE_METHOD"
+     Given run shopping and preBooking for Booking
+     And validate "BOOKING_LINK"  for "PRE_BOOKING"
+     And run booking with hold "false"
+     Then the response code for "BOOKING" should be 201
+     And validate "RETRIEVE_METHOD"  for "BOOKING"
+
+   @business_test
+   Scenario: Booking API for validation of "RETRIEVE_HREF"
+     Given run shopping and preBooking for Booking
+     And validate "BOOKING_LINK"  for "PRE_BOOKING"
+     And run booking with hold "false"
+     Then the response code for "BOOKING" should be 201
+     And validate "RETRIEVE_HREF"  for "BOOKING"
+
+  @business_test
+  Scenario: Booking API for validation of "CANCEL_HREF"
+    Given run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+    And run booking with hold "false"
+    Then the response code for "BOOKING" should be 201
+    And validate "CANCEL_HREF"  for "BOOKING"
+
+#  @business_test
+#  Scenario: Booking API for validation for multiple room request
+#    Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,4|3"
+#    And run shopping and preBooking for Booking
+#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+#    And run booking with hold "false"
+#    Then the response code for "BOOKING" should be 201
+
+
+
+  ##################################Data Validation###################################
+
+  @data_test
+  Scenario:
+
+
+

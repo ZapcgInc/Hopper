@@ -310,6 +310,8 @@ public class TestContext
                 sb.append("\t").append("API End Point").append(" : ").append(getApiPath(reqType)).append("\n");
 
                 sb.append("\t").append("Request Information").append("\n");
+                //sb.append("\t").append("Request Body").append(":").append(getPostBody(reqType)).append("\n");
+
 
                 sb.append("\t").append("\t").append("End Point").append(" : ").append(APIEndPointGenerator.create(this, reqType)).append("\n");
                 sb.append("\t").append("\t").append("Headers").append(" : ").append(getHeaders()).append("\n");

@@ -4,6 +4,7 @@ import com.hopper.tests.definitions.model.TestContext;
 import com.hopper.tests.data.model.response.booking.BookingResponse;
 import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
 import java.util.List;
@@ -33,11 +34,73 @@ public class BookingValidationUtil
                 _validateResumeBookingLink(response);
                 break;
             }
+            case ITINERARY_ID:
+            {
+                _validateItineraryId(response);
+                break;
+            }
+            case LINKS:
+            {
+                _validateLinks(response);
+                break;
+            }
+            case RETRIEVE_METHOD:
+            {
+                _validateRetrieveMethod(response);
+                break;
+            }
+            case RETRIEVE_HREF:
+            {
+                _validateRetrieveHref(response);
+                break;
+            }
+            case CANCEL_HREF:
+            {
+                _validateCancelHref(response);
+                break;
+            }
             default:
             {
                 throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
             }
         }
+    }
+
+    private static void _validateCancelHref(BookingResponse response)
+    {
+        if(response.getLinks().get("cancel")!=null)
+        {
+            Assert.assertNotNull("href link is missing",
+                    response.getLinks().get("cancel").getHref()
+            );
+        }
+    }
+
+    private static void _validateRetrieveHref(BookingResponse response)
+    {
+        Assert.assertNotNull("href link is missing",
+                response.getLinks().get("retrieve").getHref()
+        );
+    }
+
+    private static void _validateRetrieveMethod(BookingResponse response)
+    {
+        Assert.assertTrue("method value is not GET",
+                response.getLinks().get("retrieve").getMethod().equals("GET")
+        );
+    }
+
+    private static void _validateLinks(BookingResponse response)
+    {
+        Assert.assertNotNull("links node is missing",
+                response.getLinks()
+        );
+    }
+
+    private static void _validateItineraryId(BookingResponse response) {
+        Assert.assertTrue("itinerary_id is missing",
+                !StringUtils.isEmpty(response.getItineraryId())
+        );
     }
 
     public static void validate(final TestContext context, final ResponseValidationField validateField, final int count)

@@ -116,7 +116,7 @@ Feature: Validations for PreBooking API.
       | SHOPPING_LINK |
 
   @business_test
-  Scenario: PreBooking API validation for "status"
+  Scenario: PreBooking API validation for "STATUS"
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be "200"
