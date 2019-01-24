@@ -30,6 +30,15 @@ public enum ResponseValidationField
     ITINERARY_ID,
     RETRIEVE_METHOD,
     RETRIEVE_HREF,
-    CANCEL_HREF
+    CANCEL_HREF,
+    EMAIL_ADDRESS,
+    ROOM_ID,
+    CHECK_IN_DATE,
+    CHECK_OUT_DATE,
+    NUM_ADULTS,
+    RATE_ID,
+    GIVEN_NAME,
+    FAMILY_NAME,
+    PHONE
     ;
 }

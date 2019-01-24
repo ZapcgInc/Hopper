@@ -7,6 +7,7 @@ import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;
 import com.hopper.tests.validations.paymentoptions.PaymentOptionsResponseValidationUtil;
 import com.hopper.tests.validations.prebooking.PreBookingValidationUtil;
+import com.hopper.tests.validations.retrievebooking.RetrieveBookingValidationUtil;
 import com.hopper.tests.validations.shopping.ShoppingResponseValidationUtil;
 import io.restassured.response.Response;
 import org.junit.Assert;
@@ -157,6 +158,11 @@ public class ResponseValidationUtil
             case BOOKING:
             {
                 BookingValidationUtil.validate(context, validationField);
+                break;
+            }
+            case RETRIEVE_BOOKING:
+            {
+                RetrieveBookingValidationUtil.validate(context, validationField);
                 break;
             }
             default:

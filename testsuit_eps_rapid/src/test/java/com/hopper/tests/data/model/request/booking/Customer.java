@@ -77,6 +77,34 @@ public class Customer
         return specialRequest;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setSmoking(String smoking) {
+        this.smoking = smoking;
+    }
+
+    public void setSpecialRequest(String specialRequest) {
+        this.specialRequest = specialRequest;
+    }
+
     public static Customer create(final String pathToData)
     {
         try
@@ -104,5 +132,18 @@ public class Customer
         builder.put("special_request", getSpecialRequest());
 
         return builder.build();
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "title='" + title + '\'' +
+                ", givenName='" + givenName + '\'' +
+                ", familyName='" + familyName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", smoking='" + smoking + '\'' +
+                ", specialRequest='" + specialRequest + '\'' +
+                '}';
     }
 }

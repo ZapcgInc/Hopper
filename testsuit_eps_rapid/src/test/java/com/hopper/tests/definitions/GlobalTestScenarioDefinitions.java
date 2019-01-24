@@ -126,6 +126,7 @@ public class GlobalTestScenarioDefinitions
         }
     }
 
+
     @When("^set \"([^\"]*)\" queryParam \"([^\"]*)\" value \"([^\"]*)\"$")
     public void setQueryParamValue(final String requestType, final String param, final String value)
     {
@@ -139,6 +140,8 @@ public class GlobalTestScenarioDefinitions
             m_testContext.addParam(param, value, RequestType.valueOf(requestType));
         }
     }
+
+
 
     @And("^set multiple values for \"([^\"]*)\" queryParam \"([^\"]*)\" with \"([^\"]*)\"$")
     public void setMultipleValuesForQueryParamWith(final String requestType, final String queryParam, final String values)
@@ -331,10 +334,31 @@ public class GlobalTestScenarioDefinitions
     {
         BookingTestHelper.runShoppingAndPreBookingForBooking(m_testContext);
     }
+    @When("^set \"([^\"]*)\" field \"([^\"]*)\" value \"([^\"]*)\"$")
+    public void set_field_value(final String requestType, final String field, final String value) throws Throwable {
+            if(value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+            {
+                m_testContext.setBookingOverrideElementName(field);
+            }
+            else
+            {
+                if(field.equals("affiliate_confirmation_id")){
+                    m_testContext.setBookingAffiliateId(value);
+                }
+                else {
+                    m_testContext.setBookingOverrideElementName(field);
+                    m_testContext.setBookingOverrideElementValue(value);
+                }
+            }
+
+    }
+
+
 
     @And("^run booking with hold \"([^\"]*)\"$")
     public void runBookingWithHold(String holdBooking)
     {
+      //  m_testContext.setPostBody("Request","");
         BookingTestHelper.runBooking(m_testContext, Boolean.valueOf(holdBooking));
     }
 

@@ -74,6 +74,35 @@ public class CreditCard
         return contact;
     }
 
+    public void setType(String type)
+    {
+      this.type = type;
+    }
+    public void setCardType(String cardType)
+    {
+        this.cardType = cardType;
+    }
+
+   public void setNumber(String number)
+   {
+       this.number = number;
+   }
+   public void setSecurityCode(String securityCode){
+        this.securityCode = securityCode;
+   }
+
+    public void setExpirationMonth(String expirationMonth) {
+        this.expirationMonth = expirationMonth;
+    }
+
+    public void setExpirationYear(String expirationYear) {
+        this.expirationYear = expirationYear;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
+
     public static class Contact
     {
         @JsonProperty("given_name")
@@ -116,6 +145,38 @@ public class CreditCard
         public Address getAddress()
         {
             return address;
+        }
+
+        public void setAddress(Address address)
+        {
+            this.address = address;
+        }
+
+        public void setGivenName(String givenName) {
+            this.givenName = givenName;
+        }
+
+        public void setFamilyName(String familyName) {
+            this.familyName = familyName;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        @Override
+        public String toString() {
+            return "Contact{" +
+                    "givenName='" + givenName + '\'' +
+                    ", familyName='" + familyName + '\'' +
+                    ", email='" + email + '\'' +
+                    ", phone='" + phone + '\'' +
+                    ", address=" + address +
+                    '}';
         }
     }
 
@@ -179,7 +240,34 @@ public class CreditCard
         {
             return countryCode;
         }
+
+        public void setCountryCode(String countryCode) {
+            this.countryCode = countryCode;
+        }
+
+        public void setLine1(String line1) {
+            this.line1 = line1;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
+
+        @Override
+        public String toString() {
+            return "Address{" +
+                    "line1='" + line1 + '\'' +
+                    ", line2='" + line2 + '\'' +
+                    ", line3='" + line3 + '\'' +
+                    ", city='" + city + '\'' +
+                    ", stateCode='" + stateCode + '\'' +
+                    ", postalCode='" + postalCode + '\'' +
+                    ", countryCode='" + countryCode + '\'' +
+                    '}';
+        }
     }
+
+
 
     public static CreditCard create(final String pathToData)
     {
@@ -224,5 +312,18 @@ public class CreditCard
         builder.put("billing_contact", billingContactMap.build());
 
         return builder.build();
+    }
+
+    @Override
+    public String toString() {
+        return "CreditCard{" +
+                "type='" + type + '\'' +
+                ", cardType='" + cardType + '\'' +
+                ", number='" + number + '\'' +
+                ", securityCode='" + securityCode + '\'' +
+                ", expirationMonth='" + expirationMonth + '\'' +
+                ", expirationYear='" + expirationYear + '\'' +
+                ", contact=" + contact +
+                '}';
     }
 }

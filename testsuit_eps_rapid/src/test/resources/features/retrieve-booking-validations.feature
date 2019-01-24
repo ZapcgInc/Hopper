@@ -60,12 +60,40 @@ Feature: Validations for Booking Retrieve API.
       | header | value   | code | error_type           | error_message                                                                                                                             |
       | Test   | invalid |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: STANDARD, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE |
 
-  @business_test
-  Scenario: Retrieve Booking API with token successful response
-    Given run shopping and preBooking for Booking
-    And validate "BOOKING_LINK"  for "PRE_BOOKING"
-    And run booking with hold "false"
-    Then the response code for "BOOKING" should be 201
-    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
-    And retrieve booking
-    Then the response code for "RETRIEVE_BOOKING" should be 200
+#  @business_test
+#  Scenario: Retrieve Booking API with token successful response
+#    Given run shopping and preBooking for Booking
+#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+#    And run booking with hold "false"
+#    Then the response code for "BOOKING" should be 201
+#    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+#    And retrieve booking
+#    Then the response code for "RETRIEVE_BOOKING" should be 200
+
+#  @business_test
+#  Scenario Outline: Retrieve Booking API for <ELEMENT>
+#    Given run shopping and preBooking for Booking
+#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+#    And run booking with hold "false"
+#    Then the response code for "BOOKING" should be 201
+#    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+#    And retrieve booking
+#    Then the response code for "RETRIEVE_BOOKING" should be 200
+#    And validate "<ELEMENT>"  for "RETRIEVE_BOOKING"
+#    Examples:
+#    |ELEMENT|
+#    |ITENARY_ID|
+##    |CANCEL_HREF|
+##    |ROOM_ID    |
+##    |CHECK_IN_DATE|
+##    |CHECK_OUT_DATE|
+##    |NUM_ADULTS    |
+##    |RATE_ID       |
+##    |GIVEN_NAME    |
+##    |FAMILY_NAME   |
+##    |PHONE         |
+
+
+
+
+

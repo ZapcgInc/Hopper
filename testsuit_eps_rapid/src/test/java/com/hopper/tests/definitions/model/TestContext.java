@@ -1,10 +1,12 @@
 package com.hopper.tests.definitions.model;
 
+import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.authorization.Authorization;
 import com.hopper.tests.config.model.TestConfig;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.data.model.request.RequestParams;
+import com.hopper.tests.data.model.request.booking.Customer;
 import com.hopper.tests.data.model.response.booking.BookingResponse;
 import com.hopper.tests.data.model.response.booking.BookingRetrieveResponse;
 import com.hopper.tests.data.model.response.payment.PaymentOptionResponse;
@@ -14,12 +16,7 @@ import com.hopper.tests.api.APIEndPointGenerator;
 import io.restassured.response.Response;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Simple POJO to hold test criteria
@@ -31,6 +28,8 @@ public class TestContext
     private static final String CHECKIN_DATE_KEY = "checkin";
     private static final String CHECKOUT_DATE_KEY = "checkout";
 
+    private String bookingOverrideElementName = null;
+    private String bookingOverrideElementValue = "";
     private final SupportedPartners m_partner;
     private final TestConfig m_testConfig;
 
@@ -67,6 +66,23 @@ public class TestContext
         );
         m_requestTypeToAPIPath.put(RequestType.SHOPPING, config.getShoppingEndPoint());
     }
+
+    public String getBookingOverrideElementValue() {
+        return bookingOverrideElementValue;
+    }
+
+    public void setBookingOverrideElementValue(String bookingOverrideElementValue) {
+        this.bookingOverrideElementValue = bookingOverrideElementValue;
+    }
+
+    public String getBookingOverrideElementName() {
+        return bookingOverrideElementName;
+    }
+
+    public void setBookingOverrideElementName(String bookingOverrideElementName) {
+        this.bookingOverrideElementName = bookingOverrideElementName;
+    }
+
 
     public SupportedPartners getPartner()
     {
@@ -171,6 +187,7 @@ public class TestContext
     public void setPostBody(final Map<String, Object> postMessage, final RequestType requestType)
     {
         m_requestTypeToPostBody.put(requestType, postMessage);
+
     }
 
     public Map<String, Object> getPostBody(final RequestType requestType)
@@ -244,6 +261,7 @@ public class TestContext
         Optional.ofNullable(m_requestTypeToQueryParams.get(requestType))
                 .ifPresent(params -> params.removeParam(header));
     }
+
 
     public void addParamWithMultipleValues(String header, List<String> multipleValues, RequestType requestType)
     {
@@ -331,4 +349,6 @@ public class TestContext
 
         return sb.toString();
     }
+
+
 }

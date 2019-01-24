@@ -23,9 +23,12 @@ import com.hopper.tests.data.parser.PreBookingResponseParser;
 import com.hopper.tests.data.parser.ShoppingResponseParser;
 import io.restassured.response.Response;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -102,15 +105,19 @@ public class BookingTestHelper
     public static void runBooking(final TestContext context, final boolean holdBooking)
     {
         final Link bookingLink = context.getPreBookingResponse().getLinks().get("book");
-      //  int numRooms = context.getPreBookingResponse().getRoomPriceByOccupany().keySet().size();
+        int numRooms = context.getPreBookingResponse().getRoomPriceByOccupany().keySet().size();
+
         context.setApiPath(RequestType.BOOKING, bookingLink.getHref());
 
-        final String affiliateId = RandomStringUtils.randomAlphanumeric(28);
+        String affiliateId = context.getBookingAffiliateId();
+        if(StringUtils.isEmpty(affiliateId)){
+            affiliateId = RandomStringUtils.randomAlphanumeric(28);
+        }
 
-            context.setPostBody(
-                    _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig()),
-                    RequestType.BOOKING
-            );
+        context.setPostBody(
+                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig(), numRooms, context.getBookingOverrideElementName(),context.getBookingOverrideElementValue()),
+                RequestType.BOOKING
+        );
 
 
         final Response response = ResponseSupplierFactory.create(
@@ -128,26 +135,100 @@ public class BookingTestHelper
         context.setBookingResponse(BookingResponseParser.parse(response));
     }
 
-    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking, final TestConfig config)
+    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking, final TestConfig config,int numRooms,String element,String value)
     {
+        final List<Object> customerList = new ArrayList<>();
+        final List<Object> paymentList = new ArrayList<>();
+        Customer customer = Customer.create(config.getCustomerInfoPath());
+        CreditCard payment = CreditCard.create(config.getCreditCardInfoPath());
+        if (element != null) {
+            if(!element.equals("rooms")) {
+                switch (element) {
+                    case "given_name":
+                        customer.setGivenName(value);
+                        break;
+                    case "family_name":
+                        customer.setFamilyName(value);
+                        break;
+                    case "email":
+                        customer.setEmail(value);
+                        break;
+                    case "phone":
+                        customer.setPhone(value);
+                        break;
+                    case "smoking":
+                        customer.setSmoking(value);
+                        break;
+                    case "country_code":
+                        payment.getContact().getAddress().setCountryCode(value);
+                        break;
+                    case "line_1":
+                        payment.getContact().getAddress().setLine1(value);
+                        break;
+                    case "city":
+                        payment.getContact().getAddress().setCity(value);
+                        break;
+                    case "type":
+                        payment.setType(value);
+                        break;
+                    case "card_type":
+                        payment.setCardType(value);
+                        break;
+                    case "card_number":
+                        payment.setNumber(value);
+                        break;
+                    case "security_code":
+                        payment.setSecurityCode(value);
+                        break;
+                    case "expiration_month":
+                        payment.setExpirationMonth(value);
+                        break;
+                    case "expiration_year":
+                        payment.setExpirationYear(value);
+                        break;
+                    case "contact_given_name":
+                        payment.getContact().setGivenName(value);
+                        break;
+                    case "contact_family_name":
+                        payment.getContact().setFamilyName(value);
+                        break;
+                    case "contact_email":
+                        payment.getContact().setEmail(value);
+                        break;
+                    case "contact_phone":
+                        payment.getContact().setPhone(value);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Element [" + element + "] unsupported");
+                }
+            }
+        }
+        System.out.println("Customer: "+customer);
+        System.out.println("Payment: "+payment);
+        while (numRooms != 0) {
+            customerList.add(
+                    customer.getAsMap()
+            );
 
-        Object[] customers = new Object[] {
-                Customer.create(config.getCustomerInfoPath()).getAsMap()
-        };
-
-        final Object[] payments = new Object[] {
-                CreditCard.create(config.getCreditCardInfoPath()).getAsMap()
-        };
-        //    roomList.add(customers);
-        //    paymentList.add(payments);
+            paymentList.add(
+                    payment.getAsMap()
+            );
+            numRooms--;
+        }
+        System.out.println("Customer List"+ customerList);
 
 
         final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
         body.put("affiliate_reference_id", affiliateId);
         body.put("hold", holdBooking);
-        body.put("rooms", customers);
-        body.put("payments", payments);
-
+        body.put("payments", paymentList.toArray());
+        if(element!=null){
+            if(!element.equals("rooms")){
+                body.put("rooms", customerList.toArray());
+            }
+        } else {
+            body.put("rooms", customerList.toArray());
+        }
         return body.build();
     }
 

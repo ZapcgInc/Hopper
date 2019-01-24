@@ -239,7 +239,7 @@ Feature: Validations for Availability API
     Given Basic web application is running
     When set "SHOPPING" queryParam "<query_param>" value "<value>"
     And run shopping
-    Then the response code for "SHOPPING" should be 400
+    Then the response code for "SHOPPING" should be 200
     And user should see json response with paris on the filtered "." node
       | type    | invalid_input                                                               |
       | message | An invalid request was sent in, please check the nested errors for details. |
