@@ -11,7 +11,6 @@ import com.hopper.tests.validations.prebooking.PreBookingValidationUtil;
 import com.hopper.tests.validations.retrievebooking.RetrieveBookingValidation;
 import com.hopper.tests.validations.shopping.ShoppingResponseValidationUtil;
 import io.restassured.response.Response;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
 import javax.validation.constraints.NotNull;
@@ -26,7 +25,7 @@ public class ResponseValidationUtil
     {
         final int responseCode = restResponse.getStatusCode();
         final String errorMessage = "Expected response code : " + expectedCode + "and actual response code : " + responseCode + "are not matching";
-        Assert.assertTrue(errorMessage, expectedCode == responseCode);
+        Assert.assertEquals(errorMessage, expectedCode, responseCode);
     }
 
     public static void validateElementForRetrieveBooking(@NotNull final Response response, final ResponseValidationField element) {
@@ -82,7 +81,7 @@ public class ResponseValidationUtil
         }
     }
 
-    public static void validate(final ResponseValidationField validationField, final RequestType requestType, final TestContext context, final Range expectedRange)
+    public static void validate(final ResponseValidationField validationField, final RequestType requestType, final TestContext context, final Range<Integer>  expectedRange)
     {
         switch (requestType)
         {

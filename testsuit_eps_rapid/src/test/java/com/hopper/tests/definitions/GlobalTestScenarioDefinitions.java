@@ -333,21 +333,36 @@ public class GlobalTestScenarioDefinitions
     }
 
     @When("^set \"([^\"]*)\" field \"([^\"]*)\" value \"([^\"]*)\"$")
-    public void setFieldValue(final String requestType, final String field, final String value) throws Throwable
+    public void setFieldValue(final String requestTypeString, final String field, final String value)
     {
-
+        final RequestType requestType = RequestType.valueOf(requestTypeString);
         switch (requestType)
         {
-        case "BOOKING":
-            if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+            case BOOKING:
             {
-                m_testContext.setBookingOverrideElementName(field);
-            }
-            else
-            {
-                if (field.equals("affiliate_confirmation_id"))
+                if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
                 {
-                    m_testContext.setBookingAffiliateId(value);
+                    m_testContext.setBookingOverrideElementName(field);
+                }
+                else
+                {
+                    if (field.equals("affiliate_confirmation_id"))
+                    {
+                        m_testContext.setBookingAffiliateId(value);
+                    }
+                    else
+                    {
+                        m_testContext.setBookingOverrideElementName(field);
+                        m_testContext.setBookingOverrideElementValue(value);
+                    }
+                }
+                break;
+            }
+            case RETRIEVE_BOOKING:
+            {
+                if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+                {
+                    m_testContext.setRetrieveBookingOverrideElement(field);
                 }
                 else
                 {
@@ -355,20 +370,11 @@ public class GlobalTestScenarioDefinitions
                     m_testContext.setBookingOverrideElementValue(value);
                 }
             }
-            break;
-        case "RETRIEVE_BOOKING":
-            if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+            default:
             {
-                m_testContext.setRetrieveBookingOverrideElement(field);
+                throw new UnsupportedOperationException("Request Type : [" + requestType + "], is unsupported for this validation");
             }
-            else
-            {
-                m_testContext.setBookingOverrideElementName(field);
-                m_testContext.setBookingOverrideElementValue(value);
-            }
-
         }
-
     }
 
     @When("^set cancel_room_id \"(.*?)\"$")

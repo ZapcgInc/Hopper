@@ -85,9 +85,7 @@ public class BookingValidationUtil
 
     private static void _validateRetrieveMethod(BookingResponse response)
     {
-        Assert.assertTrue("method value is not GET",
-                          response.getLinks().get("retrieve").getMethod().equals("GET")
-        );
+        Assert.assertEquals("method value is not GET", "GET", response.getLinks().get("retrieve").getMethod());
     }
 
     private static void _validateLinks(BookingResponse response)
@@ -114,10 +112,10 @@ public class BookingValidationUtil
 
         switch (validateField)
         {
-        default:
-        {
-            throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
-        }
+            default:
+            {
+                throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
+            }
         }
     }
 
@@ -131,10 +129,10 @@ public class BookingValidationUtil
 
         switch (validateField)
         {
-        default:
-        {
-            throw new UnsupportedOperationException(validateField + ", not supported");
-        }
+            default:
+            {
+                throw new UnsupportedOperationException(validateField + ", not supported");
+            }
         }
     }
 
@@ -148,13 +146,13 @@ public class BookingValidationUtil
 
         switch (validateField)
         {
-        case CANCEL_METHOD:
-            validateCancelMethod(expectedValues.get(0), response);
-            break;
-        default:
-        {
-            throw new UnsupportedOperationException(validateField + ", not supported");
-        }
+            case CANCEL_METHOD:
+                validateCancelMethod(expectedValues.get(0), response);
+                break;
+            default:
+            {
+                throw new UnsupportedOperationException(validateField + ", not supported");
+            }
         }
     }
 
