@@ -20,7 +20,7 @@
         </plugins>
     </build>
     <properties>
-        <partner>${partner}</partner>
+        <partner>${hopperPartner}</partner>
     </properties>
     <dependencies>
         <dependency>
