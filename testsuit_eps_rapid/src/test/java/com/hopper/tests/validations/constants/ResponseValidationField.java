@@ -46,5 +46,7 @@ public enum ResponseValidationField
     ADDRESS,
     COUNTRY_CODE,
     CREATION_DATE_TIME,
-    FEES
+    FEES,
+    CANCEL_METHOD,
+    BILLING_CONTACT
 }

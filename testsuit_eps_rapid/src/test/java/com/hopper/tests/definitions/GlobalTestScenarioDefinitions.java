@@ -335,22 +335,45 @@ public class GlobalTestScenarioDefinitions
         BookingTestHelper.runShoppingAndPreBookingForBooking(m_testContext);
     }
     @When("^set \"([^\"]*)\" field \"([^\"]*)\" value \"([^\"]*)\"$")
-    public void set_field_value(final String requestType, final String field, final String value) throws Throwable {
-            if(value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
-            {
-                m_testContext.setBookingOverrideElementName(field);
-            }
-            else
-            {
-                if(field.equals("affiliate_confirmation_id")){
-                    m_testContext.setBookingAffiliateId(value);
+    public void setFieldValue(final String requestType, final String field, final String value) throws Throwable {
+
+        switch(requestType){
+            case "BOOKING":
+                if(value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+                {
+                    m_testContext.setBookingOverrideElementName(field);
                 }
-                else {
+                else
+                {
+                    if(field.equals("affiliate_confirmation_id")){
+                        m_testContext.setBookingAffiliateId(value);
+                    }
+                    else {
+                        m_testContext.setBookingOverrideElementName(field);
+                        m_testContext.setBookingOverrideElementValue(value);
+                    }
+                }
+                break;
+            case "RETRIEVE_BOOKING":
+                if(value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+                {
+                    m_testContext.setRetrieveBookingOverrideElement(field);
+                }
+                else
+                {
                     m_testContext.setBookingOverrideElementName(field);
                     m_testContext.setBookingOverrideElementValue(value);
                 }
-            }
 
+
+        }
+
+
+    }
+
+    @When("^set cancel_room_id \"(.*?)\"$")
+    public void set_cancel_room_id(String value) throws Throwable {
+        m_testContext.setCancelRoomId(value);
     }
 
     @Then("^validate element \"(.*?)\"  for \"(.*?)\"$")

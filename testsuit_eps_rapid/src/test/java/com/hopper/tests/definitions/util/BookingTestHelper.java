@@ -126,7 +126,7 @@ public class BookingTestHelper
                 RequestType.BOOKING).get();
 
         LoggingUtil.log("Affiliate ID used for booking : [" + affiliateId + "]");
-        if (response.getStatusCode() == 200)
+        if (response.getStatusCode() == 201)
         {
             context.setBookingAffiliateId(affiliateId);
         }
@@ -159,6 +159,7 @@ public class BookingTestHelper
                     case "smoking":
                         customer.setSmoking(value);
                         break;
+
                     case "country_code":
                         payment.getContact().getAddress().setCountryCode(value);
                         break;
@@ -198,6 +199,9 @@ public class BookingTestHelper
                     case "contact_phone":
                         payment.getContact().setPhone(value);
                         break;
+                    case "payment_type":
+                        payment.setType(value);
+                        break;
                     default:
                         throw new UnsupportedOperationException("Element [" + element + "] unsupported");
                 }
@@ -235,6 +239,11 @@ public class BookingTestHelper
         final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
 
         context.addHeader("affiliate_reference_id", context.getBookingAffiliateId());
+        if("email".equals(context.getRetrieveBookingOverrideElement()) && StringUtils.isNotEmpty(context.getRetrieveBookingOverrideElementValue()))
+        {
+            context.addHeader("email", context.getBookingOverrideElementValue());
+        }
+        if(!"email".equals(context.getRetrieveBookingOverrideElement()))
         context.addHeader("email", customer.getEmail());
         context.setApiPath(RequestType.RETRIEVE_BOOKING, bookingRetrieveLink.getHref());
 

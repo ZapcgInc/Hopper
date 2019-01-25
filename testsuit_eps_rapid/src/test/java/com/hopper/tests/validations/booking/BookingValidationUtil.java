@@ -147,11 +147,19 @@ public class BookingValidationUtil
 
         switch (validateField)
         {
+            case CANCEL_METHOD:
+                validateCancelMethod(expectedValues.get(0),response);
+                break;
             default:
             {
                 throw new UnsupportedOperationException(validateField + ", not supported");
             }
         }
+    }
+
+    private static void validateCancelMethod(String expectedValue, final BookingResponse response) {
+        if(response.getLinks().get("cancel")!=null)
+        Assert.assertEquals("cancel is not DELETE",expectedValue,response.getLinks().get("cancel").getMethod());
     }
 
 
