@@ -369,6 +369,7 @@ public class GlobalTestScenarioDefinitions
                     m_testContext.setBookingOverrideElementName(field);
                     m_testContext.setBookingOverrideElementValue(value);
                 }
+                break;
             }
             default:
             {
