@@ -19,7 +19,9 @@
             </plugin>
         </plugins>
     </build>
-
+    <properties>
+        <partner>${partner}</partner>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>info.cukes</groupId>

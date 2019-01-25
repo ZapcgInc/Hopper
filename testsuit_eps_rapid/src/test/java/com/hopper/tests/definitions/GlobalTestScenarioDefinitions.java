@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
+import com.hopper.tests.config.ConfigurationHelper;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.data.model.response.Link;
 import com.hopper.tests.data.model.response.shopping.ShoppingResponse;
 import com.hopper.tests.definitions.model.TestContext;
-import com.hopper.tests.config.ConfigurationFileParser;
 import com.hopper.tests.data.ResponseSupplierFactory;
 import com.hopper.tests.definitions.util.BookingTestHelper;
 import com.hopper.tests.util.logging.LoggingUtil;
@@ -56,10 +56,11 @@ public class GlobalTestScenarioDefinitions
         LoggingUtil.printTestStatus(scenario, m_testContext);
     }
 
-    @Given("^setup for partner with config at \"([^\"]*)\"$")
-    public void setUp(final String pathToConfig)
+
+    @Given("^partner test setup$")
+    public void partnerTestSetup()
     {
-        m_testContext = new TestContext(ConfigurationFileParser.parse(pathToConfig));
+        m_testContext = new TestContext(ConfigurationHelper.load());
         m_checkAPIAvailability = new CheckAPIAvailability();
     }
 
@@ -126,7 +127,6 @@ public class GlobalTestScenarioDefinitions
         }
     }
 
-
     @When("^set \"([^\"]*)\" queryParam \"([^\"]*)\" value \"([^\"]*)\"$")
     public void setQueryParamValue(final String requestType, final String param, final String value)
     {
@@ -140,8 +140,6 @@ public class GlobalTestScenarioDefinitions
             m_testContext.addParam(param, value, RequestType.valueOf(requestType));
         }
     }
-
-
 
     @And("^set multiple values for \"([^\"]*)\" queryParam \"([^\"]*)\" with \"([^\"]*)\"$")
     public void setMultipleValuesForQueryParamWith(final String requestType, final String queryParam, final String values)
@@ -247,8 +245,8 @@ public class GlobalTestScenarioDefinitions
     public void validateRange(String validationField, String parentNode, String requestType, String minValue, String maxValue)
     {
         final Range<Integer> range = new Range<>(Integer.parseInt(minValue),
-                Integer.parseInt(maxValue),
-                Range.BoundType.INCLUSIVE);
+                                                 Integer.parseInt(maxValue),
+                                                 Range.BoundType.INCLUSIVE);
 
         ResponseValidationUtil.validate(
                 ResponseValidationField.valueOf(validationField),
@@ -334,27 +332,32 @@ public class GlobalTestScenarioDefinitions
     {
         BookingTestHelper.runShoppingAndPreBookingForBooking(m_testContext);
     }
+
     @When("^set \"([^\"]*)\" field \"([^\"]*)\" value \"([^\"]*)\"$")
-    public void set_field_value(final String requestType, final String field, final String value) throws Throwable {
-            if(value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+    public void set_field_value(final String requestType, final String field, final String value)
+    {
+        if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+        {
+            m_testContext.setBookingOverrideElementName(field);
+        }
+        else
+        {
+            if (field.equals("affiliate_confirmation_id"))
             {
-                m_testContext.setBookingOverrideElementName(field);
+                m_testContext.setBookingAffiliateId(value);
             }
             else
             {
-                if(field.equals("affiliate_confirmation_id")){
-                    m_testContext.setBookingAffiliateId(value);
-                }
-                else {
-                    m_testContext.setBookingOverrideElementName(field);
-                    m_testContext.setBookingOverrideElementValue(value);
-                }
+                m_testContext.setBookingOverrideElementName(field);
+                m_testContext.setBookingOverrideElementValue(value);
             }
+        }
 
     }
 
     @Then("^validate element \"(.*?)\"  for \"(.*?)\"$")
-    public void validateElement(String element, String requestType) throws Throwable {
+    public void validateElement(String element, String requestType)
+    {
         ResponseValidationUtil.validateElementForRetrieveBooking(
                 m_testContext.getResponse(RequestType.valueOf(requestType)),
                 ResponseValidationField.valueOf(element)
@@ -362,13 +365,14 @@ public class GlobalTestScenarioDefinitions
     }
 
     @Then("^validate element \"(.*?)\" for \"(.*?)\" contains value among \"(.*?)\"$")
-    public void validateElementAmong(String element, String requestType, String expectedValues) throws Throwable {
+    public void validateElementAmong(String element, String requestType, String expectedValues)
+    {
         final List<String> listOfValues = Arrays.stream(expectedValues.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
 
         ResponseValidationUtil.validateElementForRetrieveBooking(
                 m_testContext.getResponse(RequestType.valueOf(requestType)),
-                ResponseValidationField.valueOf(element),listOfValues
+                ResponseValidationField.valueOf(element), listOfValues
         );
 
     }
@@ -376,7 +380,6 @@ public class GlobalTestScenarioDefinitions
     @And("^run booking with hold \"([^\"]*)\"$")
     public void runBookingWithHold(String holdBooking)
     {
-      //  m_testContext.setPostBody("Request","");
         BookingTestHelper.runBooking(m_testContext, Boolean.valueOf(holdBooking));
     }
 

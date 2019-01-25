@@ -2,7 +2,7 @@
 Feature: Validations for Payment Options API.
 
   Background:
-    Given setup for partner with config at "expedia-config.yml"
+    Given partner test setup
     And with shopping query parameters
       | checkin           | 2019-02-15        |
       | checkout          | 2019-02-17        |

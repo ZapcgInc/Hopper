@@ -3,7 +3,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
   Raise request(s) and validate mandatory data elements checks, Validate HTTP response code and parse JSON response
 
   Background:
-    Given setup for partner with config at "expedia-config.yml"
+    Given partner test setup
 
 #######################  Basic Validation Scenarios
 

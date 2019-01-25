@@ -205,9 +205,9 @@ public class TestContext
         m_bookingResponse = bookingResponse;
     }
 
-    public String getBookingAffiliateId()
+    public Optional<String> getBookingAffiliateId()
     {
-        return m_bookingAffiliateId;
+        return Optional.ofNullable(m_bookingAffiliateId);
     }
 
     public void setBookingAffiliateId(String bookingAffiliateId)

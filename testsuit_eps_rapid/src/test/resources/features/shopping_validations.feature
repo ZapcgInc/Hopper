@@ -2,7 +2,7 @@
 Feature: Validations for Availability API
 
   Background: 
-    Given setup for partner with config at "expedia-config.yml"
+    Given partner test setup
     And with shopping query parameters
       | currency          | USD               |
       | language          | en-US             |
@@ -252,7 +252,7 @@ Feature: Validations for Availability API
 
     Examples: 
       | query_param       | value | error_type                | error_message                                                                                                                                                                                                                                                                                      |
-      | currency          | RRR   | currency.not_supported    | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, TRY, TWD, USD, VND, ZAR]                                                                              |
+      | currency          | RRR   | currency.not_supported    | Currency is not supported. Supported currencies are: [AED, ARS, AUD, BRL, CAD, CHF, CNY, DKK, EGP, EUR, GBP, HKD, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RUB, SAR, SEK, SGD, THB, TRY, TWD, USD, VND, ZAR]                                                                              |
       | language          | as-US | language.not_supported    | Language is not supported. Supported languages are: [ar-SA, cs-CZ, da-DK, de-DE, el-GR, en-US, es-ES, es-MX, fi-FI, fr-CA, fr-FR, hr-HR, hu-HU, id-ID, is-IS, it-IT, ja-JP, ko-KR, lt-LT, ms-MY, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sk-SK, sv-SE, th-TH, tr-TR, uk-UA, vi-VN, zh-CN, zh-TW] |
       | country_code      | RRR   | country_code.invalid      | Country code is invalid.                                                                                                                                                                                                                                                                           |
       | rate_option       | test  | rate_option.invalid       | Rate Option is invalid.  Accepted rate_option values are: [net_rates, closed_user_group].                                                                                                                                                                                                          |

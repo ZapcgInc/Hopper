@@ -55,24 +55,36 @@ public class BookingTestHelper
         }
 
         // Run pre-booking until we find matched response.
-        int i =0;
+        int i = 0;
         boolean foundPropertyWithAvailability = false;
         for (Property property : shoppingResponse.getProperties())
         {
-        	if(foundPropertyWithAvailability) break;
-        	
+            if (foundPropertyWithAvailability)
+            {
+                break;
+            }
+
             for (Room room : property.getRooms())
             {
-            	if(foundPropertyWithAvailability) break;
-            	
+                if (foundPropertyWithAvailability)
+                {
+                    break;
+                }
+
                 for (Rate rate : room.getRates())
                 {
-                	if(foundPropertyWithAvailability) break;
-                	
+                    if (foundPropertyWithAvailability)
+                    {
+                        break;
+                    }
+
                     for (BedGroups bedGroup : rate.getBedGroups())
                     {
-                    	if(foundPropertyWithAvailability) break;
-                    	
+                        if (foundPropertyWithAvailability)
+                        {
+                            break;
+                        }
+
                         final Link priceCheckLink = bedGroup.getLinks().get("price_check");
                         context.setApiPath(RequestType.PRE_BOOKING, priceCheckLink.getHref());
 
@@ -109,16 +121,13 @@ public class BookingTestHelper
 
         context.setApiPath(RequestType.BOOKING, bookingLink.getHref());
 
-        String affiliateId = context.getBookingAffiliateId();
-        if(StringUtils.isEmpty(affiliateId)){
-            affiliateId = RandomStringUtils.randomAlphanumeric(28);
-        }
+        final String affiliateId = context.getBookingAffiliateId().orElse(RandomStringUtils.randomAlphanumeric(28));
+
 
         context.setPostBody(
-                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig(), numRooms, context.getBookingOverrideElementName(),context.getBookingOverrideElementValue()),
+                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig(), numRooms, context.getBookingOverrideElementName(), context.getBookingOverrideElementValue()),
                 RequestType.BOOKING
         );
-
 
         final Response response = ResponseSupplierFactory.create(
                 context,
@@ -135,76 +144,119 @@ public class BookingTestHelper
         context.setBookingResponse(BookingResponseParser.parse(response));
     }
 
-    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking, final TestConfig config,int numRooms,String element,String value)
+    private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking, final TestConfig config, int numRooms, String element, String value)
     {
         final List<Object> customerList = new ArrayList<>();
         final List<Object> paymentList = new ArrayList<>();
         Customer customer = Customer.create(config.getCustomerInfoPath());
         CreditCard payment = CreditCard.create(config.getCreditCardInfoPath());
-        if (element != null) {
-            if(!element.equals("rooms")) {
-                switch (element) {
-                    case "given_name":
-                        customer.setGivenName(value);
-                        break;
-                    case "family_name":
-                        customer.setFamilyName(value);
-                        break;
-                    case "email":
-                        customer.setEmail(value);
-                        break;
-                    case "phone":
-                        customer.setPhone(value);
-                        break;
-                    case "smoking":
-                        customer.setSmoking(value);
-                        break;
-                    case "country_code":
-                        payment.getContact().getAddress().setCountryCode(value);
-                        break;
-                    case "line_1":
-                        payment.getContact().getAddress().setLine1(value);
-                        break;
-                    case "city":
-                        payment.getContact().getAddress().setCity(value);
-                        break;
-                    case "type":
-                        payment.setType(value);
-                        break;
-                    case "card_type":
-                        payment.setCardType(value);
-                        break;
-                    case "card_number":
-                        payment.setNumber(value);
-                        break;
-                    case "security_code":
-                        payment.setSecurityCode(value);
-                        break;
-                    case "expiration_month":
-                        payment.setExpirationMonth(value);
-                        break;
-                    case "expiration_year":
-                        payment.setExpirationYear(value);
-                        break;
-                    case "contact_given_name":
-                        payment.getContact().setGivenName(value);
-                        break;
-                    case "contact_family_name":
-                        payment.getContact().setFamilyName(value);
-                        break;
-                    case "contact_email":
-                        payment.getContact().setEmail(value);
-                        break;
-                    case "contact_phone":
-                        payment.getContact().setPhone(value);
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("Element [" + element + "] unsupported");
+        if (element != null)
+        {
+            if (!element.equals("rooms"))
+            {
+                switch (element)
+                {
+                case "given_name":
+                {
+                    customer.setGivenName(value);
+                    break;
+                }
+                case "family_name":
+                {
+                    customer.setFamilyName(value);
+                    break;
+                }
+                case "email":
+                {
+                    customer.setEmail(value);
+                    break;
+                }
+                case "phone":
+                {
+                    customer.setPhone(value);
+                    break;
+                }
+                case "smoking":
+                {
+                    customer.setSmoking(value);
+                    break;
+                }
+
+                case "country_code":
+                {
+                    payment.getContact().getAddress().setCountryCode(value);
+                    break;
+                }
+                case "line_1":
+                {
+                    payment.getContact().getAddress().setLine1(value);
+                    break;
+                }
+                case "city":
+                {
+                    payment.getContact().getAddress().setCity(value);
+                    break;
+                }
+                case "type":
+                {
+                    payment.setType(value);
+                    break;
+                }
+                case "card_type":
+                {
+                    payment.setCardType(value);
+                    break;
+                }
+                case "card_number":
+                {
+                    payment.setNumber(value);
+                    break;
+                }
+                case "security_code":
+                {
+                    payment.setSecurityCode(value);
+                    break;
+                }
+                case "expiration_month":
+                {
+                    payment.setExpirationMonth(value);
+                    break;
+                }
+                case "expiration_year":
+                {
+                    payment.setExpirationYear(value);
+                    break;
+                }
+                case "contact_given_name":
+                {
+                    payment.getContact().setGivenName(value);
+                    break;
+                }
+                case "contact_family_name":
+                {
+                    payment.getContact().setFamilyName(value);
+                    break;
+                }
+                case "contact_email":
+                {
+                    payment.getContact().setEmail(value);
+                    break;
+                }
+                case "contact_phone":
+                {
+                    payment.getContact().setPhone(value);
+                    break;
+                }
+                default:
+                {
+                    throw new UnsupportedOperationException("Element [" + element + "] unsupported");
+                }
                 }
             }
         }
 
-        while (numRooms != 0) {
+        while (numRooms != 0)
+        {
             customerList.add(
                     customer.getAsMap()
             );
@@ -219,11 +271,15 @@ public class BookingTestHelper
         body.put("affiliate_reference_id", affiliateId);
         body.put("hold", holdBooking);
         body.put("payments", paymentList.toArray());
-        if(element!=null){
-            if(!element.equals("rooms")){
+        if (element != null)
+        {
+            if (!element.equals("rooms"))
+            {
                 body.put("rooms", customerList.toArray());
             }
-        } else {
+        }
+        else
+        {
             body.put("rooms", customerList.toArray());
         }
         return body.build();
@@ -234,7 +290,7 @@ public class BookingTestHelper
         final Link bookingRetrieveLink = context.getBookingResponse().getLinks().get("retrieve");
         final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
 
-        context.addHeader("affiliate_reference_id", context.getBookingAffiliateId());
+        context.addHeader("affiliate_reference_id", context.getBookingAffiliateId().orElse(null));
         context.addHeader("email", customer.getEmail());
         context.setApiPath(RequestType.RETRIEVE_BOOKING, bookingRetrieveLink.getHref());
 

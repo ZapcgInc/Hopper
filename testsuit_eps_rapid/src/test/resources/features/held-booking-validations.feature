@@ -2,7 +2,7 @@
 Feature: Validations for Hold Booking API.
 
   Background:
-    Given setup for partner with config at "expedia-config.yml"
+    Given partner test setup
     And with shopping query parameters
       | currency          | USD               |
       | language          | en-US             |
