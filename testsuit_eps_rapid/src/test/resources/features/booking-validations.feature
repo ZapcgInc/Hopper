@@ -70,44 +70,35 @@ Feature: Validations for Booking API.
     And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
 
   @business_test
-  Scenario: Booking API for validation of "ITINERARY_ID"
+  Scenario Outline: Booking API for validation of "<field>"
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
     Then the response code for "BOOKING" should be 201
-    And validate "ITINERARY_ID"  for "BOOKING"
-
-   @business_test
-   Scenario: Booking API for validation of "LINKS"
-     Given run shopping and preBooking for Booking
-     And validate "BOOKING_LINK"  for "PRE_BOOKING"
-     And run booking with hold "false"
-     Then the response code for "BOOKING" should be 201
-     And validate "LINKS"  for "BOOKING"
-
-   @business_test
-   Scenario: Booking API for validation of "RETRIEVE_METHOD"
-     Given run shopping and preBooking for Booking
-     And validate "BOOKING_LINK"  for "PRE_BOOKING"
-     And run booking with hold "false"
-     Then the response code for "BOOKING" should be 201
-     And validate "RETRIEVE_METHOD"  for "BOOKING"
-
-   @business_test
-   Scenario: Booking API for validation of "RETRIEVE_HREF"
-     Given run shopping and preBooking for Booking
-     And validate "BOOKING_LINK"  for "PRE_BOOKING"
-     And run booking with hold "false"
-     Then the response code for "BOOKING" should be 201
-     And validate "RETRIEVE_HREF"  for "BOOKING"
+    And validate "<field>"  for "BOOKING"
+    Examples:
+    |field|
+    |ITINERARY_ID|
+    |LINKS       |
+    |RETRIEVE_METHOD|
+    |RETRIEVE_HREF  |
+    |CANCEL_HREF    |
 
   @business_test
-  Scenario: Booking API for validation of "CANCEL_HREF"
+  Scenario: Booking API for validation for "cancel" node
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
     Then the response code for "BOOKING" should be 201
-    And validate "CANCEL_HREF"  for "BOOKING"
+    And validate "BOOKING" response element "CANCEL_METHOD" matches values "DELETE"
+
+#  @business_test
+#  Scenario: Booking API for validation for "payments"
+#    Given run shopping and preBooking for Booking
+#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+#    When set "BOOKING" field "payment_type" value "affiliate_collect"
+#    And run booking with hold "false"
+#    Then the response code for "BOOKING" should be 201
 
 #  @business_test
 #  Scenario: Booking API for validation for multiple room request

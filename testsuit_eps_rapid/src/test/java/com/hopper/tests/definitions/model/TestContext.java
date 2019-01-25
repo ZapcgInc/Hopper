@@ -40,6 +40,9 @@ public class TestContext
     private String m_checkInDate;
     private String m_checkOutDate;
     private String m_bookingAffiliateId;
+    private String retrieveBookingOverrideElement = null;
+    private String retrieveBookingOverrideElementValue = "";
+    private String cancelRoomId = null;
 
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
@@ -52,6 +55,30 @@ public class TestContext
     private BookingRetrieveResponse m_bookingRetrieveResponse;
 
     private EnumMap<RequestType, Map<String, Object>> m_requestTypeToPostBody = new EnumMap<RequestType, Map<String, Object>>(RequestType.class);
+
+    public String getRetrieveBookingOverrideElement() {
+        return retrieveBookingOverrideElement;
+    }
+
+    public void setRetrieveBookingOverrideElement(String retrieveBookingOverrideElement) {
+        this.retrieveBookingOverrideElement = retrieveBookingOverrideElement;
+    }
+
+    public String getRetrieveBookingOverrideElementValue() {
+        return retrieveBookingOverrideElementValue;
+    }
+
+    public void setRetrieveBookingOverrideElementValue(String retrieveBookingOverrideElementValue) {
+        this.retrieveBookingOverrideElementValue = retrieveBookingOverrideElementValue;
+    }
+
+    public String getCancelRoomId() {
+        return cancelRoomId;
+    }
+
+    public void setCancelRoomId(String cancelRoomId) {
+        this.cancelRoomId = cancelRoomId;
+    }
 
     public TestContext(final TestConfig config)
     {
@@ -205,9 +232,9 @@ public class TestContext
         m_bookingResponse = bookingResponse;
     }
 
-    public Optional<String> getBookingAffiliateId()
+    public String getBookingAffiliateId()
     {
-        return Optional.ofNullable(m_bookingAffiliateId);
+        return m_bookingAffiliateId;
     }
 
     public void setBookingAffiliateId(String bookingAffiliateId)

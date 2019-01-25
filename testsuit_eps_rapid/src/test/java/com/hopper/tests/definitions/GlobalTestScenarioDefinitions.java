@@ -56,7 +56,6 @@ public class GlobalTestScenarioDefinitions
         LoggingUtil.printTestStatus(scenario, m_testContext);
     }
 
-
     @Given("^partner test setup$")
     public void partnerTestSetup()
     {
@@ -334,25 +333,48 @@ public class GlobalTestScenarioDefinitions
     }
 
     @When("^set \"([^\"]*)\" field \"([^\"]*)\" value \"([^\"]*)\"$")
-    public void set_field_value(final String requestType, final String field, final String value)
+    public void setFieldValue(final String requestType, final String field, final String value) throws Throwable
     {
-        if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+
+        switch (requestType)
         {
-            m_testContext.setBookingOverrideElementName(field);
-        }
-        else
-        {
-            if (field.equals("affiliate_confirmation_id"))
+        case "BOOKING":
+            if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
             {
-                m_testContext.setBookingAffiliateId(value);
+                m_testContext.setBookingOverrideElementName(field);
+            }
+            else
+            {
+                if (field.equals("affiliate_confirmation_id"))
+                {
+                    m_testContext.setBookingAffiliateId(value);
+                }
+                else
+                {
+                    m_testContext.setBookingOverrideElementName(field);
+                    m_testContext.setBookingOverrideElementValue(value);
+                }
+            }
+            break;
+        case "RETRIEVE_BOOKING":
+            if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+            {
+                m_testContext.setRetrieveBookingOverrideElement(field);
             }
             else
             {
                 m_testContext.setBookingOverrideElementName(field);
                 m_testContext.setBookingOverrideElementValue(value);
             }
+
         }
 
+    }
+
+    @When("^set cancel_room_id \"(.*?)\"$")
+    public void setCancelRoomID(String value)
+    {
+        m_testContext.setCancelRoomId(value);
     }
 
     @Then("^validate element \"(.*?)\"  for \"(.*?)\"$")

@@ -68,10 +68,10 @@ public class BookingValidationUtil
 
     private static void _validateCancelHref(BookingResponse response)
     {
-        if(response.getLinks().get("cancel")!=null)
+        if (response.getLinks().get("cancel") != null)
         {
             Assert.assertNotNull("href link is missing",
-                    response.getLinks().get("cancel").getHref()
+                                 response.getLinks().get("cancel").getHref()
             );
         }
     }
@@ -79,27 +79,28 @@ public class BookingValidationUtil
     private static void _validateRetrieveHref(BookingResponse response)
     {
         Assert.assertNotNull("href link is missing",
-                response.getLinks().get("retrieve").getHref()
+                             response.getLinks().get("retrieve").getHref()
         );
     }
 
     private static void _validateRetrieveMethod(BookingResponse response)
     {
         Assert.assertTrue("method value is not GET",
-                response.getLinks().get("retrieve").getMethod().equals("GET")
+                          response.getLinks().get("retrieve").getMethod().equals("GET")
         );
     }
 
     private static void _validateLinks(BookingResponse response)
     {
         Assert.assertNotNull("links node is missing",
-                response.getLinks()
+                             response.getLinks()
         );
     }
 
-    private static void _validateItineraryId(BookingResponse response) {
+    private static void _validateItineraryId(BookingResponse response)
+    {
         Assert.assertTrue("itinerary_id is missing",
-                !StringUtils.isEmpty(response.getItineraryId())
+                          !StringUtils.isEmpty(response.getItineraryId())
         );
     }
 
@@ -113,10 +114,10 @@ public class BookingValidationUtil
 
         switch (validateField)
         {
-            default:
-            {
-                throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
-            }
+        default:
+        {
+            throw new UnsupportedOperationException("Validation Field [" + validateField + "] unsupported");
+        }
         }
     }
 
@@ -130,10 +131,10 @@ public class BookingValidationUtil
 
         switch (validateField)
         {
-            default:
-            {
-                throw new UnsupportedOperationException(validateField + ", not supported");
-            }
+        default:
+        {
+            throw new UnsupportedOperationException(validateField + ", not supported");
+        }
         }
     }
 
@@ -147,13 +148,21 @@ public class BookingValidationUtil
 
         switch (validateField)
         {
-            default:
-            {
-                throw new UnsupportedOperationException(validateField + ", not supported");
-            }
+        case CANCEL_METHOD:
+            validateCancelMethod(expectedValues.get(0), response);
+            break;
+        default:
+        {
+            throw new UnsupportedOperationException(validateField + ", not supported");
+        }
         }
     }
 
+    private static void validateCancelMethod(String expectedValue, final BookingResponse response)
+    {
+        if (response.getLinks().get("cancel") != null)
+            Assert.assertEquals("cancel is not DELETE", expectedValue, response.getLinks().get("cancel").getMethod());
+    }
 
     private static void _validateRetrieveBookingLink(final BookingResponse response)
     {

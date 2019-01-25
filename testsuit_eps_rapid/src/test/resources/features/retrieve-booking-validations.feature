@@ -114,3 +114,21 @@ Scenario: Retrieve Booking API for validation of "STATUS"
   And retrieve booking
   Then the response code for "RETRIEVE_BOOKING" should be 200
   And validate element "STATUS" for "RETRIEVE_BOOKING" contains value among "pending|booked|cancelled"
+
+
+@data_test
+Scenario Outline: Retrieve Booking API for missing token <element>
+  Given run shopping and preBooking for Booking
+  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+  And run booking with hold "false"
+  Then the response code for "BOOKING" should be 201
+  And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+  When set "RETRIEVE_BOOKING" field "<element>" value "null"
+  And retrieve booking
+  Then the response code for "RETRIEVE_BOOKING" should be 200
+  Examples:
+  |element|
+ # | affiliate_reference_id|
+  |email  |
+
+
