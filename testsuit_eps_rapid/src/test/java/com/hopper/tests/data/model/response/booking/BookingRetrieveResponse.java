@@ -3,7 +3,6 @@ package com.hopper.tests.data.model.response.booking;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hopper.tests.data.model.response.Link;
-import com.hopper.tests.data.model.response.retrieve_booking.Room;
 
 import java.util.List;
 import java.util.Map;

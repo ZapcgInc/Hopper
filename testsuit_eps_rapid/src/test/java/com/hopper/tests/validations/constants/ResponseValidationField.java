@@ -39,6 +39,12 @@ public enum ResponseValidationField
     RATE_ID,
     GIVEN_NAME,
     FAMILY_NAME,
-    PHONE
-    ;
+    PHONE,
+    NIGHTLY_RATE,
+    SMOKING,
+    REFUNDABLE,
+    ADDRESS,
+    COUNTRY_CODE,
+    CREATION_DATE_TIME,
+    FEES
 }

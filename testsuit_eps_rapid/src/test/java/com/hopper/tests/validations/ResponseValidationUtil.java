@@ -7,9 +7,11 @@ import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;
 import com.hopper.tests.validations.paymentoptions.PaymentOptionsResponseValidationUtil;
 import com.hopper.tests.validations.prebooking.PreBookingValidationUtil;
-import com.hopper.tests.validations.retrievebooking.RetrieveBookingValidationUtil;
+
+import com.hopper.tests.validations.retrievebooking.RetrieveBookingValidation;
 import com.hopper.tests.validations.shopping.ShoppingResponseValidationUtil;
 import io.restassured.response.Response;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
 import javax.validation.constraints.NotNull;
@@ -26,6 +28,13 @@ public class ResponseValidationUtil
         final String errorMessage = "Expected response code : " + expectedCode + "and actual response code : " + responseCode + "are not matching";
         Assert.assertTrue(errorMessage, expectedCode == responseCode);
     }
+
+    public static void validateElementForRetrieveBooking(@NotNull final Response response, final ResponseValidationField element) {
+
+        RetrieveBookingValidation.validateElement(response, element);
+
+    }
+
 
 
     public static void validateResponseBody(final Response restResponse, final Map<String, String> expectedResponseMap, final String field)
@@ -160,15 +169,17 @@ public class ResponseValidationUtil
                 BookingValidationUtil.validate(context, validationField);
                 break;
             }
-            case RETRIEVE_BOOKING:
-            {
-                RetrieveBookingValidationUtil.validate(context, validationField);
-                break;
-            }
             default:
             {
                 throw new UnsupportedOperationException("Request Type : [" + requestType + "], Unsupported for Validation");
             }
         }
+    }
+
+    public static void validateElementForRetrieveBooking(Response response, ResponseValidationField element, List<String> listOfValues) {
+
+        RetrieveBookingValidation.validateElement(response,element,listOfValues);
+
+
     }
 }

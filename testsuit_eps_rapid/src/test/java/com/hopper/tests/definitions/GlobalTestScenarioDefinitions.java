@@ -353,7 +353,25 @@ public class GlobalTestScenarioDefinitions
 
     }
 
+    @Then("^validate element \"(.*?)\"  for \"(.*?)\"$")
+    public void validateElement(String element, String requestType) throws Throwable {
+        ResponseValidationUtil.validateElementForRetrieveBooking(
+                m_testContext.getResponse(RequestType.valueOf(requestType)),
+                ResponseValidationField.valueOf(element)
+        );
+    }
 
+    @Then("^validate element \"(.*?)\" for \"(.*?)\" contains value among \"(.*?)\"$")
+    public void validateElementAmong(String element, String requestType, String expectedValues) throws Throwable {
+        final List<String> listOfValues = Arrays.stream(expectedValues.split(GlobalConstants.MULTI_VALUE_DELIMITER))
+                .collect(Collectors.toList());
+
+        ResponseValidationUtil.validateElementForRetrieveBooking(
+                m_testContext.getResponse(RequestType.valueOf(requestType)),
+                ResponseValidationField.valueOf(element),listOfValues
+        );
+
+    }
 
     @And("^run booking with hold \"([^\"]*)\"$")
     public void runBookingWithHold(String holdBooking)

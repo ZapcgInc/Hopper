@@ -203,8 +203,7 @@ public class BookingTestHelper
                 }
             }
         }
-        System.out.println("Customer: "+customer);
-        System.out.println("Payment: "+payment);
+
         while (numRooms != 0) {
             customerList.add(
                     customer.getAsMap()
@@ -215,8 +214,6 @@ public class BookingTestHelper
             );
             numRooms--;
         }
-        System.out.println("Customer List"+ customerList);
-
 
         final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
         body.put("affiliate_reference_id", affiliateId);

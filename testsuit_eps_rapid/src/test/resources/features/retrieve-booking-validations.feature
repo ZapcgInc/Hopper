@@ -60,40 +60,57 @@ Feature: Validations for Booking Retrieve API.
       | header | value   | code | error_type           | error_message                                                                                                                             |
       | Test   | invalid |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: STANDARD, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE |
 
-#  @business_test
-#  Scenario: Retrieve Booking API with token successful response
-#    Given run shopping and preBooking for Booking
-#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
-#    And run booking with hold "false"
-#    Then the response code for "BOOKING" should be 201
-#    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
-#    And retrieve booking
-#    Then the response code for "RETRIEVE_BOOKING" should be 200
 
-#  @business_test
-#  Scenario Outline: Retrieve Booking API for <ELEMENT>
-#    Given run shopping and preBooking for Booking
-#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
-#    And run booking with hold "false"
-#    Then the response code for "BOOKING" should be 201
-#    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
-#    And retrieve booking
-#    Then the response code for "RETRIEVE_BOOKING" should be 200
-#    And validate "<ELEMENT>"  for "RETRIEVE_BOOKING"
-#    Examples:
-#    |ELEMENT|
-#    |ITENARY_ID|
-##    |CANCEL_HREF|
-##    |ROOM_ID    |
-##    |CHECK_IN_DATE|
-##    |CHECK_OUT_DATE|
-##    |NUM_ADULTS    |
-##    |RATE_ID       |
-##    |GIVEN_NAME    |
-##    |FAMILY_NAME   |
-##    |PHONE         |
+@business_test
+Scenario: Retrieve Booking API with successful response
+  Given run shopping and preBooking for Booking
+  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+  And run booking with hold "false"
+  Then the response code for "BOOKING" should be 201
+  And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+  And retrieve booking
+  Then the response code for "RETRIEVE_BOOKING" should be 200
+
+@business_test
+Scenario Outline: Retrieve Booking API for validation of <ELEMENT>
+  Given run shopping and preBooking for Booking
+  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+  And run booking with hold "false"
+  Then the response code for "BOOKING" should be 201
+  And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+  And retrieve booking
+  Then the response code for "RETRIEVE_BOOKING" should be 200
+  And validate element "<ELEMENT>"  for "RETRIEVE_BOOKING"
+  Examples:
+    |ELEMENT|
+    |ITINERARY_ID|
+    |CANCEL_HREF|
+    |ROOM_ID    |
+    |CHECK_IN_DATE|
+    |CHECK_OUT_DATE|
+    |NUM_ADULTS    |
+    |RATE_ID       |
+    |GIVEN_NAME    |
+    |FAMILY_NAME   |
+    |PHONE         |
+    |NIGHTLY_RATE  |
+    |SMOKING|
+    |REFUNDABLE|
+    |ADDRESS|
+    |COUNTRY_CODE|
+    |CREATION_DATE_TIME|
+    |CURRENCY_CODE     |
+    |FEES              |
 
 
 
-
-
+@business_test
+Scenario: Retrieve Booking API for validation of "STATUS"
+  Given run shopping and preBooking for Booking
+  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+  And run booking with hold "false"
+  Then the response code for "BOOKING" should be 201
+  And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+  And retrieve booking
+  Then the response code for "RETRIEVE_BOOKING" should be 200
+  And validate element "STATUS" for "RETRIEVE_BOOKING" contains value among "pending|booked|cancelled"
