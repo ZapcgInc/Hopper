@@ -20,11 +20,10 @@ import java.nio.file.Paths;
 public class ConfigurationHelper
 {
     private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
-    private static final ImmutableMap<SupportedPartners, String> m_partnerToConfigFile = ImmutableMap.of(
-            SupportedPartners.EPS, "expedia-config.yml"
-    );
 
-    public static TestConfig load()
+    private static TestConfig config = null;
+    
+    private static void load()
     {
         final String partnerToRun = System.getProperty(GlobalConstants.PARTNER_ENV_VARIABLE);
         if (StringUtils.isEmpty(partnerToRun))
@@ -32,16 +31,24 @@ public class ConfigurationHelper
             LoggingUtil.log("Partner not configured : Defaulting to EPS");
         }
 
-        final SupportedPartners partner = StringUtils.isEmpty(partnerToRun)
-                ? SupportedPartners.EPS
-                : SupportedPartners.valueOf(System.getProperty(GlobalConstants.PARTNER_ENV_VARIABLE));
+        final String partner = StringUtils.isEmpty(partnerToRun)
+                ? GlobalConstants.DEFAULT_PARTNER
+                : partnerToRun;
 
 
-        LoggingUtil.log("Loading Environment for Partner : [" + partner.name() + "]");
+        LoggingUtil.log("Loading Environment for Partner : [" + partner + "]");
 
-        return _parse(m_partnerToConfigFile.get(partner));
+        config = _parse(partner + GlobalConstants.CONFIG_FILE_TYPE);
     }
 
+    public static TestConfig getConfig() {
+    	if(config == null ) {
+    		load();
+    	}
+    	return config;
+    }
+    
+    
     private static TestConfig _parse(final String pathToConfigFile)
     {
         try

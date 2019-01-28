@@ -11,4 +11,6 @@ public class GlobalConstants
     public static final String POST = "POST";
     public static final long SOCKET_TIMEOUT = 10000;
     public static final String PARTNER_ENV_VARIABLE = "hopperPartner";
+    public static final String DEFAULT_PARTNER = "EPS";
+    public static final String CONFIG_FILE_TYPE = ".yml";
 }

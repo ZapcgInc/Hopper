@@ -59,7 +59,7 @@ public class GlobalTestScenarioDefinitions
     @Given("^partner test setup$")
     public void partnerTestSetup()
     {
-        m_testContext = new TestContext(ConfigurationHelper.load());
+        m_testContext = new TestContext(ConfigurationHelper.getConfig());
         m_checkAPIAvailability = new CheckAPIAvailability();
     }
 

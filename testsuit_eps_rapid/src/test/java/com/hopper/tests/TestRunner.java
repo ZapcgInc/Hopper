@@ -6,6 +6,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import com.hopper.tests.config.ConfigurationHelper;
+import com.hopper.tests.config.model.TestConfig;
+import com.hopper.tests.util.logging.LoggingUtil;
+
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = "src/test/resources/features",
@@ -20,11 +24,22 @@ public class TestRunner {
 
     @BeforeClass
     public static void beforeClass() {
-        System.out.println("**********************************");
+    	LoggingUtil.log("**********************************");
+    	TestConfig config = ConfigurationHelper.getConfig();
+    	if (config != null ) {
+    		LoggingUtil.log("Starting Validations for partenr: " + config.getPartner() );
+    		LoggingUtil.log("Validations are executed for partner URL: " + config.getAPI() );
+    		LoggingUtil.log("Validations are executed for partner Version: "+ config.getVersion() );
+    	} else {
+    		LoggingUtil.log("Missing configuration file. Please pass partner name using 'mvn -DhopperPartner=<partnername>'");
+    		LoggingUtil.log("Stopping the test validations");
+    		System.exit(0);;
+    	}
+        
     }
 
     @AfterClass
     public static void afterClass() {
-        System.out.println("***********************************");
+    	LoggingUtil.log("***********************************");
     }
 }
