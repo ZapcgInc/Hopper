@@ -1,12 +1,10 @@
 package com.hopper.tests.definitions.model;
 
-import com.google.common.collect.ImmutableMap;
+
 import com.hopper.tests.authorization.Authorization;
 import com.hopper.tests.config.model.TestConfig;
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.data.model.request.RequestParams;
-import com.hopper.tests.data.model.request.booking.Customer;
 import com.hopper.tests.data.model.response.booking.BookingResponse;
 import com.hopper.tests.data.model.response.booking.BookingRetrieveResponse;
 import com.hopper.tests.data.model.response.payment.PaymentOptionResponse;
@@ -30,7 +28,7 @@ public class TestContext
 
     private String bookingOverrideElementName = null;
     private String bookingOverrideElementValue = "";
-    private final SupportedPartners m_partner;
+    private final String m_partner;
     private final TestConfig m_testConfig;
 
     private String m_host;
@@ -111,7 +109,7 @@ public class TestContext
     }
 
 
-    public SupportedPartners getPartner()
+    public String getPartner()
     {
         return m_partner;
     }

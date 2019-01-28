@@ -3,7 +3,7 @@ package com.hopper.tests.config.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
-import com.hopper.tests.constants.SupportedPartners;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class TestConfig
 {
     @JsonProperty("partner")
-    private SupportedPartners partner;
+    private String partner;
 
     @JsonProperty("api")
     private String api;
@@ -40,7 +40,7 @@ public class TestConfig
 
     public TestConfig(){}
 
-    public SupportedPartners getPartner()
+    public String getPartner()
     {
         return partner;
     }

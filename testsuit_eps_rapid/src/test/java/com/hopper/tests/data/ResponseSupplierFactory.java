@@ -1,7 +1,7 @@
 package com.hopper.tests.data;
 
+import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.definitions.model.TestContext;
 import io.restassured.response.Response;
 
@@ -17,16 +17,16 @@ public class ResponseSupplierFactory
                                             final String httpMethod,
                                             final RequestType requestType)
     {
-        final SupportedPartners partner = criteria.getPartner();
+        final String partner = criteria.getPartner();
         switch (partner)
         {
-            case EPS:
+            case GlobalConstants.DEFAULT_PARTNER:
             {
                 return new EPSResponseSupplier(criteria, httpMethod, requestType);
             }
             default:
             {
-                throw new UnsupportedOperationException("Authorization for Partner :" + partner.name() + "is currently unsupported");
+            	return new EPSResponseSupplier(criteria, httpMethod, requestType);
             }
         }
     }

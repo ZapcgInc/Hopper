@@ -5,7 +5,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.ImmutableMap;
 import com.hopper.tests.config.model.TestConfig;
 import com.hopper.tests.constants.GlobalConstants;
-import com.hopper.tests.constants.SupportedPartners;
 import com.hopper.tests.util.logging.LoggingUtil;
 import org.apache.commons.lang.StringUtils;
 

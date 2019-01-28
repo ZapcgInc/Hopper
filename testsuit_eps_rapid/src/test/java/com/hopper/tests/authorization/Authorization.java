@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import com.hopper.tests.constants.SupportedPartners;
+import com.hopper.tests.constants.GlobalConstants;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang.StringUtils;
 
@@ -18,17 +18,17 @@ public class Authorization
     private static final String AUTH_API_KEY = "apikey";
     private static final String AUTH_SECRET_KEY = "secret";
 
-    public static String getAuthKey(final SupportedPartners partner, final Map<String, String> authKeyMap)
+    public static String getAuthKey(final String partner, final Map<String, String> authKeyMap)
     {
         switch (partner)
         {
-            case EPS:
+            case GlobalConstants.DEFAULT_PARTNER:
             {
                 return _getEPSAuthKey(authKeyMap);
             }
             default:
             {
-                throw new UnsupportedOperationException("Authorization for Partner :" + partner.name() + "is currently unsupported");
+            	return _getEPSAuthKey(authKeyMap);
             }
         }
     }
