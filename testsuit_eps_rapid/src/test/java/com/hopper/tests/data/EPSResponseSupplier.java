@@ -5,6 +5,7 @@ import com.hopper.tests.constants.RequestType;
 import com.hopper.tests.definitions.model.TestContext;
 import com.hopper.tests.api.APIEndPointGenerator;
 import io.restassured.RestAssured;
+import io.restassured.config.DecoderConfig;
 import io.restassured.config.HttpClientConfig;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
@@ -156,6 +157,7 @@ public class EPSResponseSupplier implements Supplier<Response>
         httpConfig.setParam("http.socket.timeout", GlobalConstants.SOCKET_TIMEOUT);
 
         return RestAssured.given()
-                .config(RestAssuredConfig.config().httpClient(httpConfig));
+                .config(RestAssuredConfig.config().httpClient(httpConfig))
+                .config(RestAssuredConfig.config().decoderConfig(new DecoderConfig().contentDecoders(DecoderConfig.ContentDecoder.GZIP)));
     }
 }

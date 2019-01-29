@@ -24,17 +24,13 @@ public class ConfigurationHelper
     private static void load()
     {
         final String partnerToRun = System.getProperty(GlobalConstants.PARTNER_ENV_VARIABLE);
-        if (StringUtils.isEmpty(partnerToRun))
-        {
-            LoggingUtil.log("Partner not configured : Defaulting to EPS");
-        }
 
         final String partner = StringUtils.isEmpty(partnerToRun)
-                ? GlobalConstants.DEFAULT_PARTNER
+                ? GlobalConstants.DEFAULT_CONFIG
                 : partnerToRun;
 
 
-        LoggingUtil.log("Loading Environment for Partner : [" + partner + "]");
+        LoggingUtil.log("Loading Environment for Partner : [" + partner + "] using Config file: " + partner + GlobalConstants.CONFIG_FILE_TYPE);
 
         config = _parse(partner + GlobalConstants.CONFIG_FILE_TYPE);
     }

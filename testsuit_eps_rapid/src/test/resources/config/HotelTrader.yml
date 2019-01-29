@@ -1,0 +1,16 @@
+---
+partner: "HotelTrader"
+api: "https://qa2.hoteltrader.com"
+version: "HT-EPS"
+headers:
+      Accept: application/json
+      Accept-Encoding: gzip
+      Customer-Ip: 127.0.0.1
+      User-Agent: Hopper/1.0
+auth_params:
+      auth_type: basic_auth
+      user_name: hopper
+      password: hop-hot
+shopping_end_point : "properties/availability"
+customer-info-path: "booking-test-data/test-customer-1.yml"
+credit-card-info-path: "booking-test-data/test-credit-card.yml"

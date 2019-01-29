@@ -6,6 +6,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import com.hopper.tests.authorization.Authorization;
 import com.hopper.tests.config.ConfigurationHelper;
 import com.hopper.tests.config.model.TestConfig;
 import com.hopper.tests.util.logging.LoggingUtil;
@@ -25,11 +26,18 @@ public class TestRunner {
     @BeforeClass
     public static void beforeClass() {
     	LoggingUtil.log("**********************************");
-    	TestConfig config = ConfigurationHelper.getConfig();
+    	TestConfig config = ConfigurationHelper.getConfig();    	
     	if (config != null ) {
     		LoggingUtil.log("Starting Validations for partenr: " + config.getPartner() );
     		LoggingUtil.log("Validations are executed for partner URL: " + config.getAPI() );
     		LoggingUtil.log("Validations are executed for partner Version: "+ config.getVersion() );
+    		
+        	String auth_type = config.getAuthParams().get(Authorization.AUTH_TYPE);
+    		LoggingUtil.log("Authorization method for partner: "+ auth_type );
+    		if(auth_type == null) {
+    			LoggingUtil.log("Authorization method not provided to defaulting to: "+ Authorization.DEFAULT_AUTH );
+    		}
+    		
     	} else {
     		LoggingUtil.log("Missing configuration file. Please pass partner name using 'mvn -DhopperPartner=<partnername>'");
     		LoggingUtil.log("Stopping the test validations");

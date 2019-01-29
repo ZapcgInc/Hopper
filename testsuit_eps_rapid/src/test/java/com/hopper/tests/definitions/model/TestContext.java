@@ -87,7 +87,7 @@ public class TestContext
         m_headers.putAll(config.getHeaders());
         m_headers.put(
                 AUTH_HEADER_KEY,
-                Authorization.getAuthKey(config.getPartner(), config.getAuthParams())
+                Authorization.getAuthKey( config.getAuthParams() )
         );
         m_requestTypeToAPIPath.put(RequestType.SHOPPING, config.getShoppingEndPoint());
     }
