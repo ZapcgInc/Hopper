@@ -14,8 +14,9 @@ To Run Test for a specific partner use "hopperPartner" option to pass partner co
 To Run specif API tests use cucumber tags option
 
 ``
-   mvn test -Dcucumber.options="--tags @smoke"
+   mvn test -Dcucumber.options="--tags @availability"
 ``
+
 #Known Issues
 
   1. Code has issues with JDK 9.
