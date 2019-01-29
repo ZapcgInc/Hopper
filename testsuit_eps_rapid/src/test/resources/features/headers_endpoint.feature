@@ -33,7 +33,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And with shopping end point "properties/availability123"
     And run shopping
     Then the response code for "SHOPPING" should be 404
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | resource_not_found                    |
       | message | The resource requested was not found. |
 
@@ -43,10 +43,10 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And for version "1"
     And run shopping
     Then the response code for "SHOPPING" should be 400
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | version.required                                                            |
       | message | You have not specified a version, the supported versions are: [2, 2.1, 2.2] |
-    And user should see json response with paris on the filtered "fields[0]" node
+    And user should see "SHOPPING" response with paris on the filtered "fields[0]" node
       | name  | version |
       | type  | path    |
       | value | missing |

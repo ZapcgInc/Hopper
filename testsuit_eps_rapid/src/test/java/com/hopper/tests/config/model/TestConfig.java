@@ -26,11 +26,17 @@ public class TestConfig
     @JsonProperty("headers")
     private Map<String, String> headers = new HashMap<>();
 
+    @JsonProperty("query_params")
+    private Map<String,String> queryParams = new HashMap<>();
+
     @JsonProperty("auth_params")
     private Map<String, String> authParams = new HashMap<>();
 
     @JsonProperty("shopping_end_point")
     private String shoppingEndPoint;
+
+    @JsonProperty("retrieve_booking_end_point")
+    private String retrieveBookingEndPoint;
 
     @JsonProperty("customer-info-path")
     private String customerInfoPath;
@@ -78,5 +84,13 @@ public class TestConfig
     public String getCreditCardInfoPath()
     {
         return creditCardInfoPath;
+    }
+
+    public String getRetrieveBookingEndPoint() {
+        return retrieveBookingEndPoint;
+    }
+
+    public Map<String, String> getQueryParams() {
+        return queryParams !=null ? queryParams : ImmutableMap.of() ;
     }
 }

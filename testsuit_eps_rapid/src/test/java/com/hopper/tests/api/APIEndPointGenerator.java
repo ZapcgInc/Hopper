@@ -32,6 +32,10 @@ public class APIEndPointGenerator
             {
                 return _getBookingRetrieveEndPoint(criteria);
             }
+            case RETRIEVE_BOOKING_ALL_ITINERARIES:
+            {
+                return _getBookingRetrieveEndPointForAllItineraries(criteria);
+            }
             case CANCEL_BOOKING:
             {
                 return _cancelBookingEndPoint(criteria);
@@ -45,6 +49,25 @@ public class APIEndPointGenerator
                 throw new UnsupportedOperationException("Request type :" + requestType.name() + "is currently unsupported");
             }
         }
+    }
+
+    private static String _getBookingRetrieveEndPointForAllItineraries(TestContext criteria) {
+        final StringBuilder endPoint = new StringBuilder(criteria.getHost());
+
+        if (criteria.getVersion() != null)
+        {
+            endPoint.append("/");
+            endPoint.append(criteria.getVersion());
+        }
+
+        final String apiPath = criteria.getApiPath(RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        if (apiPath != null)
+        {
+            endPoint.append("/");
+            endPoint.append(apiPath);
+        }
+        return endPoint.toString();
+
     }
 
     private static String _resumeBookingEndPoint(TestContext criteria)

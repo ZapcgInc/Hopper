@@ -21,16 +21,16 @@ import com.hopper.tests.data.parser.BookingResponseParser;
 import com.hopper.tests.data.parser.BookingRetrieveResponseParser;
 import com.hopper.tests.data.parser.PreBookingResponseParser;
 import com.hopper.tests.data.parser.ShoppingResponseParser;
+import com.hopper.tests.validations.Test;
+import com.hopper.tests.validations.constants.ResponseValidationField;
+import cucumber.api.java.it.Ma;
 import io.restassured.response.Response;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Helper class for Booking Test scenarios
@@ -115,11 +115,9 @@ public class BookingTestHelper
         }
 
         context.setPostBody(
-                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig(), numRooms, context.getBookingOverrideElementName(),context.getBookingOverrideElementValue()),
+                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig(), numRooms, context.getRetrieveBookingOverrideElement(),context.getBookingOverrideElementValue()),
                 RequestType.BOOKING
         );
-
-
         final Response response = ResponseSupplierFactory.create(
                 context,
                 bookingLink.getMethod(),
@@ -141,10 +139,11 @@ public class BookingTestHelper
         final List<Object> paymentList = new ArrayList<>();
         Customer customer = Customer.create(config.getCustomerInfoPath());
         CreditCard payment = CreditCard.create(config.getCreditCardInfoPath());
-        if (element != null)
+
+        // if element to be overridden is not null and not equal to "rooms"
+
+        if (element != null && !element.equals("rooms") )
         {
-            if (!element.equals("rooms"))
-            {
                 switch (element)
                 {
                     case "given_name":
@@ -248,24 +247,23 @@ public class BookingTestHelper
                         throw new UnsupportedOperationException("Element [" + element + "] unsupported");
                     }
                 }
-            }
-        }
 
+        }
         while (numRooms != 0) {
             customerList.add(
                     customer.getAsMap()
             );
-
-            paymentList.add(
-                    payment.getAsMap()
-            );
             numRooms--;
         }
+        Object[] payments = new Object[]{payment.getAsMap()};
 
         final ImmutableMap.Builder<String, Object> body = ImmutableMap.builder();
         body.put("affiliate_reference_id", affiliateId);
         body.put("hold", holdBooking);
-        body.put("payments", paymentList.toArray());
+        body.put("payments", payments);
+
+        // if element to be overridden is not null and is not "rooms" then put customerList to the body
+        // also if element to be overridden is null then put customerList to the body
         if(element!=null){
             if(!element.equals("rooms")){
                 body.put("rooms", customerList.toArray());
@@ -276,18 +274,32 @@ public class BookingTestHelper
         return body.build();
     }
 
+    public static void retrieveBookingForAllItineraries(TestContext context) {
+
+        final String retrieveBookingEndpoint =  context.getTestConfig().getRetrieveBookingEndPoint();
+
+        final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
+        context.addParam("affiliate_reference_id", context.getBookingAffiliateId(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        if("email".equals(context.getRetrieveBookingOverrideElement()) && StringUtils.isNotEmpty(context.getRetrieveBookingOverrideElementValue()))
+        {
+            context.addParam("email", context.getBookingOverrideElementValue(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        }
+        if(!"email".equals(context.getRetrieveBookingOverrideElement()))
+            context.addParam("email", customer.getEmail(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        context.setApiPath(RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES, retrieveBookingEndpoint);
+
+        final Response response = ResponseSupplierFactory.create(context,
+                "GET",
+                RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES).get();
+        context.setResponse(RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES, response);
+        context.setBookingRetrieveResponse(BookingRetrieveResponseParser.parse(response));
+        // System.out.println(context.getBookingRetrieveResponse().getRooms().size());
+    }
+
     public static void retrieveBooking(final TestContext context)
     {
         final Link bookingRetrieveLink = context.getBookingResponse().getLinks().get("retrieve");
-        final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
-
-        context.addHeader("affiliate_reference_id", context.getBookingAffiliateId());
-        if("email".equals(context.getRetrieveBookingOverrideElement()) && StringUtils.isNotEmpty(context.getRetrieveBookingOverrideElementValue()))
-        {
-            context.addHeader("email", context.getBookingOverrideElementValue());
-        }
-        if(!"email".equals(context.getRetrieveBookingOverrideElement()))
-            context.addHeader("email", customer.getEmail());
+       // final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
         context.setApiPath(RequestType.RETRIEVE_BOOKING, bookingRetrieveLink.getHref());
 
         final Response response = ResponseSupplierFactory.create(
@@ -295,8 +307,10 @@ public class BookingTestHelper
                 bookingRetrieveLink.getMethod(),
                 RequestType.RETRIEVE_BOOKING).get();
 
+
         context.setResponse(RequestType.RETRIEVE_BOOKING, response);
         context.setBookingRetrieveResponse(BookingRetrieveResponseParser.parse(response));
+       // System.out.println(context.getBookingRetrieveResponse().getRooms().size());
     }
 
     public static void cancelBooking(final TestContext context)
@@ -342,6 +356,7 @@ public class BookingTestHelper
         context.setResponse(RequestType.CANCEL_BOOKING, response);
     }
 
+
     public static void resumeBooking(TestContext context)
     {
         final Link resumeBookingLink = context.getBookingResponse().getLinks().get("resume");
@@ -354,4 +369,28 @@ public class BookingTestHelper
 
         context.setResponse(RequestType.RESUME_BOOKING, response);
     }
+
+
+
+
+
+//    public static void cancelMutilpleRooms(int numRooms, TestContext context) {
+//        List<com.hopper.tests.data.model.response.booking.Room> roomList = context.getBookingRetrieveResponse().getRooms();
+//        int actualNumRoomsBooked = roomList.size();
+//        if (numRooms <= actualNumRoomsBooked) {
+//            while (numRooms != 0) {
+//                roomList.forEach(room -> {
+//                    Link cancelLink = room.getLinks().get("cancel");
+//                    context.setApiPath(RequestType.CANCEL_BOOKING, cancelLink.getHref());
+//
+//                    final Response response = ResponseSupplierFactory.create(
+//                            context,
+//                            cancelLink.getMethod(),
+//                            RequestType.CANCEL_BOOKING).get();
+//                    context.setResponse(RequestType.CANCEL_BOOKING, response);
+//                });
+//                numRooms--;
+//            }
+//        }
+//    }
 }

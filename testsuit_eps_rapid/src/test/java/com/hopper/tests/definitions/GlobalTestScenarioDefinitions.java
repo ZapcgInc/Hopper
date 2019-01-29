@@ -1,5 +1,6 @@
 package com.hopper.tests.definitions;
 
+import java.awt.print.Book;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -145,7 +146,7 @@ public class GlobalTestScenarioDefinitions
     {
         final List<String> listOfValues = Arrays.stream(values.split(GlobalConstants.MULTI_VALUE_DELIMITER))
                 .collect(Collectors.toList());
-
+        m_testContext.removeParam(queryParam,RequestType.valueOf(requestType));
         m_testContext.addParamWithMultipleValues(queryParam, listOfValues, RequestType.valueOf(requestType));
     }
 
@@ -192,6 +193,11 @@ public class GlobalTestScenarioDefinitions
         m_testContext.setPaymentOptionResponse(PaymentOptionResponseParser.parse(response));
     }
 
+//    @Then("^cancel \"(.*?)\" rooms booking$")
+//    public void cancel_rooms_booking(String numRooms) throws Throwable {
+//        BookingTestHelper.cancelMutilpleRooms(Integer.parseInt(numRooms),m_testContext);
+//    }
+
     @Then("^the response code for \"(.*?)\" should be (\\d+)$")
     public void validateResponseCode(final String requestType, final int expectedCode)
     {
@@ -208,12 +214,6 @@ public class GlobalTestScenarioDefinitions
                 m_testContext.getResponse(RequestType.valueOf(requestType)),
                 Integer.parseInt(expectedCode)
         );
-    }
-
-    @Then("^user should see json response with paris on the filtered \"(.*?)\" node$")
-    public void user_should_see_json_response_with_paris_on_the_filtered_node(final String field, final DataTable expectedResponse)
-    {
-        user_should_see_response_with_paris_on_the_filtered_node("SHOPPING", field, expectedResponse);
     }
 
     @Then("^user should see \"(.*?)\" response with paris on the filtered \"(.*?)\" node$")
@@ -316,6 +316,13 @@ public class GlobalTestScenarioDefinitions
         );
     }
 
+    @Then("^retrieve booking to get from all itineraries$")
+    public void retrieve_booking_to_get_from_all_itineraries() throws Throwable {
+
+        BookingTestHelper.retrieveBookingForAllItineraries(m_testContext);
+    }
+
+
     @And("^validate \"([^\"]*)\"  for \"([^\"]*)\"$")
     public void validate(String validationField, String requestType)
     {
@@ -332,6 +339,10 @@ public class GlobalTestScenarioDefinitions
         BookingTestHelper.runShoppingAndPreBookingForBooking(m_testContext);
     }
 
+    /*
+    This method is for overriding the field values of already set fields for booking and retrieve booking
+    (Specially handling the customer details which are being set from the yml)
+     */
     @When("^set \"([^\"]*)\" field \"([^\"]*)\" value \"([^\"]*)\"$")
     public void setFieldValue(final String requestTypeString, final String field, final String value)
     {
@@ -378,12 +389,6 @@ public class GlobalTestScenarioDefinitions
         }
     }
 
-    @When("^set cancel_room_id \"(.*?)\"$")
-    public void setCancelRoomID(String value)
-    {
-        m_testContext.setCancelRoomId(value);
-    }
-
     @Then("^validate element \"(.*?)\"  for \"(.*?)\"$")
     public void validateElement(String element, String requestType)
     {
@@ -417,6 +422,7 @@ public class GlobalTestScenarioDefinitions
     {
         BookingTestHelper.retrieveBooking(m_testContext);
     }
+
 
     @And("^cancel booking$")
     public void cancelBooking()

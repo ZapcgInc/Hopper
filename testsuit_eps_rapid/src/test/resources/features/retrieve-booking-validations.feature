@@ -7,7 +7,7 @@ Feature: Validations for Booking Retrieve API.
       | currency          | USD               |
       | language          | en-US             |
       | country_code      | US                |
-      | property_id       |             20321 |
+ #     | property_id       |             20321 |
       | occupancy         | 2-9,4             |
       | sales_channel     | website           |
       | sales_environment | hotel_only        |
@@ -115,20 +115,37 @@ Scenario: Retrieve Booking API for validation of "STATUS"
   Then the response code for "RETRIEVE_BOOKING" should be 200
   And validate element "STATUS" for "RETRIEVE_BOOKING" contains value among "pending|booked|cancelled"
 
-
-@data_test
-Scenario Outline: Retrieve Booking API for missing token <element>
-  Given run shopping and preBooking for Booking
+@business_test
+ Scenario: Retrieve Booking API for validation of multiple rooms
+  Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-2,3|3"
+  And run shopping and preBooking for Booking
   And validate "BOOKING_LINK"  for "PRE_BOOKING"
   And run booking with hold "false"
   Then the response code for "BOOKING" should be 201
   And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
-  When set "RETRIEVE_BOOKING" field "<element>" value "null"
   And retrieve booking
   Then the response code for "RETRIEVE_BOOKING" should be 200
-  Examples:
-  |element|
- # | affiliate_reference_id|
-  |email  |
 
 
+#@data_test
+#Scenario Outline: Retrieve Booking API for missing token <element>
+#  Given run shopping and preBooking for Booking
+#  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+#  And run booking with hold "false"
+#  Then the response code for "BOOKING" should be 201
+#  And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+#  When set "RETRIEVE_BOOKING" field "<element>" value "null"
+#  And retrieve booking
+#  Then the response code for "RETRIEVE_BOOKING" should be 200
+#  Examples:
+#  |element|
+# # | affiliate_reference_id|
+#  |email  |
+
+#Scenario: Retrieve Booking API
+#  Given run shopping and preBooking for Booking
+#  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+#  And run booking with hold "false"
+#  Then the response code for "BOOKING" should be 201
+#  And retrieve booking to get from all itineraries
+#  Then the response code for "RETRIEVE_BOOKING_ALL_ITINERARIES" should be 200

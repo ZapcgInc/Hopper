@@ -100,13 +100,13 @@ Feature: Validations for Booking API.
 #    And run booking with hold "false"
 #    Then the response code for "BOOKING" should be 201
 
-#  @business_test
-#  Scenario: Booking API for validation for multiple room request
-#    Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,4|3"
-#    And run shopping and preBooking for Booking
-#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
-#    And run booking with hold "false"
-#    Then the response code for "BOOKING" should be 201
+  @business_test
+  Scenario: Booking API for validation for multiple room request
+    Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-2,3|3"
+    And run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+    And run booking with hold "false"
+    Then the response code for "BOOKING" should be 201
 
 
   @data_test

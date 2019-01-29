@@ -64,30 +64,6 @@ Feature: Validations for Room Cancellation API.
       | header | value   | code | error_type           | error_message                                                                                                                                               |
       | Test   | invalid |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: STANDARD, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE, POST_STAY_CANCEL |
 
-  @business_test
-  Scenario: Cancel room API successful response.
-    Given run shopping and preBooking for Booking
-    And validate "BOOKING_LINK"  for "PRE_BOOKING"
-    And run booking with hold "false"
-    Then the response code for "BOOKING" should be 201
-    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
-    And retrieve booking
-    Then the response code for "RETRIEVE_BOOKING" should be 200
-    And cancel room booking
-    And the response code for "CANCEL_BOOKING" should be 204
-
-#   @business_test
-#   Scenario: Cancel room API for validation of Single room cancellation of multiple room
-#     Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,4|3"
-#     And run shopping and preBooking for Booking
-#     And validate "BOOKING_LINK"  for "PRE_BOOKING"
-#     And run booking with hold "false"
-#     Then the response code for "BOOKING" should be 201
-#     And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
-#     And retrieve booking
-#     Then the response code for "RETRIEVE_BOOKING" should be 200
-
-
 #  @business_test
 #  Scenario: Cancel room API successful response.
 #    Given run shopping and preBooking for Booking
@@ -97,8 +73,60 @@ Feature: Validations for Room Cancellation API.
 #    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
 #    And retrieve booking
 #    Then the response code for "RETRIEVE_BOOKING" should be 200
-#    When set cancel_room_id "88648d31-c20c-41d5-ac6a-07d0d02953d9"
+#    And cancel room booking
 #    And the response code for "CANCEL_BOOKING" should be 204
+
+   @business_test
+   Scenario: Cancel room API for validation of Single room cancellation of multiple room
+     Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-3,4|3"
+     And run shopping and preBooking for Booking
+     And validate "BOOKING_LINK"  for "PRE_BOOKING"
+     And run booking with hold "false"
+     Then the response code for "BOOKING" should be 201
+     And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+     And retrieve booking
+     Then the response code for "RETRIEVE_BOOKING" should be 200
+     And cancel room booking
+     And the response code for "CANCEL_BOOKING" should be 204
+
+  @business_test
+  Scenario: Cancel room API for cancellation of entire booking on multiple room
+    Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-3,4|3"
+    And run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+    And run booking with hold "false"
+    Then the response code for "BOOKING" should be 201
+    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+    And retrieve booking
+    Then the response code for "RETRIEVE_BOOKING" should be 200
+    And cancel booking
+    And the response code for "CANCEL_BOOKING" should be 204
+
+
+#  @business_test
+#  Scenario: Cancel room API for cancellation of mutiple rooms booking
+#    Given set multiple values for "SHOPPING" queryParam "occupancy" with "2|3|5|1"
+#    And run shopping and preBooking for Booking
+#    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+#    And run booking with hold "false"
+#    Then the response code for "BOOKING" should be 201
+#    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+#    And retrieve booking
+#    Then the response code for "RETRIEVE_BOOKING" should be 200
+#    And cancel "3" rooms booking
+#    And the response code for "CANCEL_BOOKING" should be 204
+
+  @business_test
+  Scenario: Cancel room API for successful response
+    Given run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+    And run booking with hold "false"
+    Then the response code for "BOOKING" should be 201
+    And validate "RETRIEVE_BOOKING_LINK"  for "BOOKING"
+    And retrieve booking
+    Then the response code for "RETRIEVE_BOOKING" should be 200
+    And cancel room booking
+    And the response code for "CANCEL_BOOKING" should be 204
 
 
 

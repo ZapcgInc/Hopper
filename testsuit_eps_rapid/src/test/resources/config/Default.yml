@@ -13,3 +13,11 @@ auth_params:
 shopping_end_point : "properties/availability"
 customer-info-path: "booking-test-data/test-customer-1.yml"
 credit-card-info-path: "booking-test-data/test-credit-card.yml"
+retrieve_booking_end_point: "itineraries"
+query_params:
+      property_id: 20321
+
+
+
+
+
