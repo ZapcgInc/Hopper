@@ -1,36 +1,29 @@
 package com.hopper.tests.definitions.util;
 
 import com.google.common.collect.ImmutableMap;
+import com.hopper.tests.config.model.TestConfig;
 import com.hopper.tests.constants.GlobalConstants;
 import com.hopper.tests.constants.RequestType;
-import com.hopper.tests.config.model.TestConfig;
-import com.hopper.tests.data.model.response.RoomPrice;
-import com.hopper.tests.definitions.model.TestContext;
+import com.hopper.tests.data.ResponseSupplierFactory;
 import com.hopper.tests.data.model.request.booking.CreditCard;
 import com.hopper.tests.data.model.request.booking.Customer;
 import com.hopper.tests.data.model.response.Link;
 import com.hopper.tests.data.model.response.prebooking.PreBookingResponse;
-import com.hopper.tests.data.model.response.shopping.BedGroups;
-import com.hopper.tests.data.model.response.shopping.Property;
-import com.hopper.tests.data.model.response.shopping.Rate;
-import com.hopper.tests.data.model.response.shopping.Room;
-import com.hopper.tests.data.model.response.shopping.ShoppingResponse;
-import com.hopper.tests.data.ResponseSupplierFactory;
-import com.hopper.tests.util.logging.LoggingUtil;
+import com.hopper.tests.data.model.response.shopping.*;
 import com.hopper.tests.data.parser.BookingResponseParser;
 import com.hopper.tests.data.parser.BookingRetrieveResponseParser;
 import com.hopper.tests.data.parser.PreBookingResponseParser;
 import com.hopper.tests.data.parser.ShoppingResponseParser;
-import com.hopper.tests.validations.Test;
-import com.hopper.tests.validations.constants.ResponseValidationField;
-import cucumber.api.java.it.Ma;
+import com.hopper.tests.definitions.model.TestContext;
+import com.hopper.tests.util.logging.LoggingUtil;
 import io.restassured.response.Response;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class for Booking Test scenarios
