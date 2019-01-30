@@ -7,14 +7,14 @@ import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;
 import com.hopper.tests.validations.paymentoptions.PaymentOptionsResponseValidationUtil;
 import com.hopper.tests.validations.prebooking.PreBookingValidationUtil;
-
 import com.hopper.tests.validations.retrievebooking.RetrieveBookingValidation;
 import com.hopper.tests.validations.shopping.ShoppingResponseValidationUtil;
 import io.restassured.response.Response;
 import org.junit.Assert;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Util class for Response Validations
