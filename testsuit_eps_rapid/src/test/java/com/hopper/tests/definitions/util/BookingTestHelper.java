@@ -302,7 +302,7 @@ public class BookingTestHelper
 
 
         context.setResponse(RequestType.RETRIEVE_BOOKING, response);
-        context.setBookingRetrieveResponse(BookingRetrieveResponseParser.parse(response));  
+        context.setBookingRetrieveResponse(BookingRetrieveResponseParser.parse(response));
     }
 
     public static void cancelBooking(final TestContext context)
