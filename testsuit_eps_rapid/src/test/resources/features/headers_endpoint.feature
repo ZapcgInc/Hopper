@@ -13,7 +13,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And set header "Authorization" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 401
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | request_unauthenticated                                                                                                |
       | message | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation. |
 
@@ -23,7 +23,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And set header "Authorization" value "abc123"
     And run shopping
     Then the response code for "SHOPPING" should be 401
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | request_unauthenticated                                                                                                |
       | message | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation. |
 
@@ -80,7 +80,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And set header "Accept" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | invalid_input                                                                                                |
       | message | An invalid request was sent in, please check the nested errors for details. |
 
@@ -101,7 +101,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And set header "Accept-Encoding" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | invalid_input                                                                                                |
       | message | An invalid request was sent in, please check the nested errors for details. |
 
@@ -111,7 +111,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And set header "Customer IP" value "abc123"
     And run shopping
     Then the response code for "SHOPPING" should be 400
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | invalid_input                                            |
       | message | An invalid request was sent in, please check the nested errors for details. |
 
@@ -121,7 +121,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And set header "Customer IP" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | invalid_input                                                                                                |
       | message | An invalid request was sent in, please check the nested errors for details. |
 
@@ -143,7 +143,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
     And set header "User-Agent" value "null"
     And run shopping
     Then the response code for "SHOPPING" should be 400
-    And user should see json response with paris on the filtered "." node
+    And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | invalid_input                                                                                                |
       | message | An invalid request was sent in, please check the nested errors for details. |
 

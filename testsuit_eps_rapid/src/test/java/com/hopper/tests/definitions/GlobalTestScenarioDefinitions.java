@@ -132,7 +132,7 @@ public class GlobalTestScenarioDefinitions
     {
         if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
         {
-            m_testContext.removeParam(param, RequestType.SHOPPING);
+            m_testContext.removeParam(param, RequestType.valueOf(requestType));
             m_testContext.removeParamWithMultipleValues(param, RequestType.valueOf(requestType));
         }
         else
@@ -353,7 +353,7 @@ public class GlobalTestScenarioDefinitions
             {
                 if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
                 {
-                    m_testContext.setBookingOverrideElementName(field);
+                    m_testContext.setOverrideElementName(field);
                 }
                 else
                 {
@@ -363,8 +363,8 @@ public class GlobalTestScenarioDefinitions
                     }
                     else
                     {
-                        m_testContext.setBookingOverrideElementName(field);
-                        m_testContext.setBookingOverrideElementValue(value);
+                        m_testContext.setOverrideElementName(field);
+                        m_testContext.setOverrideElementValue(value);
                     }
                 }
                 break;
@@ -373,12 +373,12 @@ public class GlobalTestScenarioDefinitions
             {
                 if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
                 {
-                    m_testContext.setRetrieveBookingOverrideElement(field);
+                    m_testContext.setOverrideElementName(field);
                 }
                 else
                 {
-                    m_testContext.setBookingOverrideElementName(field);
-                    m_testContext.setBookingOverrideElementValue(value);
+                    m_testContext.setOverrideElementName(field);
+                    m_testContext.setOverrideElementValue(value);
                 }
                 break;
             }

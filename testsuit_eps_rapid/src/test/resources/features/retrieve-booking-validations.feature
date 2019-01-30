@@ -126,6 +126,20 @@ Scenario: Retrieve Booking API for validation of "STATUS"
   And retrieve booking
   Then the response code for "RETRIEVE_BOOKING" should be 200
 
+  @data_test
+  Scenario Outline: : Retrieve Booking API for All Itineraries for invalid Query Param <query_param>
+    Given run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+    And run booking with hold "false"
+    Then the response code for "BOOKING" should be 201
+    And retrieve booking to get from all itineraries
+    And set "RETRIEVE_BOOKING_ALL_ITINERARIES" queryParam "<query_param>" value "<value>"
+    Then the response code for "RETRIEVE_BOOKING_ALL_ITINERARIES" should be 400
+    Examples:
+      |query_param| value |
+   # |affiliate_reference_id|
+      |email      | john|
+
 
 #@data_test
 #Scenario Outline: Retrieve Booking API for missing token <element>
@@ -142,13 +156,29 @@ Scenario: Retrieve Booking API for validation of "STATUS"
 # # | affiliate_reference_id|
 #  |email  |
 
-Scenario: Retrieve Booking API
+@business_test
+Scenario: Retrieve Booking API for Itineraries with successful response
   Given run shopping and preBooking for Booking
   And validate "BOOKING_LINK"  for "PRE_BOOKING"
   And run booking with hold "false"
   Then the response code for "BOOKING" should be 201
   And retrieve booking to get from all itineraries
   Then the response code for "RETRIEVE_BOOKING_ALL_ITINERARIES" should be 200
+
+@data_test
+Scenario Outline: Retrieve Booking API for Itineraries for missing Query Param <query_param>
+  Given run shopping and preBooking for Booking
+  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+  And run booking with hold "false"
+  Then the response code for "BOOKING" should be 201
+  And retrieve booking to get from all itineraries
+  And set "RETRIEVE_BOOKING_ALL_ITINERARIES" queryParam "<query_param>" value "null"
+  Then the response code for "RETRIEVE_BOOKING_ALL_ITINERARIES" should be 400
+  Examples:
+  |query_param|
+ # |affiliate_reference_id|
+ # |email                 |
+
 
 
 

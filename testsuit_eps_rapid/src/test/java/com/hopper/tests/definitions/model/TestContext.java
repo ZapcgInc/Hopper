@@ -27,8 +27,8 @@ public class TestContext
     private static final String CHECKOUT_DATE_KEY = "checkout";
     private static final String PROPERTY_ID = "property_id";
 
-    private String bookingOverrideElementName = null;
-    private String bookingOverrideElementValue = "";
+    private String overrideElementName = null;
+    private String overrideElementValue = "";
     private final String m_partner;
     private final TestConfig m_testConfig;
 
@@ -39,8 +39,6 @@ public class TestContext
     private String m_checkInDate;
     private String m_checkOutDate;
     private String m_bookingAffiliateId;
-    private String retrieveBookingOverrideElement = null;
-    private String retrieveBookingOverrideElementValue = "";
     private String cancelRoomId = null;
 
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
@@ -55,20 +53,8 @@ public class TestContext
 
     private EnumMap<RequestType, Map<String, Object>> m_requestTypeToPostBody = new EnumMap<RequestType, Map<String, Object>>(RequestType.class);
 
-    public String getRetrieveBookingOverrideElement() {
-        return retrieveBookingOverrideElement;
-    }
-
-    public void setRetrieveBookingOverrideElement(String retrieveBookingOverrideElement) {
-        this.retrieveBookingOverrideElement = retrieveBookingOverrideElement;
-    }
-
-    public String getRetrieveBookingOverrideElementValue() {
-        return retrieveBookingOverrideElementValue;
-    }
-
-    public void setRetrieveBookingOverrideElementValue(String retrieveBookingOverrideElementValue) {
-        this.retrieveBookingOverrideElementValue = retrieveBookingOverrideElementValue;
+    public void setOverrideElementName(String overrideElementName) {
+        this.overrideElementName = overrideElementName;
     }
 
     public String getCancelRoomId() {
@@ -96,22 +82,17 @@ public class TestContext
         m_requestTypeToAPIPath.put(RequestType.SHOPPING, config.getShoppingEndPoint());
     }
 
-    public String getBookingOverrideElementValue() {
-        return bookingOverrideElementValue;
+    public String getOverrideElementName() {
+        return overrideElementName;
     }
 
-    public void setBookingOverrideElementValue(String bookingOverrideElementValue) {
-        this.bookingOverrideElementValue = bookingOverrideElementValue;
+    public String getOverrideElementValue() {
+        return overrideElementValue;
     }
 
-    public String getBookingOverrideElementName() {
-        return bookingOverrideElementName;
+    public void setOverrideElementValue(String overrideElementValue) {
+        this.overrideElementValue = overrideElementValue;
     }
-
-    public void setBookingOverrideElementName(String bookingOverrideElementName) {
-        this.bookingOverrideElementName = bookingOverrideElementName;
-    }
-
 
     public String getPartner()
     {
@@ -285,10 +266,10 @@ public class TestContext
         m_requestTypeToQueryParams.get(requestType).addParam(header, value);
     }
 
-    public void removeParam(String header, RequestType requestType)
+    public void removeParam(String param, RequestType requestType)
     {
         Optional.ofNullable(m_requestTypeToQueryParams.get(requestType))
-                .ifPresent(params -> params.removeParam(header));
+                .ifPresent(params -> params.removeParam(param));
     }
 
 

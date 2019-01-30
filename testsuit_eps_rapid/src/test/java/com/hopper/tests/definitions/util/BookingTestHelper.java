@@ -108,7 +108,7 @@ public class BookingTestHelper
         }
 
         context.setPostBody(
-                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig(), numRooms, context.getRetrieveBookingOverrideElement(),context.getBookingOverrideElementValue()),
+                _getBookingBodyAsMap(affiliateId, holdBooking, context.getTestConfig(), numRooms, context.getOverrideElementName(),context.getOverrideElementValue()),
                 RequestType.BOOKING
         );
         final Response response = ResponseSupplierFactory.create(
@@ -272,12 +272,12 @@ public class BookingTestHelper
 
         final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
         context.addParam("affiliate_reference_id", context.getBookingAffiliateId(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
-        if("email".equals(context.getRetrieveBookingOverrideElement()) && StringUtils.isNotEmpty(context.getRetrieveBookingOverrideElementValue()))
-        {
-            context.addParam("email", context.getBookingOverrideElementValue(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
-        }
-        if(!"email".equals(context.getRetrieveBookingOverrideElement()))
-            context.addParam("email", customer.getEmail(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+      //  if("email".equals(context.getOverrideElementName()) && StringUtils.isNotEmpty(context.getOverrideElementValue()))
+      //  {
+            context.addParam("email", context.getOverrideElementValue(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+       // }
+      //  if(!"email".equals(context.getOverrideElementName()))
+        context.addParam("email", customer.getEmail(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
         context.setApiPath(RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES, retrieveBookingEndpoint);
 
         final Response response = ResponseSupplierFactory.create(context,
