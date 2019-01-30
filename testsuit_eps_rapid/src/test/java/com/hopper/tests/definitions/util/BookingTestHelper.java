@@ -129,7 +129,6 @@ public class BookingTestHelper
     private static Map<String, Object> _getBookingBodyAsMap(final String affiliateId, final boolean holdBooking, final TestConfig config,int numRooms,String element,String value)
     {
         final List<Object> customerList = new ArrayList<>();
-        final List<Object> paymentList = new ArrayList<>();
         Customer customer = Customer.create(config.getCustomerInfoPath());
         CreditCard payment = CreditCard.create(config.getCreditCardInfoPath());
 
