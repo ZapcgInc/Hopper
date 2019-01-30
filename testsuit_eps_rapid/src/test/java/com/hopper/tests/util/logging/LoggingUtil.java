@@ -14,7 +14,7 @@ public class LoggingUtil
         log("Scenario ID                 : " + scenario.getId());
         log("Scenario Name               : " + scenario.getName());
         log("Scenario Stage              : " + scenario.getSourceTagNames());
-        log("Scenario Status: Started at : " + new java.util.Date());
+        log("Scenario Status: Started at : " + new java.util.Date() + "\n");
     }
 
     public static void printTestStatus(final Scenario scenario, final TestContext context)

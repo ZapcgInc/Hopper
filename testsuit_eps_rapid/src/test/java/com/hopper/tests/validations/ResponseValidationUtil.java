@@ -23,9 +23,12 @@ public class ResponseValidationUtil
 {
     public static void validateHTTPResponseCode(@NotNull final Response restResponse, final int expectedCode)
     {
-        final int responseCode = restResponse.getStatusCode();
-        final String errorMessage = "Expected response code : " + expectedCode + "and actual response code : " + responseCode + "are not matching";
-        Assert.assertEquals(errorMessage, expectedCode, responseCode);
+        if(restResponse!=null)
+        {
+            final int responseCode = restResponse.getStatusCode();
+            final String errorMessage = "Expected response code : " + expectedCode + "and actual response code : " + responseCode + "are not matching";
+            Assert.assertEquals(errorMessage, expectedCode, responseCode);
+        }
     }
 
     public static void validateElementForRetrieveBooking(@NotNull final Response response, final ResponseValidationField element) {

@@ -61,6 +61,8 @@ Feature: Validations for Booking API.
       | Test   | cc_declined |  400 | payments.invalid     | Payment information is invalid.                                                                                                                                                                              |
       | Test   | invalid     |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: STANDARD, ROOMS_UNAVAILABLE, CC_DECLINED, PRICE_UNAVAILABLE, PRICE_MISMATCH, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE |
 
+    ###################### Business Test Scenarios
+
   @business_test
   Scenario: Booking API successful response for "HOLD" false
     Given run shopping and preBooking for Booking
@@ -108,6 +110,7 @@ Feature: Validations for Booking API.
     And run booking with hold "false"
     Then the response code for "BOOKING" should be 201
 
+ ################################# Data Validation Test Scenarios
 
   @data_test
   Scenario Outline: Booking API without <element>
@@ -152,6 +155,7 @@ Feature: Validations for Booking API.
     And user should see "BOOKING" response with paris on the filtered "errors[0]" node
       | type    | <error_type>    |
       | message | <error_message> |
+
     Examples:
     |element     | value |error_type   |error_message            |
     |phone       | 12#   |phone.invalid|Phone is invalid.        |
@@ -164,7 +168,20 @@ Feature: Validations for Booking API.
     |security_code|AQQ                               | payments.credit_card.security_code.invalid|Security code is invalid.|
     |expiration_month|14|payments.credit_card.expiration_month.length_invalid|Credit card expiration month is not two digits long.|
     |expiration_year |1997|payments.credit_card.expired|Credit card is expired.|
-
     |contact_email|jay   |email.invalid| Customer email address is invalid.|
     |contact_phone|12$   |phone.invalid | Phone number is invalid.                       |
 
+
+  @data_test
+  Scenario: Booking API with invalid token
+    Given run shopping and preBooking for Booking
+    And validate "BOOKING_LINK"  for "PRE_BOOKING"
+    When set invalid token for "BOOKING"
+    And run booking with hold "false"
+    Then the response code for "BOOKING" should be 400
+    And user should see "BOOKING" response with paris on the filtered "." node
+      | type    | invalid_input                                                               |
+      | message | An invalid request was sent in, please check the nested errors for details. |
+    And user should see "BOOKING" response with paris on the filtered "errors[0]" node
+      | type    | link.invalid    |
+      | message | Link is invalid. |

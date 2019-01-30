@@ -40,6 +40,7 @@ public class TestContext
     private String m_checkOutDate;
     private String m_bookingAffiliateId;
     private String cancelRoomId = null;
+    private String invalidToken = null;
 
     private EnumMap<RequestType, String> m_requestTypeToAPIPath = new EnumMap<RequestType, String>(RequestType.class);
     private EnumMap<RequestType, RequestParams> m_requestTypeToQueryParams = new EnumMap<RequestType, RequestParams>(RequestType.class);
@@ -63,6 +64,14 @@ public class TestContext
 
     public void setCancelRoomId(String cancelRoomId) {
         this.cancelRoomId = cancelRoomId;
+    }
+
+    public String getInvalidToken() {
+        return invalidToken;
+    }
+
+    public void setInvalidToken(String invalidToken) {
+        this.invalidToken = invalidToken;
     }
 
     public TestContext(final TestConfig config)

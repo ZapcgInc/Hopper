@@ -26,6 +26,7 @@ import com.hopper.tests.validations.ResponseValidationUtil;
 import com.hopper.tests.validations.constants.ResponseValidationField;
 import com.hopper.tests.validations.model.Range;
 import cucumber.api.DataTable;
+import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -347,30 +348,30 @@ public class GlobalTestScenarioDefinitions
     public void setFieldValue(final String requestTypeString, final String field, final String value)
     {
         final RequestType requestType = RequestType.valueOf(requestTypeString);
-        switch (requestType)
-        {
-            case BOOKING:
-            {
-                if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
-                {
-                    m_testContext.setOverrideElementName(field);
-                }
-                else
-                {
-                    if (field.equals("affiliate_confirmation_id"))
-                    {
-                        m_testContext.setBookingAffiliateId(value);
-                    }
-                    else
-                    {
-                        m_testContext.setOverrideElementName(field);
-                        m_testContext.setOverrideElementValue(value);
-                    }
-                }
-                break;
-            }
-            case RETRIEVE_BOOKING:
-            {
+//        switch (requestType)
+//        {
+//            case BOOKING:
+//            {
+//                if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+//                {
+//                    m_testContext.setOverrideElementName(field);
+//                }
+//                else
+//                {
+//                    if (field.equals("affiliate_confirmation_id"))
+//                    {
+//                        m_testContext.setBookingAffiliateId(value);
+//                    }
+//                    else
+//                    {
+//                        m_testContext.setOverrideElementName(field);
+//                        m_testContext.setOverrideElementValue(value);
+//                    }
+//                }
+//                break;
+//            }
+//            case RETRIEVE_BOOKING_ALL_ITINERARIES:
+//            {
                 if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
                 {
                     m_testContext.setOverrideElementName(field);
@@ -380,13 +381,26 @@ public class GlobalTestScenarioDefinitions
                     m_testContext.setOverrideElementName(field);
                     m_testContext.setOverrideElementValue(value);
                 }
-                break;
-            }
-            default:
-            {
-                throw new UnsupportedOperationException("Request Type : [" + requestType + "], is unsupported for this validation");
-            }
-        }
+//                break;
+//            }
+//            case RETRIEVE_BOOKING:
+//            {
+//                if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
+//                {
+//                    m_testContext.setOverrideElementName(field);
+//                }
+//                else
+//                {
+//                    m_testContext.setOverrideElementName(field);
+//                    m_testContext.setOverrideElementValue(value);
+//                }
+//                break;
+//            }
+//            default:
+//            {
+//                throw new UnsupportedOperationException("Request Type : [" + requestType + "], is unsupported for this validation");
+//            }
+//        }
     }
 
     @Then("^validate element \"(.*?)\"  for \"(.*?)\"$")
@@ -440,5 +454,10 @@ public class GlobalTestScenarioDefinitions
     public void runResumeBooking()
     {
         BookingTestHelper.resumeBooking(m_testContext);
+    }
+
+    @When("^set invalid token for \"([^\"]*)\"$")
+    public void setInvalidTokenFor(String requestType) throws Throwable {
+        m_testContext.setInvalidToken("abc");
     }
 }

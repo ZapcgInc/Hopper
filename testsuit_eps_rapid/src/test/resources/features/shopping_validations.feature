@@ -7,7 +7,7 @@ Feature: Validations for Availability API
       | currency          | USD               |
       | language          | en-US             |
       | country_code      | US                |
-      | property_id       |             20321 |
+#      | property_id       |             20321 |
       | occupancy         | 2-9,4             |
       | sales_channel     | website           |
       | sales_environment | hotel_only        |

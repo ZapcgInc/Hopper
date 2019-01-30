@@ -98,11 +98,21 @@ public class BookingTestHelper
     public static void runBooking(final TestContext context, final boolean holdBooking)
     {
         final Link bookingLink = context.getPreBookingResponse().getLinks().get("book");
+
         int numRooms = context.getPreBookingResponse().getRoomPriceByOccupany().keySet().size();
 
-        context.setApiPath(RequestType.BOOKING, bookingLink.getHref());
+        String apiPath = bookingLink.getHref();
+        if (context.getInvalidToken()!=null){
+            apiPath=apiPath+context.getInvalidToken();
+        }
+        context.setApiPath(RequestType.BOOKING, apiPath);
 
+        if("affiliate_confirmation_id".equals(context.getOverrideElementName()))
+        {
+            context.setBookingAffiliateId(context.getOverrideElementValue());
+        }
         String affiliateId = context.getBookingAffiliateId();
+
         if(StringUtils.isEmpty(affiliateId)){
             affiliateId = RandomStringUtils.randomAlphanumeric(28);
         }
@@ -116,7 +126,7 @@ public class BookingTestHelper
                 bookingLink.getMethod(),
                 RequestType.BOOKING).get();
 
-        LoggingUtil.log("Affiliate ID used for booking : [" + affiliateId + "]");
+        LoggingUtil.log("Affiliate ID used for booking : [" + affiliateId + "]" + "\n");
         if (response.getStatusCode() == 201)
         {
             context.setBookingAffiliateId(affiliateId);
@@ -132,9 +142,9 @@ public class BookingTestHelper
         Customer customer = Customer.create(config.getCustomerInfoPath());
         CreditCard payment = CreditCard.create(config.getCreditCardInfoPath());
 
-        // if element to be overridden is not null and not equal to "rooms"
+        // if element to be overridden is not null and not equal to "rooms" & "affiliate_confirmation_id"
 
-        if (element != null && !element.equals("rooms") )
+        if (element != null && !element.equals("rooms") && !element.equals("affiliate_confirmation_id") )
         {
                 switch (element)
                 {
@@ -271,13 +281,23 @@ public class BookingTestHelper
         final String retrieveBookingEndpoint =  context.getTestConfig().getRetrieveBookingEndPoint();
 
         final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
-        context.addParam("affiliate_reference_id", context.getBookingAffiliateId(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
-      //  if("email".equals(context.getOverrideElementName()) && StringUtils.isNotEmpty(context.getOverrideElementValue()))
-      //  {
+
+        if("affiliate_reference_id".equals(context.getOverrideElementName()) && StringUtils.isNotEmpty(context.getOverrideElementValue()))
+        {
+            context.addParam("affiliate_reference_id", context.getOverrideElementValue(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        }
+        if(!"affiliate_reference_id".equals(context.getOverrideElementName()))
+        {
+            context.addParam("affiliate_reference_id", context.getBookingAffiliateId(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        }
+        if("email".equals(context.getOverrideElementName()) && StringUtils.isNotEmpty(context.getOverrideElementValue()))
+        {
             context.addParam("email", context.getOverrideElementValue(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
-       // }
-      //  if(!"email".equals(context.getOverrideElementName()))
-        context.addParam("email", customer.getEmail(),RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        }
+        if(!"email".equals(context.getOverrideElementName()))
+        {
+            context.addParam("email", customer.getEmail(), RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES);
+        }
         context.setApiPath(RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES, retrieveBookingEndpoint);
 
         final Response response = ResponseSupplierFactory.create(context,
@@ -290,8 +310,21 @@ public class BookingTestHelper
     public static void retrieveBooking(final TestContext context)
     {
         final Link bookingRetrieveLink = context.getBookingResponse().getLinks().get("retrieve");
-       // final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
-        context.setApiPath(RequestType.RETRIEVE_BOOKING, bookingRetrieveLink.getHref());
+        final Customer customer = Customer.create(context.getTestConfig().getCustomerInfoPath());
+        if("email".equals(context.getOverrideElementName()) && StringUtils.isNotEmpty(context.getOverrideElementValue()))
+        {
+            context.addParam("email", context.getOverrideElementValue(),RequestType.RETRIEVE_BOOKING);
+        }
+        if(!"email".equals(context.getOverrideElementName()))
+        {
+            context.addParam("email", customer.getEmail(), RequestType.RETRIEVE_BOOKING);
+        }
+
+        String apiPath = bookingRetrieveLink.getHref();
+        if (context.getInvalidToken()!=null){
+            apiPath = apiPath+context.getInvalidToken();
+        }
+        context.setApiPath(RequestType.RETRIEVE_BOOKING,apiPath );
 
         final Response response = ResponseSupplierFactory.create(
                 context,
@@ -305,18 +338,24 @@ public class BookingTestHelper
 
     public static void cancelBooking(final TestContext context)
     {
-        final Link cancelLink = context.getBookingRetrieveResponse()
-                .getLinks()
-                .get("cancel");
+        if (context.getBookingRetrieveResponse().getLinks() == null)
+        {
+            System.out.println("No Links found for Booking Cancellation");
+        } else {
 
-        context.setApiPath(RequestType.CANCEL_BOOKING, cancelLink.getHref());
+            final Link cancelLink = context.getBookingRetrieveResponse()
+                    .getLinks()
+                    .get("cancel");
 
-        final Response response = ResponseSupplierFactory.create(
-                context,
-                cancelLink.getMethod(),
-                RequestType.CANCEL_BOOKING).get();
+            context.setApiPath(RequestType.CANCEL_BOOKING, cancelLink.getHref());
 
-        context.setResponse(RequestType.CANCEL_BOOKING, response);
+            final Response response = ResponseSupplierFactory.create(
+                    context,
+                    cancelLink.getMethod(),
+                    RequestType.CANCEL_BOOKING).get();
+
+            context.setResponse(RequestType.CANCEL_BOOKING, response);
+        }
     }
 
     public static void cancelRoomBooking(TestContext context)

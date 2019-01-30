@@ -18,13 +18,17 @@ Feature: Validations for Payment Options API.
       | rate_option       | closed_user_group |
     And with shopping end point "properties/availability"
 
+  ########################Business Validation
+
+  @business_test
   Scenario: Payment Options API successful response
     Given run shopping
     When run paymentOptions
     Then the response code for "PAYMENT_OPTIONS" should be 200
 
 
-  Scenario: Payment Options API for validation of "credit_card"
+  @business_test
+  Scenario: Payment Options API for validation of "CARD_TYPE"
     Given run shopping
     When run paymentOptions
     Then the response code for "PAYMENT_OPTIONS" should be 200
