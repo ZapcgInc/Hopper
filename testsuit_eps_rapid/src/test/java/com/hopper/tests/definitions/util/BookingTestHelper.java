@@ -286,7 +286,6 @@ public class BookingTestHelper
                 RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES).get();
         context.setResponse(RequestType.RETRIEVE_BOOKING_ALL_ITINERARIES, response);
         context.setBookingRetrieveResponse(BookingRetrieveResponseParser.parse(response));
-        // System.out.println(context.getBookingRetrieveResponse().getRooms().size());
     }
 
     public static void retrieveBooking(final TestContext context)
