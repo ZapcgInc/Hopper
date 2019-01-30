@@ -142,10 +142,13 @@ Scenario: Retrieve Booking API for validation of "STATUS"
 # # | affiliate_reference_id|
 #  |email  |
 
-#Scenario: Retrieve Booking API
-#  Given run shopping and preBooking for Booking
-#  And validate "BOOKING_LINK"  for "PRE_BOOKING"
-#  And run booking with hold "false"
-#  Then the response code for "BOOKING" should be 201
-#  And retrieve booking to get from all itineraries
-#  Then the response code for "RETRIEVE_BOOKING_ALL_ITINERARIES" should be 200
+Scenario: Retrieve Booking API
+  Given run shopping and preBooking for Booking
+  And validate "BOOKING_LINK"  for "PRE_BOOKING"
+  And run booking with hold "false"
+  Then the response code for "BOOKING" should be 201
+  And retrieve booking to get from all itineraries
+  Then the response code for "RETRIEVE_BOOKING_ALL_ITINERARIES" should be 200
+
+
+

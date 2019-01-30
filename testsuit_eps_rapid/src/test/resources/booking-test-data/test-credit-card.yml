@@ -8,7 +8,7 @@ expiration_year: '2025'
 billing_contact:
   given_name: John
   family_name: Smith
-  email: smith@example.com
+  email: john@example.com
   phone: '4875550077'
   address:
     line_1: 555 1st St
