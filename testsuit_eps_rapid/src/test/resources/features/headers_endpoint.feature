@@ -8,7 +8,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
 #######################  Basic Validation Scenarios
 
   @basic_test
-  Scenario: Missing Authorization header
+  Scenario:[COM7] Missing Authorization header
     Given Basic web application is running
     And set header "Authorization" value "null"
     And run shopping
@@ -18,7 +18,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
       | message | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation. |
 
   @basic_test
-  Scenario: Invalid Authorization header
+  Scenario:[COM6] Invalid Authorization header
     Given Basic web application is running
     And set header "Authorization" value "abc123"
     And run shopping
@@ -28,7 +28,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
       | message | The authorization header is missing or invalid.  Ensure that your request follows the guidelines in our documentation. |
 
   @basic_test
-  Scenario: Invalid resource
+  Scenario:[COM3] Invalid resource
     Given Basic web application is running
     And with shopping end point "properties/availability123"
     And run shopping
@@ -38,7 +38,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
       | message | The resource requested was not found. |
 
   @basic_test
-  Scenario: Invalid version
+  Scenario:[COM2] Invalid version
     Given Basic web application is running
     And for version "1"
     And run shopping
@@ -52,7 +52,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
       | value | missing |
 
   @basic_test
-  Scenario: Missing version
+  Scenario:[COM1] Missing version
     Given Basic web application is running
     And for version "null"
     And run shopping
@@ -74,7 +74,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
 
 
   @basic_test
-  Scenario: Missing Accept header
+  Scenario:[COM4] Missing Accept header
     Given Basic web application is running
     And with shopping end point "properties/availability"
     And set header "Accept" value "null"
@@ -96,7 +96,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
 #        | message | An invalid request was sent in, please check the nested errors for details. |
 
   @basic_test
-  Scenario: Missing Accept-Encoding header
+  Scenario:[COM4] Missing Accept-Encoding header
     Given Basic web application is running
     And set header "Accept-Encoding" value "null"
     And run shopping
@@ -106,7 +106,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
       | message | An invalid request was sent in, please check the nested errors for details. |
 
   @basic_test
-  Scenario: Invalid Customer IP header
+  Scenario:[COM8] Invalid Customer IP header
     Given Basic web application is running
     And set header "Customer IP" value "abc123"
     And run shopping
@@ -116,7 +116,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
       | message | An invalid request was sent in, please check the nested errors for details. |
 
   @basic_test
-  Scenario: Missing Customer IP header
+  Scenario:[COM9] Missing Customer IP header
     Given Basic web application is running
     And set header "Customer IP" value "null"
     And run shopping
@@ -138,7 +138,7 @@ Feature: EAN API Version, Authorization, Invalid resource validations
 #
 
   @basic_test
-  Scenario: Missing User-Agent header
+  Scenario:[COM10] Missing User-Agent header
     Given Basic web application is running
     And set header "User-Agent" value "null"
     And run shopping
