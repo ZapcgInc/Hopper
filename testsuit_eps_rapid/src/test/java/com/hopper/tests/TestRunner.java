@@ -34,7 +34,7 @@ public class TestRunner {
     		
         	String auth_type = config.getAuthParams().get(Authorization.AUTH_TYPE);
     		if(auth_type == null) {
-    			LoggingUtil.log("Authorization method not provided to defaulting to: "+ Authorization.DEFAULT_AUTH );
+    			LoggingUtil.log("Authorization method not provided. Setting default authorization method: "+ Authorization.DEFAULT_AUTH );
     		} else {
         		LoggingUtil.log("Authorization method for partner: "+ auth_type );
     		}
