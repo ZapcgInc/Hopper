@@ -33,9 +33,10 @@ public class TestRunner {
     		LoggingUtil.log("Validations are executed for partner Version: "+ config.getVersion() );
     		
         	String auth_type = config.getAuthParams().get(Authorization.AUTH_TYPE);
-    		LoggingUtil.log("Authorization method for partner: "+ auth_type );
     		if(auth_type == null) {
     			LoggingUtil.log("Authorization method not provided to defaulting to: "+ Authorization.DEFAULT_AUTH );
+    		} else {
+        		LoggingUtil.log("Authorization method for partner: "+ auth_type );
     		}
     		
     	} else {

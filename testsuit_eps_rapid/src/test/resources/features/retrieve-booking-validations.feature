@@ -7,15 +7,16 @@ Feature: Validations for Booking Retrieve API.
       | currency          | USD               |
       | language          | en-US             |
       | country_code      | US                |
- #     | property_id       |             20321 |
+#      | property_id       |             20321 |
       | occupancy         | 2-9,4             |
       | sales_channel     | website           |
       | sales_environment | hotel_only        |
       | sort_type         | preferred         |
       | include           | all_rates         |
       | rate_option       | closed_user_group |
+    And with query param "property_id" from config
     And with request DateFormat "yyyy-MM-dd"
-    And set checkin "90" from today with lengthOfStay "3"
+    And set checkin "90" from today with lengthOfStay "2"
 
   #######################   Rapid Test Scenarios
   @rapid_test

@@ -25,7 +25,7 @@ public class TestContext
     private static final String AUTH_HEADER_KEY = "Authorization";
     private static final String CHECKIN_DATE_KEY = "checkin";
     private static final String CHECKOUT_DATE_KEY = "checkout";
-    private static final String PROPERTY_ID = "property_id";
+    public static final String PROPERTY_ID = "property_id";
 
     private String overrideElementName = null;
     private String overrideElementValue = "";
@@ -85,9 +85,9 @@ public class TestContext
                 AUTH_HEADER_KEY,
                 Authorization.getAuthKey( config.getAuthParams() )
         );
-        RequestParams requestParams = new RequestParams();
-        requestParams.addParam(PROPERTY_ID,config.getQueryParams().get("property_id"));
-        m_requestTypeToQueryParams.put(RequestType.valueOf("SHOPPING"),requestParams);
+//        RequestParams requestParams = new RequestParams();
+//        requestParams.addParam(PROPERTY_ID,config.getQueryParams().get("property_id"));
+//        m_requestTypeToQueryParams.put(RequestType.valueOf("SHOPPING"),requestParams);
         m_requestTypeToAPIPath.put(RequestType.SHOPPING, config.getShoppingEndPoint());
     }
 

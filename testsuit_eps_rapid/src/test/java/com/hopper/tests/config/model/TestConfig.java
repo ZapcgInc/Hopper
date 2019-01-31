@@ -28,8 +28,11 @@ public class TestConfig
 
     @JsonProperty("query_params")
     private Map<String,String> queryParams = new HashMap<>();
+    
+    @JsonProperty("query_params_with_multiple_values")
+    private Map<String,String> queryParamsWithMultipleValues = new HashMap<>();
 
-    @JsonProperty("auth_params")
+	@JsonProperty("auth_params")
     private Map<String, String> authParams = new HashMap<>();
 
     @JsonProperty("shopping_end_point")
@@ -93,4 +96,8 @@ public class TestConfig
     public Map<String, String> getQueryParams() {
         return queryParams !=null ? queryParams : ImmutableMap.of() ;
     }
+    
+    public Map<String, String> getQueryParamsWithMultipleValues() {
+		return queryParamsWithMultipleValues  !=null ? queryParamsWithMultipleValues : ImmutableMap.of() ;
+	}
 }

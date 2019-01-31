@@ -16,7 +16,8 @@ credit-card-info-path: "booking-test-data/test-credit-card.yml"
 retrieve_booking_end_point: "itineraries"
 query_params:
       property_id: 20321
-
+query_params_with_multiple_values:
+      property_id: 8521|3317|19762|9100
 
 
 

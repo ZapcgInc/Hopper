@@ -14,8 +14,9 @@ Feature: Validations for Availability API
       | sort_type         | preferred         |
       | include           | all_rates         |
       | rate_option       | closed_user_group |
+    And with query param "property_id" from config
     And with request DateFormat "yyyy-MM-dd"
-    And set checkin "90" from today with lengthOfStay "5"
+    And set checkin "90" from today with lengthOfStay "2"
 
   #    And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,0|2"
   #    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
@@ -287,7 +288,7 @@ Feature: Validations for Availability API
   Scenario: Availability API response validation matching occupancies with single Query Param "occupancy" and multiple Query Param "property_id"
     Given Basic web application is running
     When set "SHOPPING" queryParam "property_id" value "null"
-    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
+    And set multiple values for "SHOPPING" queryParam "property_id" from config
     And run shopping
     Then the response code for "SHOPPING" should be 200
     And validate "SHOPPING" response element "OCCUPANCY" matches values "2-9,4"
@@ -298,7 +299,7 @@ Feature: Validations for Availability API
     When set "SHOPPING" queryParam "property_id" value "null"
     And set "SHOPPING" queryParam "occupancy" value "null"
     And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,4|3"
-    And set multiple values for "SHOPPING" queryParam "property_id" with "8521|3317|19762|9100"
+    And set multiple values for "SHOPPING" queryParam "property_id" from config
     And run shopping
     Then the response code for "SHOPPING" should be 200
     And validate "SHOPPING" response element "OCCUPANCY" matches values "2-9,4|3"

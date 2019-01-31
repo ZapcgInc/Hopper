@@ -73,6 +73,16 @@ public class GlobalTestScenarioDefinitions
             m_testContext.setVersion(version);
         }
     }
+    
+    @Given("^with query param \"(.*?)\" from config$")
+    public void with_query_param_from_config(String queryParam) throws Throwable {
+    	setQueryParamValue(RequestType.SHOPPING.toString(), queryParam, ConfigurationHelper.getConfig().getQueryParams().get(queryParam));
+    }
+    
+    @When("^set multiple values for \"(.*?)\" queryParam \"(.*?)\" from config$")
+    public void set_multiple_values_for_queryParam_from_config(String requestType, String queryParam) throws Throwable {
+    	setMultipleValuesForQueryParamWith(requestType, queryParam ,ConfigurationHelper.getConfig().getQueryParamsWithMultipleValues().get(queryParam));
+    }
 
     @Given("^with shopping query parameters$")
     public void setShoppingQueryParameters(final DataTable shoppingQueryParams)

@@ -14,3 +14,7 @@ auth_params:
 shopping_end_point : "properties/availability"
 customer-info-path: "booking-test-data/test-customer-1.yml"
 credit-card-info-path: "booking-test-data/test-credit-card.yml"
+query_params:
+      property_id: 12887
+query_params_with_multiple_values:
+      property_id: 12887|3317|19762|9100
