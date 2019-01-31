@@ -116,11 +116,20 @@ public class GlobalTestScenarioDefinitions
         Assert.assertFalse(StringUtils.isEmpty(lengthOfStay));
 
         final Calendar checkInDate = Calendar.getInstance();
-        checkInDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday));
+
+        // due to too many no. of request to the same propertyId, availability of property was failing sometimes.
+        // Hence checkin date is randomized
+        // numOfDays is calculated such that it is equal to any random no. between given numOfDaysFromToday(+-)10.
+
+        int numOfDays = new Random().nextInt(
+                (Integer.parseInt(numOfDaysFromToday)+10)- (Integer.parseInt(numOfDaysFromToday)-10))
+                +Integer.parseInt(numOfDaysFromToday)-10;
+
+        System.out.println("Num of Days:"+numOfDays);
+        checkInDate.add(Calendar.DATE, numOfDays);
 
         final Calendar checkOutDate = Calendar.getInstance();
-        checkOutDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday) + Integer.parseInt(lengthOfStay));
-
+        checkOutDate.add(Calendar.DATE, numOfDays + Integer.parseInt(lengthOfStay));
         m_testContext.addCheckInDate(checkInDate, RequestType.SHOPPING);
         m_testContext.addCheckOutDate(checkOutDate, RequestType.SHOPPING);
     }
@@ -203,11 +212,6 @@ public class GlobalTestScenarioDefinitions
         m_testContext.setResponse(RequestType.PAYMENT_OPTIONS, response);
         m_testContext.setPaymentOptionResponse(PaymentOptionResponseParser.parse(response));
     }
-
-//    @Then("^cancel \"(.*?)\" rooms booking$")
-//    public void cancel_rooms_booking(String numRooms) throws Throwable {
-//        BookingTestHelper.cancelMutilpleRooms(Integer.parseInt(numRooms),m_testContext);
-//    }
 
     @Then("^the response code for \"(.*?)\" should be (\\d+)$")
     public void validateResponseCode(final String requestType, final int expectedCode)
