@@ -16,19 +16,19 @@ Feature: Validations for Payment Options API.
       | rate_option       | closed_user_group |
     And with query param "property_id" from config
     And with request DateFormat "yyyy-MM-dd"
-    And set checkin "90" from today with lengthOfStay "2"
+    And set checkin "90" from today with lengthOfStay "2" by default
 
   ########################Business Validation
 
   @business_test
-  Scenario: Payment Options API successful response
+  Scenario:[PAYT1] Payment Options API successful response
     Given run shopping
     When run paymentOptions
     Then the response code for "PAYMENT_OPTIONS" should be 200
 
 
   @business_test
-  Scenario: Payment Options API for validation of "CARD_TYPE"
+  Scenario:[PAYT3] Payment Options API for validation of "CARD_TYPE"
     Given run shopping
     When run paymentOptions
     Then the response code for "PAYMENT_OPTIONS" should be 200

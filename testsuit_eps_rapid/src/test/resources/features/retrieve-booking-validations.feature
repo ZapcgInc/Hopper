@@ -16,7 +16,7 @@ Feature: Validations for Booking Retrieve API.
       | rate_option       | closed_user_group |
     And with query param "property_id" from config
     And with request DateFormat "yyyy-MM-dd"
-    And set checkin "90" from today with lengthOfStay "2"
+    And set checkin "90" from today with lengthOfStay "2" by default
 
   #######################   Rapid Test Scenarios
   @rapid_test
@@ -75,7 +75,7 @@ Feature: Validations for Booking Retrieve API.
     Then the response code for "RETRIEVE_BOOKING" should be 200
 
   @business_test
-  Scenario Outline: Retrieve Booking API for validation of <ELEMENT>
+  Scenario Outline:<test_case> Retrieve Booking API for validation of <ELEMENT>
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -85,30 +85,30 @@ Feature: Validations for Booking Retrieve API.
     Then the response code for "RETRIEVE_BOOKING" should be 200
     And validate element "<ELEMENT>"  for "RETRIEVE_BOOKING"
   Examples:
-    |ELEMENT|
-    |ITINERARY_ID|
-    |CANCEL_HREF|
-    |ROOM_ID    |
-    |CHECK_IN_DATE|
-    |CHECK_OUT_DATE|
-    |NUM_ADULTS    |
-    |RATE_ID       |
-    |GIVEN_NAME    |
-    |FAMILY_NAME   |
-    |PHONE         |
-    |NIGHTLY_RATE  |
-    |SMOKING|
-    |REFUNDABLE|
-    |ADDRESS|
-    |COUNTRY_CODE|
-    |CREATION_DATE_TIME|
-    |CURRENCY_CODE     |
-    |FEES              |
+    |test_case|ELEMENT|
+    |[RETR9]|ITINERARY_ID|
+    |[RETR7]|CANCEL_HREF|
+    |[RETR8]|ROOM_ID    |
+    |[RETR10]|CHECK_IN_DATE|
+    |[RETR11]|CHECK_OUT_DATE|
+    |[RETR12]|NUM_ADULTS    |
+    |[RETR14]|RATE_ID       |
+    |[RETR21]|GIVEN_NAME    |
+    |[RETR22]|FAMILY_NAME   |
+    |[RETR24]|PHONE         |
+    |[RETR16]|NIGHTLY_RATE  |
+    |[RETR13]|SMOKING|
+    |[RETR15]|REFUNDABLE|
+    |[RETR25]|ADDRESS|
+    |[RETR26]|COUNTRY_CODE|
+    |[RETR27]|CREATION_DATE_TIME|
+    |[RETR17]|CURRENCY_CODE     |
+    |[RETR19]|FEES              |
 
 
 
   @business_test
-  Scenario: Retrieve Booking API for validation of "STATUS"
+  Scenario:[RETR18] Retrieve Booking API for validation of "STATUS"
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -119,7 +119,7 @@ Feature: Validations for Booking Retrieve API.
     And validate element "STATUS" for "RETRIEVE_BOOKING" contains value among "pending|booked|cancelled"
 
   @business_test
-  Scenario: Retrieve Booking API for validation with  Query Param "email" that was not connected with booking
+  Scenario:[RETR23] Retrieve Booking API for validation with  Query Param "email" that was not connected with booking
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -130,7 +130,7 @@ Feature: Validations for Booking Retrieve API.
     Then the response code for "RETRIEVE_BOOKING" should be 200
 
   @business_test
-  Scenario: Retrieve Booking API for validation of multiple rooms
+  Scenario:[RETR32] Retrieve Booking API for validation of multiple rooms
     Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-2,3|3"
     And run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
@@ -150,7 +150,7 @@ Feature: Validations for Booking Retrieve API.
     Then the response code for "RETRIEVE_BOOKING_ALL_ITINERARIES" should be 200
 
   @business_test
-  Scenario: Retrieve Booking API for invalid Query Param "email"
+  Scenario:[RETR4] Retrieve Booking API for invalid Query Param "email"
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -163,7 +163,7 @@ Feature: Validations for Booking Retrieve API.
 
     ####################### Data Validations
   @data_test
-  Scenario: Retrieve Booking API with invalid token
+  Scenario:[RETR28] Retrieve Booking API with invalid token
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -177,7 +177,7 @@ Feature: Validations for Booking Retrieve API.
       | message | Itinerary was not found with provided request. |
 
   @data_test
-  Scenario: Retrieve Booking API for all itineraries for missing Query Param "affiliate_reference_id"
+  Scenario: [RETR1] Retrieve Booking API for all itineraries for missing Query Param "affiliate_reference_id"
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -193,7 +193,7 @@ Feature: Validations for Booking Retrieve API.
       | message | Affiliate reference id is required. |
 
   @data_test
-  Scenario: Retrieve Booking API for all itineraries for missing Query Param "email"
+  Scenario:[RETR3] Retrieve Booking API for all itineraries for missing Query Param "email"
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -207,7 +207,7 @@ Feature: Validations for Booking Retrieve API.
 
 
   @data_test
-  Scenario: Retrieve Booking API for all itineraries for invalid Query Param "email"
+  Scenario:[RETR4] Retrieve Booking API for all itineraries for invalid Query Param "email"
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -224,7 +224,7 @@ Feature: Validations for Booking Retrieve API.
 
 
   @data_test
-  Scenario: Retrieve Booking API for all itineraries for invalid Query Param "affiliate_reference_id"
+  Scenario: [RETR2] Retrieve Booking API for all itineraries for invalid Query Param "affiliate_reference_id"
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"
@@ -240,7 +240,7 @@ Feature: Validations for Booking Retrieve API.
       | message | Affiliate Reference Id exceeded the 28 character maximum. |
 
   @data_test
-  Scenario: Retrieve Booking API for all itineraries for different "email" as of the booking request
+  Scenario:[RETR5] Retrieve Booking API for all itineraries for different "email" as of the booking request
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"

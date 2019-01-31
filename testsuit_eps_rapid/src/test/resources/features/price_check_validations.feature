@@ -16,11 +16,11 @@ Feature: Validations for PreBooking API.
       | rate_option       | closed_user_group |
     And with query param "property_id" from config
     And with request DateFormat "yyyy-MM-dd"
-    And set checkin "90" from today with lengthOfStay "2"
+    And set checkin "90" from today with lengthOfStay "5" by default
 
   #######################   Rapid Test Scenarios
   @rapid_test
-  Scenario Outline: PreBooking API Rapid test Header "<header>" with "<value>"
+  Scenario Outline:<test_case> PreBooking API Rapid test Header "<header>" with "<value>"
     Given run shopping
     When set header "<header>" value "<value>"
     And run preBooking
@@ -30,12 +30,12 @@ Feature: Validations for PreBooking API.
       | message | <message> |
 
     Examples: 
-      | header | value                  | code | type                   | message                                |
-      | Test   | unknown_internal_error |  500 | unknown_internal_error | An internal server error has occurred. |
-      | Test   | service_unavailable    |  503 | service_unavailable    | This service is currently unavailable. |
+     |test_case | header | value                  | code | type                   | message                                |
+     |[PCHK3] | Test   | unknown_internal_error |  500 | unknown_internal_error | An internal server error has occurred. |
+     |[PCHK4] | Test   | service_unavailable    |  503 | service_unavailable    | This service is currently unavailable. |
 
   @rapid_test
-  Scenario Outline: PreBooking API Rapid test Header "<header>" with "<value>"
+  Scenario Outline:<test_case> PreBooking API Rapid test Header "<header>" with "<value>"
     Given run shopping
     When set header "<header>" value "<value>"
     And run preBooking
@@ -44,13 +44,13 @@ Feature: Validations for PreBooking API.
       | status | <status> |
 
     Examples: 
-      | header | value         | code | status        |
-      | Test   | matched       |  200 | matched       |
-      | Test   | price_changed |  409 | price_changed |
-      | Test   | sold_out      |  410 | sold_out      |
+      |test_case| header | value         | code | status        |
+      |[PCHK2]| Test   | matched       |  200 | matched       |
+      |[PCHK5]| Test   | price_changed |  409 | price_changed |
+      |[PCHK6]| Test   | sold_out      |  410 | sold_out      |
 
   @rapid_test
-  Scenario Outline: PreBooking API Rapid test Header "<header>" with "<value>"
+  Scenario Outline:<test_case> PreBooking API Rapid test Header "<header>" with "<value>"
     Given run shopping
     When set header "<header>" value "<value>"
     And run preBooking
@@ -63,18 +63,18 @@ Feature: Validations for PreBooking API.
       | message | <error_message> |
 
     Examples: 
-      | header | value   | code | error_type           | error_message                                                                                                                                                      |
-      | Test   | invalid |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: matched, price_changed, service_unavailable, sold_out, unknown_internal_error |
+      |test_case| header | value   | code | error_type           | error_message                                                                                                                                                      |
+      |[PCHK16]| Test   | invalid |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: matched, price_changed, service_unavailable, sold_out, unknown_internal_error |
 
   ################# Business Validations ################################
   @busiess_test
-  Scenario: PreBooking API successful response
+  Scenario: [PCHK1] PreBooking API successful response
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be 200
 
   @business_test
-  Scenario: PreBooking API validation for night room prices available for all LOS
+  Scenario:[PCHK9] PreBooking API validation for night room prices available for all LOS
     Given set checkin "5" from today with lengthOfStay "3"
     And run shopping
     When run preBooking
@@ -82,14 +82,14 @@ Feature: Validations for PreBooking API.
     And validate "PRE_BOOKING" response element "NIGHTLY_PRICE_COUNT" matches values "3"
 
   @business_test
-  Scenario: PreBooking API validation for Total Price is matching
+  Scenario:[PCHK10] PreBooking API validation for Total Price is matching
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be 200
     And validate that "TOTAL_PRICE" for "PRE_BOOKING" is the sum of individual room stay values with taxes and fees
 
   @business_test
-  Scenario: PreBooking API validation with multiple Query Param "occupancy" and single Query Param "property_id"
+  Scenario: [PCHK11] PreBooking API validation with multiple Query Param "occupancy" and single Query Param "property_id"
     Given set "SHOPPING" queryParam "occupancy" value "null"
     And set multiple values for "SHOPPING" queryParam "occupancy" with "2-9,4|3"
     And run shopping
@@ -98,26 +98,26 @@ Feature: Validations for PreBooking API.
     And validate "PRE_BOOKING" response element "OCCUPANCY" matches values "2-9,4|3"
 
   @business_test
-  Scenario: PreBooking API validation for "STAY_PRICE_TYPE"
+  Scenario:[PCHK12] PreBooking API validation for "STAY_PRICE_TYPE"
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be 200
     And validate "PRE_BOOKING" response element "STAY_PRICE_TYPE" matches values "base_rate|tax_and_service_fee|extra_person_fee|property_fee|sales_tax|adjustment"
 
   @business_test
-  Scenario Outline: PreBooking API validation for "href" in "<field>"
+  Scenario Outline:<test_case> PreBooking API validation for "href" in "<field>"
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be 200
     And validate "<field>"  for "PRE_BOOKING"
 
     Examples: 
-      | field         |
-      | BOOKING_LINK  |
-      | SHOPPING_LINK |
+      |test_case| field         |
+      |[PCHK13]| BOOKING_LINK  |
+      |[PCHK14]| SHOPPING_LINK |
 
   @business_test
-  Scenario: PreBooking API validation for "STATUS"
+  Scenario:[PCHK15] PreBooking API validation for "STATUS"
     Given run shopping
     When run preBooking
     Then the response code for "PRE_BOOKING" should be "200"

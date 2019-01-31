@@ -16,11 +16,11 @@ Feature: Validations for Room Cancellation API.
       | rate_option       | closed_user_group |
     And with query param "property_id" from config
     And with request DateFormat "yyyy-MM-dd"
-    And set checkin "90" from today with lengthOfStay "2"
+    And set checkin "90" from today with lengthOfStay "2" by default
 
   #######################   Rapid Test Scenarios
   @rapid_test
-  Scenario: Cancel room API Rapid test Header "Test" with "standard"
+  Scenario:[CNCL1] Cancel room API Rapid test Header "Test" with "standard"
     Given run shopping and preBooking for Booking
     And run booking with hold "false"
     And retrieve booking
@@ -29,7 +29,7 @@ Feature: Validations for Room Cancellation API.
     Then the response code for "CANCEL_BOOKING" should be 204
 
   @rapid_test
-  Scenario Outline: Cancel room API Rapid test Header "<header>" with "<value>"
+  Scenario Outline:<test_case> Cancel room API Rapid test Header "<header>" with "<value>"
     Given run shopping and preBooking for Booking
     And run booking with hold "false"
     And retrieve booking
@@ -41,13 +41,13 @@ Feature: Validations for Room Cancellation API.
       | message | <message> |
 
     Examples: 
-      | header | value                 | code | type                  | message                                                     |
-      | Test   | post_stay_cancel      |  400 | cancel.post_checkout  | Room cannot be cancelled after checkout/completion of stay. |
-      | Test   | internal_server_error |  500 | cancel.system_failure | An internal server error has occurred.                      |
-      | Test   | service_unavailable   |  503 | service_unavailable   | This service is currently unavailable.                      |
+      |test_case| header | value                 | code | type                  | message                                                     |
+      |[CNCL2]| Test   | post_stay_cancel      |  400 | cancel.post_checkout  | Room cannot be cancelled after checkout/completion of stay. |
+      |[CNCL3]| Test   | internal_server_error |  500 | cancel.system_failure | An internal server error has occurred.                      |
+      |[CNCL4]| Test   | service_unavailable   |  503 | service_unavailable   | This service is currently unavailable.                      |
 
   @rapid_test
-  Scenario Outline: Cancel room API Rapid test Header "<header>" with "<value>"
+  Scenario Outline:<test_case> Cancel room API Rapid test Header "<header>" with "<value>"
     Given run shopping and preBooking for Booking
     And run booking with hold "false"
     And retrieve booking
@@ -62,13 +62,13 @@ Feature: Validations for Room Cancellation API.
       | message | <error_message> |
 
     Examples: 
-      | header | value   | code | error_type           | error_message                                                                                                                                               |
-      | Test   | invalid |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: STANDARD, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE, POST_STAY_CANCEL |
+      |test_case| header | value   | code | error_type           | error_message                                                                                                                                               |
+      |[CNCL7]| Test   | invalid |  400 | test.content_invalid | Content of the test header is invalid. Please use one of the following valid values: STANDARD, INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE, POST_STAY_CANCEL |
 
     #################### Business Validations
 
    @business_test
-   Scenario: Cancel room API for validation of Single room cancellation of multiple room
+   Scenario:[CNCL5] Cancel room API for validation of Single room cancellation of multiple room
      Given set multiple values for "SHOPPING" queryParam "occupancy" with "2-3,4|3"
      And run shopping and preBooking for Booking
      And validate "BOOKING_LINK"  for "PRE_BOOKING"
@@ -94,7 +94,7 @@ Feature: Validations for Room Cancellation API.
     And the response code for "CANCEL_BOOKING" should be 204
 
   @business_test
-  Scenario: Cancel room API for validation of cancelling booking for single room
+  Scenario:[CNCL6] Cancel room API for validation of cancelling booking for single room
     Given run shopping and preBooking for Booking
     And validate "BOOKING_LINK"  for "PRE_BOOKING"
     And run booking with hold "false"

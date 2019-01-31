@@ -116,20 +116,10 @@ public class GlobalTestScenarioDefinitions
         Assert.assertFalse(StringUtils.isEmpty(lengthOfStay));
 
         final Calendar checkInDate = Calendar.getInstance();
-
-        // due to too many no. of request to the same propertyId, availability of property was failing sometimes.
-        // Hence checkin date is randomized
-        // numOfDays is calculated such that it is equal to any random no. between given numOfDaysFromToday(+-)10.
-
-        int numOfDays = new Random().nextInt(
-                (Integer.parseInt(numOfDaysFromToday)+10)- (Integer.parseInt(numOfDaysFromToday)-10))
-                +Integer.parseInt(numOfDaysFromToday)-10;
-
-        System.out.println("Num of Days:"+numOfDays);
-        checkInDate.add(Calendar.DATE, numOfDays);
+        checkInDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday));
 
         final Calendar checkOutDate = Calendar.getInstance();
-        checkOutDate.add(Calendar.DATE, numOfDays + Integer.parseInt(lengthOfStay));
+        checkOutDate.add(Calendar.DATE, Integer.parseInt(numOfDaysFromToday)  + Integer.parseInt(lengthOfStay));
         m_testContext.addCheckInDate(checkInDate, RequestType.SHOPPING);
         m_testContext.addCheckOutDate(checkOutDate, RequestType.SHOPPING);
     }
@@ -355,37 +345,13 @@ public class GlobalTestScenarioDefinitions
     }
 
     /*
-    This method is for overriding the field values of already set fields for booking and retrieve booking
-    (Specially handling the customer details which are being set from the yml)
+     * This method is for overriding the field values of already set fields for booking and retrieve booking
+     * (Specially handling the customer details which are being set from the yml)
      */
     @When("^set \"([^\"]*)\" field \"([^\"]*)\" value \"([^\"]*)\"$")
     public void setFieldValue(final String requestTypeString, final String field, final String value)
     {
-        final RequestType requestType = RequestType.valueOf(requestTypeString);
-//        switch (requestType)
-//        {
-//            case BOOKING:
-//            {
-//                if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
-//                {
-//                    m_testContext.setOverrideElementName(field);
-//                }
-//                else
-//                {
-//                    if (field.equals("affiliate_confirmation_id"))
-//                    {
-//                        m_testContext.setBookingAffiliateId(value);
-//                    }
-//                    else
-//                    {
-//                        m_testContext.setOverrideElementName(field);
-//                        m_testContext.setOverrideElementValue(value);
-//                    }
-//                }
-//                break;
-//            }
-//            case RETRIEVE_BOOKING_ALL_ITINERARIES:
-//            {
+
                 if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
                 {
                     m_testContext.setOverrideElementName(field);
@@ -395,26 +361,7 @@ public class GlobalTestScenarioDefinitions
                     m_testContext.setOverrideElementName(field);
                     m_testContext.setOverrideElementValue(value);
                 }
-//                break;
-//            }
-//            case RETRIEVE_BOOKING:
-//            {
-//                if (value.equalsIgnoreCase(GlobalConstants.NULL_STRING))
-//                {
-//                    m_testContext.setOverrideElementName(field);
-//                }
-//                else
-//                {
-//                    m_testContext.setOverrideElementName(field);
-//                    m_testContext.setOverrideElementValue(value);
-//                }
-//                break;
-//            }
-//            default:
-//            {
-//                throw new UnsupportedOperationException("Request Type : [" + requestType + "], is unsupported for this validation");
-//            }
-//        }
+
     }
 
     @Then("^validate element \"(.*?)\"  for \"(.*?)\"$")
@@ -473,5 +420,30 @@ public class GlobalTestScenarioDefinitions
     @When("^set invalid token for \"([^\"]*)\"$")
     public void setInvalidTokenFor(String requestType) throws Throwable {
         m_testContext.setInvalidToken("abc");
+    }
+
+    @And("^set checkin \"([^\"]*)\" from today with lengthOfStay \"([^\"]*)\" by default$")
+    public void setCheckinFromTodayWithLengthOfStayByDefault(String numOfDaysFromToday, String lengthOfStay) throws Throwable {
+        Assert.assertFalse(StringUtils.isEmpty(numOfDaysFromToday));
+        Assert.assertFalse(StringUtils.isEmpty(lengthOfStay));
+
+        final Calendar checkInDate = Calendar.getInstance();
+
+        /* due to too many no. of request to the same propertyId, availability of property was failing sometimes.
+        *  Hence default checkin date is randomized
+        *  numOfDays is calculated such that it is equal to any random no. between given numOfDaysFromToday(+-)10.
+        */
+
+        int numOfDays = new Random().nextInt(
+                (Integer.parseInt(numOfDaysFromToday)+10)- (Integer.parseInt(numOfDaysFromToday)-10))
+                +Integer.parseInt(numOfDaysFromToday)-10;
+
+
+        checkInDate.add(Calendar.DATE, numOfDays);
+
+        final Calendar checkOutDate = Calendar.getInstance();
+        checkOutDate.add(Calendar.DATE, numOfDays + Integer.parseInt(lengthOfStay));
+        m_testContext.addCheckInDate(checkInDate, RequestType.SHOPPING);
+        m_testContext.addCheckOutDate(checkOutDate, RequestType.SHOPPING);
     }
 }
