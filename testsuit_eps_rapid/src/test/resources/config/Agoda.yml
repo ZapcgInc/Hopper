@@ -1,6 +1,6 @@
 ---
 partner: "AGODA"
-api: "http://drec.kepsla.com:31328"
+api: "http://development.zapcg.com:31825"
 version:
 headers:
       Accept: application/json
