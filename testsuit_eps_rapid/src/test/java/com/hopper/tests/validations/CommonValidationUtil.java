@@ -254,21 +254,18 @@ public class CommonValidationUtil
                     }
                 }
             }
-
             Assert.assertTrue(
                     "Total Inclusive Price doesn't match the break-down",
-                    FuzzyCompareDouble.equal(
-                            baseRate + extraPersonFee + adjustment + taxRate,
-                            roomPrice.getTotals().getInclusive().getBillable().getValue()
-                    )
+
+                           Math.round( baseRate + extraPersonFee + adjustment + taxRate)==
+                            Math.round(roomPrice.getTotals().getInclusive().getBillable().getValue())
+
             );
 
             Assert.assertTrue(
                     "Total Exclusive Price doesn't match the break-down",
-                    FuzzyCompareDouble.equal(
-                            baseRate + extraPersonFee + adjustment,
-                            roomPrice.getTotals().getExclusive().getBillable().getValue()
-                    )
+                    Math.round( baseRate + extraPersonFee + adjustment)==
+                            Math.round(roomPrice.getTotals().getExclusive().getBillable().getValue())
             );
         }
     }
