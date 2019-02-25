@@ -6,14 +6,14 @@ Feature: Validations for Availability API
     And with shopping query parameters
       | currency          | USD               |
       | language          | en-US             |
-      | country_code      | US                |
+      | country_code      | BB               |
 #      | property_id       |             20321 |
       | occupancy         | 2-9,4             |
       | sales_channel     | website           |
       | sales_environment | hotel_only        |
       | sort_type         | preferred         |
       | include           | all_rates         |
-      | rate_option       | closed_user_group |
+      | rate_option       | net_rates |
     And with query param "property_id" from config
     And with request DateFormat "yyyy-MM-dd"
     And set checkin "90" from today with lengthOfStay "2" by default
@@ -55,21 +55,21 @@ Feature: Validations for Availability API
   #Scenario: Missing User-Agent in header is not returning error
   #Scenario: Missing Accept-Encoding in header is not returning error
 
-  @data_test
-  Scenario: Availability API Missing Customer-Ip in header
-    Given Basic web application is running
-    When set header "Customer-Ip" value "null"
-    And run shopping
-    Then the response code for "SHOPPING" should be 400
-    And user should see "SHOPPING" response with paris on the filtered "." node
-      | type    | invalid_input                                                               |
-      | message | An invalid request was sent in, please check the nested errors for details. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
-      | type    | customer_ip.required                                           |
-      | message | Customer-Ip header is required and must be a valid IP Address. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
-      | name | Customer-Ip |
-      | type | header      |
+#  @data_test
+#  Scenario: Availability API Missing Customer-Ip in header
+#    Given Basic web application is running
+#    When set header "Customer-Ip" value "null"
+#    And run shopping
+#    Then the response code for "SHOPPING" should be 400
+#    And user should see "SHOPPING" response with paris on the filtered "." node
+#      | type    | invalid_input                                                               |
+#      | message | An invalid request was sent in, please check the nested errors for details. |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
+#      | type    | customer_ip.required                                           |
+#      | message | Customer-Ip header is required and must be a valid IP Address. |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
+#      | name | Customer-Ip |
+#      | type | header      |
 
   #######################   Data Validation Test Scenarios for Query parameters
   @data_test
@@ -101,59 +101,59 @@ Feature: Validations for Availability API
       |[AVAIL47]| sales_environment | sales_environment.required | Sales Environment is required.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].               |
       |[AVAIL48]| sort_type         | sort_type.required         | Sort Type is required.  Accepted sort_type values are: [preferred].                                                        |
 
-  @data_test
-  Scenario: [AVAIL43] Availabilty API with more than 250 values for Query Param "property_id"
-    Given Basic web application is running
-    When set "SHOPPING" queryParam "property_id" value "null"
-    And set multiple values for "SHOPPING" queryParam "property_id" with "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99|100|101|102|103|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|119|120|121|122|123|124|125|126|127|128|129|130|131|132|133|134|135|136|137|138|139|140|141|142|143|144|145|146|147|148|149|150|151|152|153|154|155|156|157|158|159|160|161|162|163|164|165|166|167|168|169|170|171|172|173|174|175|176|177|178|179|180|181|182|183|184|185|186|187|188|189|190|191|192|193|194|195|196|197|198|199|200|201|202|203|204|205|206|207|208|209|210|211|212|213|214|215|216|217|218|219|220|221|222|223|224|225|226|227|228|229|230|231|232|233|234|235|236|237|238|239|240|241|242|243|244|245|246|247|248|249|250|251"
-    And run shopping
-    Then the response code for "SHOPPING" should be 400
-    And user should see "SHOPPING" response with paris on the filtered "." node
-      | type    | invalid_input                                                               |
-      | message | An invalid request was sent in, please check the nested errors for details. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
-      | type    | property_id.above_maximum                                           |
-      | message | The number of property_id's passed in must not be greater than 250. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
-      | name  | property_id |
-      | type  | querystring |
-      | value |         251 |
+#  @data_test
+#  Scenario: [AVAIL43] Availabilty API with more than 250 values for Query Param "property_id"
+#    Given Basic web application is running
+#    When set "SHOPPING" queryParam "property_id" value "null"
+#    And set multiple values for "SHOPPING" queryParam "property_id" with "1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99|100|101|102|103|104|105|106|107|108|109|110|111|112|113|114|115|116|117|118|119|120|121|122|123|124|125|126|127|128|129|130|131|132|133|134|135|136|137|138|139|140|141|142|143|144|145|146|147|148|149|150|151|152|153|154|155|156|157|158|159|160|161|162|163|164|165|166|167|168|169|170|171|172|173|174|175|176|177|178|179|180|181|182|183|184|185|186|187|188|189|190|191|192|193|194|195|196|197|198|199|200|201|202|203|204|205|206|207|208|209|210|211|212|213|214|215|216|217|218|219|220|221|222|223|224|225|226|227|228|229|230|231|232|233|234|235|236|237|238|239|240|241|242|243|244|245|246|247|248|249|250|251"
+#    And run shopping
+#    Then the response code for "SHOPPING" should be 400
+#    And user should see "SHOPPING" response with paris on the filtered "." node
+#      | type    | invalid_input                                                               |
+#      | message | An invalid request was sent in, please check the nested errors for details. |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
+#      | type    | property_id.above_maximum                                           |
+#      | message | The number of property_id's passed in must not be greater than 250. |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
+#      | name  | property_id |
+#      | type  | querystring |
+#      | value |         251 |
 
-  @data_test
-  Scenario:[AVAIL53] Availabilty API with more than 8 values for Query Param "occupancy"
-    Given Basic web application is running
-    When set "SHOPPING" queryParam "occupancy" value "null"
-    And set multiple values for "SHOPPING" queryParam "occupancy" with "1|2|3|4|5|6|7|8|8|"
-    And run shopping
-    Then the response code for "SHOPPING" should be 400
-    And user should see "SHOPPING" response with paris on the filtered "." node
-      | type    | invalid_input                                                               |
-      | message | An invalid request was sent in, please check the nested errors for details. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
-      | type    | number_of_occupancies.invalid_above_maximum |
-      | message | Number of occupancies must be less than 9.  |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
-      | name  | occupancy   |
-      | type  | querystring |
-      | value |           9 |
+#  @data_test
+#  Scenario:[AVAIL53] Availabilty API with more than 8 values for Query Param "occupancy"
+#    Given Basic web application is running
+#    When set "SHOPPING" queryParam "occupancy" value "null"
+#    And set multiple values for "SHOPPING" queryParam "occupancy" with "1|2|3|4|5|6|7|8|8|"
+#    And run shopping
+#    Then the response code for "SHOPPING" should be 400
+#    And user should see "SHOPPING" response with paris on the filtered "." node
+#      | type    | invalid_input                                                               |
+#      | message | An invalid request was sent in, please check the nested errors for details. |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
+#      | type    | number_of_occupancies.invalid_above_maximum |
+#      | message | Number of occupancies must be less than 9.  |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
+#      | name  | occupancy   |
+#      | type  | querystring |
+#      | value |           9 |
 
-  @data_test
-  Scenario:[AVAIL52] Availability API with total length of stay more than 28 days
-    Given Basic web application is running
-    When set checkin "3" from today with lengthOfStay "29"
-    And run shopping
-    Then the response code for "SHOPPING" should be 400
-    And user should see "SHOPPING" response with paris on the filtered "." node
-      | type    | invalid_input                                                               |
-      | message | An invalid request was sent in, please check the nested errors for details. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
-      | type    | checkout.invalid_length_of_stay_too_long                                           |
-      | message | Invalid date range. Checkin and checkout dates cannot differ by more than 28 days. |
+#  @data_test
+#  Scenario:[AVAIL52] Availability API with total length of stay more than 28 days
+#    Given Basic web application is running
+#    When set checkin "3" from today with lengthOfStay "29"
+#    And run shopping
+#    Then the response code for "SHOPPING" should be 400
+#    And user should see "SHOPPING" response with paris on the filtered "." node
+#      | type    | invalid_input                                                               |
+#      | message | An invalid request was sent in, please check the nested errors for details. |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
+#      | type    | checkout.invalid_length_of_stay_too_long                                           |
+#      | message | Invalid date range. Checkin and checkout dates cannot differ by more than 28 days. |
 
   @data_test
   Scenario: [AVAIL21] Availability API with invalid date format for Query Param "checkin" and "checkout"
     Given Basic web application is running
-    When with request DateFormat "MM dd,YYYY"
+    When with request DateFormat "MM-dd-YYYY"
     When set checkin "10" from today with lengthOfStay "5"
     And run shopping
     Then the response code for "SHOPPING" should be 400
@@ -166,12 +166,12 @@ Feature: Validations for Availability API
     And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
       | name | checkin     |
       | type | querystring |
-    And user should see "SHOPPING" response with paris on the filtered "errors[1]" node
-      | type    | checkout.invalid_date_format                                                                                              |
-      | message | Invalid date format. It must be formatted in ISO 8601 (YYYY-mm-dd)http://www.iso.org/iso/catalogue_detail?csnumber=40874. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[1].fields[0]" node
-      | name | checkout    |
-      | type | querystring |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[1]" node
+#      | type    | checkout.invalid_date_format                                                                                              |
+#      | message | Invalid date format. It must be formatted in ISO 8601 (YYYY-mm-dd)http://www.iso.org/iso/catalogue_detail?csnumber=40874. |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[1].fields[0]" node
+#      | name | checkout    |
+#      | type | querystring |
 
   @data_test
   Scenario Outline:<test_case> Availability API with "<scenario>" for query Param "checkin"
@@ -228,7 +228,7 @@ Feature: Validations for Availability API
     And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
       | name  | occupancy   |
       | type  | querystring |
-      | value | <value>     |
+ #     | value | <value>     |
 
     Examples: 
       |test_case| scenario                      | numOfAdult | ageOfChildren | error_type                               | error_message                            | value |
@@ -261,7 +261,7 @@ Feature: Validations for Availability API
       |[AVAIL45]| sales_channel     | test  | sales_channel.invalid     | Sales Channel is invalid.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta].                                                                                                                                                                          |
       |[AVAIL46]| sales_environment | test  | sales_environment.invalid | Sales Environment is invalid.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].                                                                                                                                                                                        |
       |[AVAIL49]| sort_type         | test  | sort_type.invalid         | Sort Type is invalid.  Accepted sort_type values are: [preferred].                                                                                                                                                                                                                                 |
-      |[AVAIL54]| filter            | test  | filter.invalid            | Filter is invalid.  Accepted filter values are: [refundable, expedia_collect, property_collect].                                                                                                                                                                                                   |
+#      |[AVAIL54]| filter            | test  | filter.invalid            | Filter is invalid.  Accepted filter values are: [refundable, expedia_collect, property_collect].                                                                                                                                                                                                   |
 
   @busiess_test
   Scenario: Availability API successful response

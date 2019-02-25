@@ -1,6 +1,6 @@
 ---
 partner: "AGODA"
-api: "http://development.zapcg.com:31811"
+api: "http://development.zapcg.com:31074"
 version:
 headers:
       Accept: application/json
@@ -17,7 +17,7 @@ retrieve_booking_end_point: "itineraries"
 query_params:
       property_id: 482
 query_params_with_multiple_values:
-      property_id: 8521|3317|19762|9100
+      property_id: 482|954
 
 
 
