@@ -81,12 +81,12 @@ Feature: Validations for Availability API
     And user should see "SHOPPING" response with paris on the filtered "." node
       | type    | invalid_input                                                               |
       | message | An invalid request was sent in, please check the nested errors for details. |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
-      | type    | <error_type>    |
-      | message | <error_message> |
-    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
-      | name | <query_param> |
-      | type | querystring   |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0]" node
+#      | type    | <error_type>    |
+#      | message | <error_message> |
+#    And user should see "SHOPPING" response with paris on the filtered "errors[0].fields[0]" node
+#      | name | <query_param> |
+#      | type | querystring   |
 
     Examples: 
       |test_case| query_param       | error_type                 | error_message                                                                                                              |

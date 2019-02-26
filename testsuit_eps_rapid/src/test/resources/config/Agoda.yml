@@ -1,6 +1,6 @@
 ---
 partner: "AGODA"
-api: "http://development.zapcg.com:31074"
+api: "http://development.zapcg.com/adapter"
 version:
 headers:
       Accept: application/json
