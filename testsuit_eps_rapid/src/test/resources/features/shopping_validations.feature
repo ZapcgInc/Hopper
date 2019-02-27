@@ -261,7 +261,7 @@ Feature: Validations for Availability API
       |[AVAIL45]| sales_channel     | test  | sales_channel.invalid     | Sales Channel is invalid.  Accepted sales_channel values are: [website, agent_tool, mobile_app, mobile_web, cache, meta].                                                                                                                                                                          |
       |[AVAIL46]| sales_environment | test  | sales_environment.invalid | Sales Environment is invalid.  Accepted sales_environment values are: [hotel_only, hotel_package, loyalty].                                                                                                                                                                                        |
       |[AVAIL49]| sort_type         | test  | sort_type.invalid         | Sort Type is invalid.  Accepted sort_type values are: [preferred].                                                                                                                                                                                                                                 |
-#      |[AVAIL54]| filter            | test  | filter.invalid            | Filter is invalid.  Accepted filter values are: [refundable, expedia_collect, property_collect].                                                                                                                                                                                                   |
+      |[AVAIL54]| filter            | test  | filter.invalid            | Filter is invalid.  Accepted filter values are: [refundable, expedia_collect, property_collect].                                                                                                                                                                                                   |
 
   @busiess_test
   Scenario: Availability API successful response
@@ -313,15 +313,15 @@ Feature: Validations for Availability API
     Then the response code for "SHOPPING" should be 200
     And validate "SHOPPING" response element "OCCUPANCY" matches values "2-0"
 
-  @business_test
-  Scenario: [AVAIL50] Availability API response validation for missing Query Param "include"
-    Given Basic web application is running
-    When set "SHOPPING" queryParam "include" value "null"
-    And run shopping
-    Then the response code for "SHOPPING" should be 200
-    And validate "ROOM_COUNT" for "SHOPPING" should be 1
-    And validate "ROOM_RATES_COUNT" for "SHOPPING" should be 1
-    And validate "PROPERTY_LINK_COUNT" for "SHOPPING" should be 1
+#  @business_test
+#  Scenario: [AVAIL50] Availability API response validation for missing Query Param "include"
+#    Given Basic web application is running
+#    When set "SHOPPING" queryParam "include" value "null"
+#    And run shopping
+#    Then the response code for "SHOPPING" should be 200
+#    And validate "ROOM_COUNT" for "SHOPPING" should be 1
+#    And validate "ROOM_RATES_COUNT" for "SHOPPING" should be 1
+#    And validate "PROPERTY_LINK_COUNT" for "SHOPPING" should be 1
 
   @business_test
   Scenario: [AVAIL15] Availability API response validation with "all_rates" for Query Param "include"
@@ -337,12 +337,12 @@ Feature: Validations for Availability API
     Then the response code for "SHOPPING" should be "200"
     And the element "AVAILABLE_ROOMS" count per "rooms" for "SHOPPING" should be between "0" and "2147483647"
 
-  @business_test
-  Scenario:[AVAIL11] Availability API response validation for "merchant_of_records"
-    Given Basic web application is running
-    And run shopping
-    Then the response code for "SHOPPING" should be "200"
-    And the element "MERCHANT_OF_RECORD" for "SHOPPING" should have value belongs to "expedia|property"
+#  @business_test
+#  Scenario:[AVAIL11] Availability API response validation for "merchant_of_records"
+#    Given Basic web application is running
+#    And run shopping
+#    Then the response code for "SHOPPING" should be "200"
+#    And the element "MERCHANT_OF_RECORD" for "SHOPPING" should have value belongs to "expedia|property"
 
   @business_test
   Scenario Outline:<test_case> Availability API response validation for "href" in "<field>"
@@ -354,7 +354,7 @@ Feature: Validations for Availability API
     Examples: 
       |<test_case>| field                |
       |[AVAIL18]| PRICE_CHECK_LINK     |
-      |[AVAIL19]| PAYMENT_OPTIONS_LINK |
+#      |[AVAIL19]| PAYMENT_OPTIONS_LINK |
 
   @business_test
   Scenario:[AVAIL6] Availability API response validation for "cancel_policies" if "refundable_rates" sets to "true"
