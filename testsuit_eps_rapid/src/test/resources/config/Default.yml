@@ -1,7 +1,7 @@
 ---
-partner: "EPS"
-api: "https://test.ean.com"
-version: "2.1"
+partner: "AGODA"
+api: "http://qa.kepsla.com:31075"
+version: "1"
 headers:
       Accept: application/json
       Accept-Encoding: gzip
@@ -15,10 +15,6 @@ customer-info-path: "booking-test-data/test-customer-1.yml"
 credit-card-info-path: "booking-test-data/test-credit-card.yml"
 retrieve_booking_end_point: "itineraries"
 query_params:
-      property_id: 20321
+      property_id: 902
 query_params_with_multiple_values:
-      property_id: 8521|3317|19762|9100
-
-
-
-
+      property_id: 482|954
